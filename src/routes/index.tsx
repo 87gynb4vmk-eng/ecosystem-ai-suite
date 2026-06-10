@@ -1,29 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Header } from "@/components/landing/Header";
+import { Hero } from "@/components/landing/Hero";
+import { ComoFunciona } from "@/components/landing/ComoFunciona";
+import { TestimonialsResultado, TestimonialsObjecao } from "@/components/landing/Testimonials";
+import { Pricing } from "@/components/landing/Pricing";
+import { Footer } from "@/components/landing/Footer";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "Alevi.ai — Crie ecossistemas digitais completos com IA" },
+      {
+        name: "description",
+        content:
+          "A Alevi.ai transforma o seu negócio em um ecossistema digital premium em minutos, com copy de alta conversão gerada por inteligência artificial.",
+      },
+      { property: "og:title", content: "Alevi.ai — Ecossistemas digitais com IA" },
+      {
+        property: "og:description",
+        content: "Gere páginas, ofertas e copy de alta conversão para o seu negócio em minutos.",
+      },
+      { property: "og:type", content: "website" },
     ],
   }),
-  component: Index,
+  component: LandingPage,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function LandingPage() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="min-h-screen">
+      <Header />
+      <Hero />
+      <ComoFunciona />
+      <TestimonialsResultado />
+      <TestimonialsObjecao />
+      <Pricing />
+      <Footer />
+    </main>
   );
 }
