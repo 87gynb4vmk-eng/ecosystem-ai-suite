@@ -54,9 +54,9 @@
 :root {
   --radius: 0.75rem;
 
-  /* Backgrounds — sophisticated off-white */
-  --background: oklch(0.985 0.005 95);
-  --foreground: oklch(0.18 0.02 160);
+  /* Backgrounds — deep black canvas */
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.96 0.01 90);
 
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.02 160);
