@@ -1,56 +1,32 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { gerarEcossistema, listarProjetos } from "@/lib/projetos.functions";
-import { toast } from "sonner";
-import { Sparkles, LogOut, Inbox, FileText, Loader2 } from "lucide-react";
+import {
+  Menu,
+  FileText,
+  Plus,
+  Gift,
+  Home,
+  BookOpen,
+  Layout as LayoutIcon,
+  Video,
+  User,
+  TrendingUp,
+} from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Painel | Alevi.ai" }] }),
-  component: DashboardPage,
+  head: () => ({ meta: [{ title: "Início | Alevi.ai" }] }),
+  component: InicioPage,
 });
 
-type Projeto = {
-  id: string;
-  nome_negocio: string;
-  nicho: string;
-  descricao: string | null;
-  paginas_ia: unknown;
-  created_at: string;
-};
+type Periodo = "hoje" | "7" | "30";
 
-function DashboardPage() {
+function InicioPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const listar = useServerFn(listarProjetos);
-  const gerar = useServerFn(gerarEcossistema);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["projetos"],
-    queryFn: () => listar(),
-  });
-  const projetos = (data?.projetos ?? []) as Projeto[];
-
-  const [nome, setNome] = useState("");
-  const [nicho, setNicho] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [selected, setSelected] = useState<Projeto | null>(null);
-
-  const mutation = useMutation({
-    mutationFn: (input: { nome_negocio: string; nicho: string; descricao: string }) =>
-      gerar({ data: input }),
-    onSuccess: (res) => {
-      toast.success("Ecossistema gerado com sucesso!");
-      setNome("");
-      setNicho("");
-      setDescricao("");
-      qc.invalidateQueries({ queryKey: ["projetos"] });
-      setSelected(res.projeto as Projeto);
-    },
-    onError: (err: Error) => toast.error(err.message || "Falha ao gerar ecossistema."),
-  });
+  const [periodo, setPeriodo] = useState<Periodo>("hoje");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     await qc.cancelQueries();
@@ -59,211 +35,211 @@ function DashboardPage() {
     navigate({ to: "/auth", replace: true });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!nome.trim() || !nicho.trim() || descricao.trim().length < 10) {
-      toast.error("Preencha todos os campos. A descrição precisa ter pelo menos 10 caracteres.");
-      return;
-    }
-    mutation.mutate({ nome_negocio: nome, nicho, descricao });
-  };
-
   return (
-    <main className="min-h-screen bg-muted/30">
-      <header className="bg-background border-b border-border">
-        <div className="container mx-auto max-w-6xl flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2">
-            <span className="font-display text-2xl font-bold text-primary">Alevi</span>
-            <span className="font-display text-2xl font-bold text-gradient-gold">.ai</span>
-            <span className="ml-3 text-xs uppercase tracking-wider text-muted-foreground border border-border rounded-full px-2 py-0.5">
-              Painel
-            </span>
-          </div>
-          <button
-            onClick={handleSignOut}
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-          >
-            <LogOut className="h-4 w-4" /> Sair
-          </button>
-        </div>
-      </header>
+    <div className="relative min-h-screen bg-background text-foreground overflow-hidden">
+      {/* Radial verde rolex glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-0"
+        style={{
+          background:
+            "radial-gradient(60% 45% at 50% 25%, oklch(0.28 0.08 158 / 0.55), transparent 70%)",
+        }}
+      />
 
-      <div className="container mx-auto max-w-6xl px-6 py-10 grid lg:grid-cols-5 gap-8">
-        {/* Form */}
-        <section className="lg:col-span-2 bg-card border border-border rounded-2xl p-6 shadow-card h-fit">
-          <h2 className="font-display text-xl font-bold mb-1">Criar novo ecossistema</h2>
-          <p className="text-sm text-muted-foreground mb-6">
-            Descreva seu negócio e a IA monta tudo para você.
-          </p>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-sm font-medium block mb-1.5">Nome do negócio</label>
-              <input
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                maxLength={120}
-                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                placeholder="Ex: Mentoria Diamante"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium block mb-1.5">Nicho</label>
-              <input
-                value={nicho}
-                onChange={(e) => setNicho(e.target.value)}
-                maxLength={120}
-                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                placeholder="Ex: Emagrecimento feminino"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium block mb-1.5">Descreva seu negócio</label>
-              <textarea
-                value={descricao}
-                onChange={(e) => setDescricao(e.target.value)}
-                maxLength={2000}
-                rows={6}
-                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-                placeholder="Para quem é, qual a proposta única, principais serviços e diferenciais..."
-              />
-              <div className="text-xs text-muted-foreground mt-1">{descricao.length} / 2000</div>
-            </div>
+      <div className="relative z-10 mx-auto max-w-md min-h-screen flex flex-col pb-24">
+        {/* HEADER */}
+        <header className="flex items-center justify-between px-5 pt-6 pb-4">
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label="Abrir menu"
+            className="h-10 w-10 inline-flex items-center justify-center rounded-xl border border-border/60 bg-white/[0.02] hover:bg-white/[0.05] transition"
+          >
+            <Menu className="h-5 w-5 text-foreground/90" />
+          </button>
+
+          <div className="h-10 w-10 inline-flex items-center justify-center rounded-xl border border-border/40">
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </div>
+
+          <button
+            aria-label="Novo"
+            className="h-10 w-10 inline-flex items-center justify-center rounded-xl border border-gold/60 text-gold hover:bg-gold/10 transition shadow-[0_0_18px_-6px_var(--gold)]"
+          >
+            <Plus className="h-5 w-5" />
+          </button>
+        </header>
+
+        {menuOpen && (
+          <div className="mx-5 mb-4 rounded-xl border border-border/60 bg-card/60 backdrop-blur p-2">
             <button
-              type="submit"
-              disabled={mutation.isPending}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-gradient-gold px-4 py-3 text-sm font-semibold text-gold-foreground shadow-gold-glow hover:opacity-95 transition disabled:opacity-60"
+              onClick={handleSignOut}
+              className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-white/[0.04]"
             >
-              {mutation.isPending ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> Gerando com IA...</>
-              ) : (
-                <><Sparkles className="h-4 w-4" /> Gerar ecossistema com IA</>
-              )}
+              Sair da conta
             </button>
-          </form>
+          </div>
+        )}
+
+        {/* TITLE */}
+        <section className="px-5 pt-2">
+          <h1 className="text-3xl font-bold tracking-tight">Visão Geral</h1>
+          <p className="text-xs text-muted-foreground mt-1">Atualizado agora</p>
         </section>
 
-        {/* Histórico */}
-        <section className="lg:col-span-3">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-xl font-bold">Seus ecossistemas</h2>
-            <span className="text-xs text-muted-foreground">{projetos.length} {projetos.length === 1 ? "projeto" : "projetos"}</span>
-          </div>
+        {/* FILTERS */}
+        <section className="px-5 mt-5 flex items-center gap-2">
+          <PeriodoPill ativo={periodo === "hoje"} onClick={() => setPeriodo("hoje")}>
+            Hoje
+          </PeriodoPill>
+          <PeriodoPill ativo={periodo === "7"} onClick={() => setPeriodo("7")}>
+            7 dias
+          </PeriodoPill>
+          <PeriodoPill ativo={periodo === "30"} onClick={() => setPeriodo("30")}>
+            30 dias
+          </PeriodoPill>
 
-          {isLoading ? (
-            <div className="bg-card border border-border rounded-2xl p-12 text-center text-muted-foreground">
-              <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+          <button className="ml-auto inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold bg-gradient-gold text-gold-foreground shadow-gold-glow">
+            <Plus className="h-3.5 w-3.5" /> Novo
+          </button>
+        </section>
+
+        {/* BONUS ALERT */}
+        <section className="px-5 mt-5">
+          <div className="flex items-center gap-3 rounded-xl border border-gold/25 bg-gold/[0.04] px-4 py-3">
+            <div className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-lg bg-gold/15 text-gold">
+              <Gift className="h-4 w-4" />
             </div>
-          ) : projetos.length === 0 ? (
-            <div className="bg-card border border-dashed border-border rounded-2xl p-12 text-center">
-              <div className="mx-auto h-14 w-14 rounded-full bg-muted flex items-center justify-center mb-4">
-                <Inbox className="h-6 w-6 text-muted-foreground" />
+            <p className="text-xs leading-relaxed text-foreground/85">
+              <span className="font-semibold text-gold">Bônus disponível em 6 dias</span>
+              <span className="text-muted-foreground"> • Continue usando a plataforma para desbloquear</span>
+            </p>
+          </div>
+        </section>
+
+        {/* FATURAMENTO CARD */}
+        <section className="px-5 mt-5">
+          <div className="relative rounded-2xl border border-border/60 bg-gradient-dark p-5 shadow-card overflow-hidden">
+            <div
+              aria-hidden
+              className="absolute -top-16 -right-16 h-48 w-48 rounded-full opacity-40"
+              style={{
+                background:
+                  "radial-gradient(circle, oklch(0.48 0.1 158 / 0.55), transparent 70%)",
+              }}
+            />
+
+            <div className="relative flex items-center justify-between">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Você faturou hoje
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.04] border border-border/60 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                <TrendingUp className="h-3 w-3" /> 0%
+              </span>
+            </div>
+
+            <div className="relative mt-3">
+              <div className="text-4xl font-bold tracking-tight">
+                R$ <span className="text-foreground">0,00</span>
               </div>
-              <h3 className="font-semibold mb-1">Nenhum ecossistema ainda</h3>
-              <p className="text-sm text-muted-foreground">
-                Preencha o formulário ao lado para criar o seu primeiro.
-              </p>
             </div>
-          ) : (
-            <div className="grid sm:grid-cols-2 gap-4">
-              {projetos.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => setSelected(p)}
-                  className="text-left bg-card border border-border rounded-2xl p-5 shadow-card hover:shadow-luxury hover:border-gold transition"
-                >
-                  <FileText className="h-5 w-5 text-primary mb-3" />
-                  <div className="font-semibold mb-1 line-clamp-1">{p.nome_negocio}</div>
-                  <div className="text-xs text-gold uppercase tracking-wider mb-2">{p.nicho}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {new Date(p.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
-                  </div>
-                </button>
-              ))}
+
+            <div className="relative mt-4 flex items-center gap-x-4 gap-y-1.5 flex-wrap text-[11px] text-muted-foreground">
+              <span>0 vendas aprovadas</span>
+              <span className="h-1 w-1 rounded-full bg-border" />
+              <span>Ticket médio R$ 0,00</span>
+              <span className="ml-auto inline-flex items-center gap-1.5">
+                <span className="relative inline-flex">
+                  <span className="h-2 w-2 rounded-full bg-primary" />
+                  <span className="absolute inset-0 h-2 w-2 rounded-full bg-primary animate-ping opacity-60" />
+                </span>
+                <span className="text-foreground/80">Sistema ativo</span>
+              </span>
             </div>
-          )}
+
+            <div className="relative mt-5 space-y-3">
+              <OrigemBar label="Pix" pct={0} />
+              <OrigemBar label="Cartão de Crédito" pct={0} />
+              <OrigemBar label="PicPay" pct={0} />
+            </div>
+          </div>
         </section>
       </div>
 
-      {selected && <ProjetoModal projeto={selected} onClose={() => setSelected(null)} />}
-    </main>
+      {/* BOTTOM NAV */}
+      <nav className="fixed bottom-0 inset-x-0 z-20 border-t border-border/60 bg-background/85 backdrop-blur-xl">
+        <div className="mx-auto max-w-md grid grid-cols-5 px-2 py-2">
+          <NavItem icon={<Home className="h-5 w-5" />} label="Início" ativo />
+          <NavItem icon={<BookOpen className="h-5 w-5" />} label="Ebooks" />
+          <NavItem icon={<LayoutIcon className="h-5 w-5" />} label="Páginas" />
+          <NavItem icon={<Video className="h-5 w-5" />} label="Vídeos" />
+          <NavItem icon={<User className="h-5 w-5" />} label="Perfil" />
+        </div>
+      </nav>
+    </div>
   );
 }
 
-type PaginasIa = {
-  landing?: { headline?: string; subheadline?: string; cta?: string; beneficios?: string[] };
-  sobre?: { titulo?: string; texto?: string };
-  servicos?: Array<{ titulo?: string; descricao?: string }>;
-  contato?: { titulo?: string; cta?: string };
-};
-
-function ProjetoModal({ projeto, onClose }: { projeto: Projeto; onClose: () => void }) {
-  const p = (projeto.paginas_ia ?? {}) as PaginasIa;
+function PeriodoPill({
+  children,
+  ativo,
+  onClick,
+}: {
+  children: React.ReactNode;
+  ativo?: boolean;
+  onClick?: () => void;
+}) {
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onClick={onClose}>
-      <div className="bg-background rounded-2xl max-w-3xl w-full my-8 shadow-luxury" onClick={(e) => e.stopPropagation()}>
-        <div className="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-background rounded-t-2xl">
-          <div>
-            <h3 className="font-display text-2xl font-bold">{projeto.nome_negocio}</h3>
-            <p className="text-sm text-gold uppercase tracking-wider">{projeto.nicho}</p>
-          </div>
-          <button onClick={onClose} className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md border border-border">
-            Fechar
-          </button>
-        </div>
+    <button
+      onClick={onClick}
+      className={
+        "rounded-full px-3.5 py-1.5 text-xs font-medium transition border " +
+        (ativo
+          ? "bg-white/[0.06] border-border text-foreground"
+          : "bg-transparent border-border/50 text-muted-foreground hover:text-foreground hover:bg-white/[0.03]")
+      }
+    >
+      {children}
+    </button>
+  );
+}
 
-        <div className="p-6 space-y-8">
-          {p.landing && (
-            <Section label="Landing Page">
-              <h4 className="font-display text-2xl font-bold mb-2">{p.landing.headline}</h4>
-              <p className="text-muted-foreground mb-4">{p.landing.subheadline}</p>
-              {p.landing.beneficios && (
-                <ul className="space-y-2 mb-4">
-                  {p.landing.beneficios.map((b, i) => (
-                    <li key={i} className="text-sm flex gap-2"><span className="text-gold">✦</span> {b}</li>
-                  ))}
-                </ul>
-              )}
-              {p.landing.cta && <div className="inline-block bg-gradient-gold text-gold-foreground px-4 py-2 rounded-md text-sm font-semibold">{p.landing.cta}</div>}
-            </Section>
-          )}
-
-          {p.sobre && (
-            <Section label="Sobre">
-              <h4 className="font-display text-xl font-bold mb-2">{p.sobre.titulo}</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{p.sobre.texto}</p>
-            </Section>
-          )}
-
-          {p.servicos && p.servicos.length > 0 && (
-            <Section label="Serviços">
-              <div className="grid sm:grid-cols-2 gap-3">
-                {p.servicos.map((s, i) => (
-                  <div key={i} className="bg-card border border-border rounded-lg p-4">
-                    <div className="font-semibold mb-1">{s.titulo}</div>
-                    <div className="text-sm text-muted-foreground">{s.descricao}</div>
-                  </div>
-                ))}
-              </div>
-            </Section>
-          )}
-
-          {p.contato && (
-            <Section label="Contato">
-              <h4 className="font-display text-xl font-bold mb-2">{p.contato.titulo}</h4>
-              {p.contato.cta && <div className="inline-block bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-semibold">{p.contato.cta}</div>}
-            </Section>
-          )}
-        </div>
+function OrigemBar({ label, pct }: { label: string; pct: number }) {
+  return (
+    <div>
+      <div className="flex items-center justify-between text-[11px] mb-1.5">
+        <span className="text-muted-foreground">{label}</span>
+        <span className="text-foreground/70 font-medium">{pct}%</span>
+      </div>
+      <div className="h-1.5 w-full rounded-full bg-white/[0.05] overflow-hidden">
+        <div
+          className="h-full bg-gradient-gold rounded-full transition-all"
+          style={{ width: `${Math.max(pct, 0)}%` }}
+        />
       </div>
     </div>
   );
 }
 
-function Section({ label, children }: { label: string; children: React.ReactNode }) {
+function NavItem({
+  icon,
+  label,
+  ativo,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  ativo?: boolean;
+}) {
   return (
-    <section>
-      <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gold mb-3">{label}</div>
-      <div className="bg-muted/30 rounded-xl p-5 border border-border">{children}</div>
-    </section>
+    <button
+      className={
+        "flex flex-col items-center justify-center gap-1 py-1.5 rounded-lg transition " +
+        (ativo ? "text-gold" : "text-muted-foreground hover:text-foreground")
+      }
+    >
+      <span className={ativo ? "drop-shadow-[0_0_8px_var(--gold)]" : ""}>{icon}</span>
+      <span className="text-[10px] font-medium tracking-wide">{label}</span>
+      {ativo && <span className="h-0.5 w-6 rounded-full bg-gold" />}
+    </button>
   );
 }
