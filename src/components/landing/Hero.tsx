@@ -16,32 +16,25 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/5 to-background" aria-hidden="true" />
 
       <div className="container relative mx-auto max-w-5xl px-6 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-background/10 px-4 py-1.5 text-xs font-medium text-gold backdrop-blur-sm mb-8">
+        <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-background/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-gold backdrop-blur-sm mb-8">
           <Sparkles className="h-3.5 w-3.5" />
-          Inteligência Artificial Premium
+          ALEVI.AI
         </div>
 
         <h1 className="font-display text-5xl md:text-7xl font-bold text-background leading-[1.05] tracking-tight">
-          Crie um <span className="text-gradient-gold">ecossistema digital</span> completo em minutos com IA
+          Construa seu ecossistema digital com <span className="text-gradient-gold">precisão de elite</span>.
         </h1>
 
         <p className="mt-8 text-lg md:text-xl text-background/75 max-w-2xl mx-auto leading-relaxed">
-          A Alevi.ai transforma a descrição do seu negócio em um sistema de páginas estratégicas,
-          prontas para converter — sem mexer em uma linha de código.
+          Sua estrutura completa de vendas, configurada automaticamente por IA, do zero ao faturamento.
         </p>
 
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="mt-12 flex justify-center">
           <a
             href="#planos"
-            className="inline-flex items-center justify-center rounded-md bg-gradient-gold px-8 py-4 text-base font-semibold text-gold-foreground shadow-gold-glow hover:opacity-95 transition"
+            className="inline-flex items-center justify-center rounded-md bg-gradient-gold px-8 py-4 text-base font-semibold text-black shadow-gold-glow hover:opacity-95 transition"
           >
-            Criar meu ecossistema
-          </a>
-          <a
-            href="#como-funciona"
-            className="inline-flex items-center justify-center rounded-md border border-background/20 px-8 py-4 text-base font-semibold text-background/90 hover:bg-background/10 transition"
-          >
-            Como funciona
+            Criar meu negócio agora
           </a>
         </div>
 
