@@ -22,8 +22,7 @@ export function Hero() {
         </div>
 
         <h1 className="font-display text-5xl md:text-7xl font-bold text-background leading-[1.05] tracking-tight">
-          Crie um <span className="text-gradient-gold">ecossistema digital</span><br className="hidden md:block" />
-          completo em minutos com IA
+          Crie um <span className="text-gradient-gold">ecossistema digital</span> completo em minutos com IA
         </h1>
 
         <p className="mt-8 text-lg md:text-xl text-background/75 max-w-2xl mx-auto leading-relaxed">
