@@ -14,7 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      projetos: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          id: string
+          nicho: string
+          nome_negocio: string
+          paginas_ia: Json
+          usuario_id: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nicho: string
+          nome_negocio: string
+          paginas_ia?: Json
+          usuario_id: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nicho?: string
+          nome_negocio?: string
+          paginas_ia?: Json
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projetos_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usuarios: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          plano: string
+          senha_temporaria: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          plano?: string
+          senha_temporaria?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          plano?: string
+          senha_temporaria?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
