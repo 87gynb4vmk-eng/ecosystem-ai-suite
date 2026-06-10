@@ -32,7 +32,7 @@ export function Hero() {
         <div className="mt-12 flex justify-center">
           <a
             href="#planos"
-            className="inline-flex items-center justify-center rounded-md bg-gradient-gold px-8 py-4 text-base font-semibold text-black shadow-gold-glow hover:opacity-95 transition"
+            className="inline-flex items-center justify-center rounded-full bg-gradient-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-luxury hover:opacity-95 transition"
           >
             Criar meu negócio agora
           </a>
