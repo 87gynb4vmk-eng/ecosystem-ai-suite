@@ -1,4 +1,5 @@
 import { Check, Crown } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 const beneficiosMensal = [
   "Geração ilimitada de ecossistemas",
@@ -44,12 +45,13 @@ export function Pricing() {
                 </li>
               ))}
             </ul>
-            <a
-              href="#checkout-mensal"
+            <Link
+              to="/checkout/$plano"
+              params={{ plano: "mensal" }}
               className="block w-full text-center rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90 transition"
             >
               Assinar Mensal
-            </a>
+            </Link>
           </div>
 
           {/* Plano Vitalício — destaque */}
@@ -72,12 +74,13 @@ export function Pricing() {
                 </li>
               ))}
             </ul>
-            <a
-              href="#checkout-vitalicio"
+            <Link
+              to="/checkout/$plano"
+              params={{ plano: "vitalicio" }}
               className="block w-full text-center rounded-md bg-gradient-gold px-6 py-3.5 text-base font-bold text-gold-foreground shadow-gold-glow hover:opacity-95 transition"
             >
               Garantir Vitalício
-            </a>
+            </Link>
           </div>
         </div>
 
