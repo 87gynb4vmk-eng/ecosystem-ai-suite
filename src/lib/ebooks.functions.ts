@@ -7,17 +7,6 @@ const Input = z.object({
   subnicho: z.string().min(2).max(80),
 });
 
-const EbookSchema = z.object({
-  titulo: z.string(),
-  subtitulo: z.string(),
-  introducao: z.string(),
-  capitulos: z.array(z.object({
-    titulo: z.string(),
-    paragrafos: z.array(z.string()).min(2).max(8),
-  })).min(4).max(8),
-  conclusao: z.string(),
-});
-
 export const gerarEbook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => Input.parse(i))
@@ -29,28 +18,47 @@ export const gerarEbook = createServerFn({ method: "POST" })
     const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
     const gateway = createLovableAiGatewayProvider(key);
 
-    let ebook: z.infer<typeof EbookSchema>;
+    let titulo = `E-book de ${data.subnicho}`;
+    let subtitulo = `${data.nicho} • ${data.subnicho}`;
+    let conteudo = "";
     try {
       const result = await generateText({
         model: gateway("google/gemini-3-flash-preview"),
-        prompt: `Escreva um e-book completo em português brasileiro sobre o sub-nicho "${data.subnicho}" dentro do nicho "${data.nicho}".
-Tom profissional, prático e envolvente.
+        prompt: `Crie um e-book completo em português brasileiro sobre "${data.subnicho}" dentro do nicho "${data.nicho}".
+Use tom profissional, prático e envolvente.
 
-Retorne APENAS um JSON válido (sem markdown, sem \`\`\`), exatamente neste formato:
-{
-  "titulo": "string",
-  "subtitulo": "string",
-  "introducao": "string (2-4 parágrafos separados por \\n\\n)",
-  "capitulos": [
-    { "titulo": "string", "paragrafos": ["string", "string", "string", "string"] }
-  ],
-  "conclusao": "string"
-}
-Inclua exatamente 5 capítulos, cada um com 4 a 6 parágrafos.`,
+Formato obrigatório em texto simples, sem JSON e sem markdown:
+TÍTULO: um título comercial curto
+SUBTÍTULO: uma promessa clara do conteúdo
+
+INTRODUÇÃO
+2 parágrafos curtos.
+
+CAPÍTULO 1 — título do capítulo
+3 parágrafos curtos.
+
+CAPÍTULO 2 — título do capítulo
+3 parágrafos curtos.
+
+CAPÍTULO 3 — título do capítulo
+3 parágrafos curtos.
+
+CAPÍTULO 4 — título do capítulo
+3 parágrafos curtos.
+
+CAPÍTULO 5 — título do capítulo
+3 parágrafos curtos.
+
+CONCLUSÃO
+2 parágrafos curtos.`,
       });
-      const raw = result.text.trim().replace(/^```json\s*|\s*```$/g, "");
-      const parsed = JSON.parse(raw);
-      ebook = EbookSchema.parse(parsed);
+      conteudo = result.text.trim();
+      if (!conteudo) throw new Error("A IA retornou uma resposta vazia.");
+
+      const tituloMatch = conteudo.match(/^\s*T[IÍ]TULO\s*:\s*(.+)$/im);
+      const subtituloMatch = conteudo.match(/^\s*SUBT[IÍ]TULO\s*:\s*(.+)$/im);
+      if (tituloMatch?.[1]) titulo = tituloMatch[1].trim();
+      if (subtituloMatch?.[1]) subtitulo = subtituloMatch[1].trim();
     } catch (err) {
       const msg = (err as Error).message ?? "";
       console.error("[gerarEbook] AI error:", err);
@@ -95,28 +103,19 @@ Inclua exatamente 5 capítulos, cada um com 4 a 6 parágrafos.`,
 
     // Cover
     y = PAGE_H / 2 + 60;
-    draw(ebook.titulo, bold, 28, 10);
+    draw(titulo, bold, 28, 10);
     y -= 10;
-    draw(ebook.subtitulo, font, 16, 6);
+    draw(subtitulo, font, 16, 6);
     newPage();
 
-    draw("Introdução", bold, 20, 12);
-    draw(ebook.introducao, font, 12, 6);
-    y -= 16;
-
-    for (const cap of ebook.capitulos) {
-      if (y < 200) newPage();
-      draw(cap.titulo, bold, 18, 10);
-      for (const p of cap.paragrafos) {
-        draw(p, font, 12, 6);
-        y -= 6;
+    for (const bloco of conteudo.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)) {
+      const normalized = bloco.replace(/^T[IÍ]TULO\s*:.+$/im, "").replace(/^SUBT[IÍ]TULO\s*:.+$/im, "").trim();
+      if (!normalized) continue;
+      const isHeading = /^(INTRODUÇÃO|CONCLUSÃO|CAP[IÍ]TULO\s+\d+)/i.test(normalized);
+      if (isHeading && y < 180) newPage();
+      draw(normalized, isHeading ? bold : font, isHeading ? 18 : 12, isHeading ? 10 : 6);
+      if (!isHeading) y -= 8;
       }
-      y -= 12;
-    }
-
-    if (y < 200) newPage();
-    draw("Conclusão", bold, 20, 12);
-    draw(ebook.conclusao, font, 12, 6);
 
     const bytes = await pdf.save();
     let bin = "";
@@ -126,5 +125,5 @@ Inclua exatamente 5 capítulos, cada um com 4 a 6 parágrafos.`,
     }
     const base64 = btoa(bin);
 
-    return { titulo: ebook.titulo, pdfBase64: base64 };
+    return { titulo, pdfBase64: base64 };
   });
