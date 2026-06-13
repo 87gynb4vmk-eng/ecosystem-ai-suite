@@ -258,8 +258,32 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
 function EbookFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generated, setGenerated] = useState(false);
+  const [generated, setGenerated] = useState<{ titulo: string; url: string; filename: string } | null>(null);
   const [price, setPrice] = useState("");
+  const [nicho, setNicho] = useState("");
+  const [subnicho, setSubnicho] = useState("");
+  const gerar = useServerFn(gerarEbook);
+
+  const subnichos = useMemo(() => (nicho ? NICHOS[nicho] ?? [] : []), [nicho]);
+  const canGenerate = !!nicho && !!subnicho && !isGenerating;
+
+  const handleGenerate = async () => {
+    setIsGenerating(true);
+    try {
+      const res = await gerar({ data: { nicho, subnicho } });
+      const bin = atob(res.pdfBase64);
+      const arr = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+      const blob = new Blob([arr], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const filename = `${res.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`;
+      setGenerated({ titulo: res.titulo, url, filename });
+    } catch (e) {
+      toast.error((e as Error).message || "Falha ao gerar e-book.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="max-w-xl mx-auto px-4 pt-6">
