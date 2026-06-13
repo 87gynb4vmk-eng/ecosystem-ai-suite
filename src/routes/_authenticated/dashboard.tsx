@@ -320,7 +320,7 @@ function EbookFlow() {
   const [subnicho, setSubnicho] = useState("");
   const gerar = useServerFn(gerarEbook);
 
-  const subnichos = useMemo(() => (nicho ? NICHOS[nicho] ?? [] : []), [nicho]);
+  const subnichos = useMemo(() => (nicho ? (NICHOS[nicho] ?? []) : []), [nicho]);
   const canGenerate = !!nicho && !!subnicho && !isGenerating;
 
   const handleGenerate = async () => {
@@ -329,7 +329,12 @@ function EbookFlow() {
       const res = await gerar({ data: { nicho, subnicho } });
       if (!res.ok) throw new Error(res.error);
       const filename = `${res.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`;
-      setGenerated({ titulo: res.titulo, subtitulo: res.subtitulo, conteudo: res.conteudo, filename });
+      setGenerated({
+        titulo: res.titulo,
+        subtitulo: res.subtitulo,
+        conteudo: res.conteudo,
+        filename,
+      });
     } catch (e) {
       toast.error((e as Error).message || "Falha ao gerar e-book.");
     } finally {
@@ -377,7 +382,10 @@ function EbookFlow() {
         const lines = doc.splitTextToSize(bloco, maxW);
         const lh = size * 1.4;
         for (const ln of lines) {
-          if (y + lh > pageH - margin) { doc.addPage(); y = margin; }
+          if (y + lh > pageH - margin) {
+            doc.addPage();
+            y = margin;
+          }
           doc.text(ln, margin, y);
           y += lh;
         }
