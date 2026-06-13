@@ -323,6 +323,7 @@ function EbookFlow() {
   const [price, setPrice] = useState("");
   const [nicho, setNicho] = useState("");
   const [subnicho, setSubnicho] = useState("");
+  const [affiliateLink, setAffiliateLink] = useState("");
   const gerar = useServerFn(gerarEbook);
   const docRef = useRef<HTMLDivElement>(null);
 
