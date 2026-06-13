@@ -124,7 +124,19 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
     });
 
     return (
-      <div ref={ref} style={{ background: "#fff" }}>
+      <div ref={ref} className="ebook-pdf-root" style={{ background: "#fff" }}>
+        <style>{`
+          .ebook-pdf-root, .ebook-pdf-root * {
+            border-color: #e5e7eb !important;
+            outline-color: #e5e7eb !important;
+            text-decoration-color: currentColor !important;
+            -webkit-text-fill-color: currentColor;
+          }
+          .ebook-pdf-root *::before,
+          .ebook-pdf-root *::after {
+            border-color: #e5e7eb !important;
+          }
+        `}</style>
         {/* COVER */}
         <div
           style={{
