@@ -350,11 +350,14 @@ function EbookFlow() {
       if (!res.ok) throw new Error(res.error);
       const filename = `${res.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`;
       setGenerated({
+        id: res.id,
         titulo: res.titulo,
         subtitulo: res.subtitulo,
         conteudo: res.conteudo,
         filename,
       });
+      setPublishedUrl(null);
+      setAffiliateLink("");
     } catch (e) {
       toast.error((e as Error).message || "Falha ao gerar e-book.");
     } finally {
