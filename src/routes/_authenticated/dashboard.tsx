@@ -345,56 +345,20 @@ function EbookFlow() {
   };
 
   const handleDownload = async () => {
-    if (!generated) return;
+    if (!generated || !docRef.current) return;
     try {
-      const { jsPDF } = await import("jspdf");
-      const doc = new jsPDF({ unit: "pt", format: "a4" });
-      const pageW = doc.internal.pageSize.getWidth();
-      const pageH = doc.internal.pageSize.getHeight();
-      const margin = 56;
-      const maxW = pageW - margin * 2;
-
-      // Cover
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(26);
-      const titleLines = doc.splitTextToSize(generated.titulo, maxW);
-      doc.text(titleLines, pageW / 2, pageH / 2 - 20, { align: "center" });
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(14);
-      const subLines = doc.splitTextToSize(generated.subtitulo, maxW);
-      doc.text(subLines, pageW / 2, pageH / 2 + 20, { align: "center" });
-
-      doc.addPage();
-      let y = margin;
-      const blocos = generated.conteudo
-        .split(/\n{2,}/)
-        .map((p) => p.trim())
-        .filter(Boolean);
-
-      for (const raw of blocos) {
-        const bloco = raw
-          .replace(/^T[IÍ]TULO\s*:.+$/im, "")
-          .replace(/^SUBT[IÍ]TULO\s*:.+$/im, "")
-          .trim();
-        if (!bloco) continue;
-        const isHeading = /^(INTRODUÇÃO|CONCLUSÃO|CAP[IÍ]TULO\s+\d+)/i.test(bloco);
-        const size = isHeading ? 16 : 11;
-        doc.setFont("helvetica", isHeading ? "bold" : "normal");
-        doc.setFontSize(size);
-        const lines = doc.splitTextToSize(bloco, maxW);
-        const lh = size * 1.4;
-        for (const ln of lines) {
-          if (y + lh > pageH - margin) {
-            doc.addPage();
-            y = margin;
-          }
-          doc.text(ln, margin, y);
-          y += lh;
-        }
-        y += isHeading ? 10 : 8;
-      }
-
-      doc.save(generated.filename);
+      const html2pdf = (await import("html2pdf.js")).default;
+      await html2pdf()
+        .set({
+          margin: 0,
+          filename: generated.filename,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+          jsPDF: { unit: "px", format: [794, 1123], orientation: "portrait" },
+          pagebreak: { mode: ["css", "legacy"] },
+        })
+        .from(docRef.current)
+        .save();
     } catch (e) {
       toast.error((e as Error).message || "Falha ao baixar PDF.");
     }
