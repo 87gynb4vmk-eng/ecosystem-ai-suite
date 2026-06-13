@@ -24,69 +24,6 @@ function EbookWorkflow() {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
-  const nicheContentMap: Record<string, { title: string; image: string }> = {
-    "E-commerce": {
-      title: "Guia Prático Whitelabel: E-commerce",
-      image: "https://images.unsplash.com/photo-1502920514313-52581002a659?auto=format&fit=crop&q=80&w=600",
-    },
-    "Finanças para Crianças": {
-      title: "Criem Crianças Empreendedoras em 21 Dias: 5 Steps Certeiros",
-      image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&q=80&w=600",
-    },
-    "Emagrecimento": {
-      title: "Mecanismo Queima de Gordura: O Protocolo de Emagrecimento Definitivo",
-      image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=600",
-    },
-    "Finanças": {
-      title: "Mente Rica: O Manual Whitelabel para Liberdade Financeira",
-      image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&q=80&w=600",
-    },
-    "Marketing Digital": {
-      title: "Império Digital: Estratégias Secretas de Tráfego e Escala Rápida",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=600",
-    },
-    "Produtividade": {
-      title: "Foco Hiperativo: Como Multiplicar Suas Horas Úteis e Resultados",
-      image: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=600",
-    },
-    "Saúde Mental": {
-      title: "Equilíbrio Emocional: O Guia Prático contra Ansiedade e Estresse",
-      image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=600",
-    },
-    "Culinária": {
-      title: "Chef em Casa: Técnicas Gastronômicas e Receitas Lucrativas",
-      image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&q=80&w=600",
-    },
-    "Fitness": {
-      title: "Hipertrofia de Alta Performance: Manual Avançado de Treino",
-      image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=600",
-    },
-    "Maternidade": {
-      title: "Maternidade Leve: Guia de Sobrevivência e Desenvolvimento Infantil",
-      image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&q=80&w=600",
-    },
-    "Desenvolvimento Pessoal": {
-      title: "O Despertar do Potencial Máximo: Mentalidade Lendária",
-      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600",
-    },
-    "Dropshipping": {
-      title: "E-commerce Sem Estoque: Logística Reversa e Escala Global",
-      image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=600",
-    },
-    "Inteligência Artificial": {
-      title: "Alquimia dos Prompts: Como Lucrar Diariamente usando IAs",
-      image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&q=80&w=600",
-    },
-    "Milhas Aéreas": {
-      title: "Passagens Ocultas: O Segredo de Lucrar e Viajar com Milhas",
-      image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=600",
-    },
-    "Biohacking": {
-      title: "Biohacking na Prática: Engenharia Corporal e Longevidade",
-      image: "https://images.unsplash.com/photo-1532187863486-abf9d39d6618?auto=format&fit=crop&q=80&w=600",
-    },
-  };
-
   const niches = [
     "Emagrecimento", "Finanças", "Relacionamento", "Marketing Digital",
     "Produtividade", "Saúde Mental", "Culinária", "Fitness", "Maternidade",
@@ -104,15 +41,50 @@ function EbookWorkflow() {
     "Finanças para Crianças", "Dropshipping",
   ];
 
-  const getCurrentEbookDetails = () => {
-    if (nicheContentMap[selectedNiche]) return nicheContentMap[selectedNiche];
+  const getEbookDataByNiche = (niche: string) => {
+    const data: Record<string, { title: string; image: string }> = {
+      "E-commerce": { title: "Guia Prático Whitelabel: E-commerce", image: "https://images.unsplash.com/photo-1502920514313-52581002a659?auto=format&fit=crop&q=80&w=600" },
+      "Finanças para Crianças": { title: "Criem Crianças Empreendedoras em 21 Dias: 5 Steps Certeiros", image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&q=80&w=600" },
+      "Emagrecimento": { title: "Mecanismo Queima de Gordura: O Protocolo de Emagrecimento Definitivo", image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=600" },
+      "Finanças": { title: "Mente Rica: O Manual Whitelabel para Liberdade Financeira", image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&q=80&w=600" },
+      "Marketing Digital": { title: "Império Digital: Estratégias Secretas de Tráfego e Escala Rápida", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=600" },
+      "Produtividade": { title: "Foco Hiperativo: Como Multiplicar Suas Horas Úteis e Resultados", image: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=600" },
+      "Saúde Mental": { title: "Equilíbrio Emocional: O Guia Prático contra Ansiedade e Estresse", image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=600" },
+      "Culinária": { title: "Chef em Casa: Técnicas Gastronômicas e Receitas Lucrativas", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&q=80&w=600" },
+      "Fitness": { title: "Hipertrofia de Alta Performance: Manual Avançado de Treino", image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=600" },
+      "Maternidade": { title: "Maternidade Leve: Guia de Sobrevivência e Desenvolvimento Infantil", image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&q=80&w=600" },
+      "Dropshipping": { title: "E-commerce Sem Estoque: Logística Reversa e Escala Global", image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=600" },
+      "Inteligência Artificial": { title: "Alquimia dos Prompts: Como Lucrar Diariamente usando IAs", image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&q=80&w=600" },
+      "Milhas Aéreas": { title: "Passagens Ocultas: O Segredo de Lucrar e Viajar com Milhas", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=600" },
+      "Biohacking": { title: "Biohacking na Prática: Engenharia Corporal e Longevidade", image: "https://images.unsplash.com/photo-1532187863486-abf9d39d6618?auto=format&fit=crop&q=80&w=600" },
+    };
+    if (data[niche]) return data[niche];
+
+    const keywords: Record<string, string> = {
+      "Relacionamento": "couple,love", "Educação": "books,study", "Religião": "faith,pray",
+      "Empreendedorismo": "business,startup", "Gestão de Negócios": "office,charts",
+      "Beleza": "makeup,cosmetics", "Carreira": "interview,suit", "Idiomas": "travel,globe",
+      "Musculação": "gym,dumbbell", "Artesanato": "handmade,craft", "Casa e Organização": "clean,home",
+      "Espiritualidade": "meditation,zen", "Pet": "dog,cat", "Tecnologia": "code,cyberpunk",
+      "Air Fryer Gourmet": "cooking,food", "Alfabetização em Casa": "kids,drawing",
+      "Ansiedade Digital": "phone,stressed", "Beleza Natural": "skincare,flowers",
+      "Escrita Criativa": "notebook,typewriter", "Fotografia com Celular": "smartphone,camera",
+      "Horta Urbana": "plants,garden", "Skincare Masculino": "man,shave", "Viagem Low Cost": "backpack,map",
+      "Investimentos para Iniciantes": "stocks,money", "Sono e Bem-estar": "bed,sleep",
+      "Minimalismo": "interior,white", "Crochê Moderno": "yarn,knitting", "Terapias Naturais": "herbs,tea",
+      "Gestão de Tempo": "clock,calendar", "Autoconhecimento": "mirror,journal",
+      "Receitas Saudáveis": "salad,healthy", "Jardinagem": "flowers,soil", "Moda Feminina": "dress,style",
+      "Vendas Online": "laptop,shopping", "Treino em Casa": "yoga,mat", "Planejamento Financeiro": "wallet,coins",
+      "Marketing para Afiliados": "network,click", "Estudo para Concursos": "library,exam",
+    };
+    const keyword = keywords[niche] || "notebook,workspace";
     return {
-      title: `Guia Whitelabel Completo: Estratégias de Elite para ${selectedNiche}`,
-      image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&q=80&w=600",
+      title: `Guia Prático Whitelabel: ${niche}`,
+      image: `https://images.unsplash.com/featured/600x450?${keyword}`,
     };
   };
 
-  const currentEbook = getCurrentEbookDetails();
+  const currentEbook = getEbookDataByNiche(selectedNiche);
 
   const handleGenerateEbook = () => {
     setIsGenerating(true);
@@ -137,7 +109,7 @@ function EbookWorkflow() {
 
         {isSidebarOpen && (
           <div className="absolute inset-0 z-50 flex">
-            <div className="w-[85%] bg-[#09090b] h-full border-r border-zinc-900 p-5 flex flex-col justify-between z-10 animate-in slide-in-from-left duration-200">
+            <div className="w-[85%] bg-[#09090b] h-full border-r border-zinc-900 p-5 flex flex-col justify-between z-10">
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
                   <div className="border border-zinc-900 bg-[#0d0d0f] p-2 rounded-xl">
@@ -283,7 +255,7 @@ function EbookWorkflow() {
 
               <div className="space-y-3">
                 <label className="text-sm font-medium text-zinc-400 block pl-1">Selecione um Nicho</label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 max-h-[300px] overflow-y-auto p-1 border border-zinc-900 rounded-2xl bg-zinc-950/30 scrollbar-none">
                   {niches.map((niche) => (
                     <button
                       key={niche}
@@ -344,7 +316,7 @@ function EbookWorkflow() {
                 <img
                   src={currentEbook.image}
                   alt={`Capa ${selectedNiche}`}
-                  className="w-full h-full object-cover brightness-[85%] contrast-[105%] transition-all duration-300 group-hover:scale-105"
+                  className="w-full h-full object-cover brightness-[85%] contrast-[105%] transition-all duration-300"
                 />
               </div>
 
@@ -363,7 +335,7 @@ function EbookWorkflow() {
               </div>
 
               <div className="w-full space-y-2 pt-2">
-                <button className="w-full bg-[#e2b35c] hover:bg-[#d0a34c] text-black py-3.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-amber-500/5">
+                <button className="w-full bg-[#e2b35c] hover:bg-[#d0a34c] text-black py-3.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md">
                   <Download className="w-4 h-4 text-black stroke-[2.5]" />
                   <span>Baixar E-book em PDF</span>
                 </button>
