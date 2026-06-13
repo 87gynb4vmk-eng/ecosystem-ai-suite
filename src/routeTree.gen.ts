@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as FaviconIcoRouteImport } from './routes/favicon.ico'
 import { Route as CheckoutPlanoRouteImport } from './routes/checkout.$plano'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as ApiPublicWebhookCaktoRouteImport } from './routes/api/public/webhook/cakto'
@@ -29,11 +28,6 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaviconIcoRoute = FaviconIcoRouteImport.update({
-  id: '/favicon/ico',
-  path: '/favicon/ico',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutPlanoRoute = CheckoutPlanoRouteImport.update({
@@ -57,7 +51,6 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
-  '/favicon/ico': typeof FaviconIcoRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
 }
 export interface FileRoutesByTo {
@@ -65,7 +58,6 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
-  '/favicon/ico': typeof FaviconIcoRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
 }
 export interface FileRoutesById {
@@ -75,7 +67,6 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
-  '/favicon/ico': typeof FaviconIcoRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
 }
 export interface FileRouteTypes {
@@ -85,7 +76,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/checkout/$plano'
-    | '/favicon/ico'
     | '/api/public/webhook/cakto'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -93,7 +83,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/checkout/$plano'
-    | '/favicon/ico'
     | '/api/public/webhook/cakto'
   id:
     | '__root__'
@@ -102,7 +91,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/dashboard'
     | '/checkout/$plano'
-    | '/favicon/ico'
     | '/api/public/webhook/cakto'
   fileRoutesById: FileRoutesById
 }
@@ -111,7 +99,6 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CheckoutPlanoRoute: typeof CheckoutPlanoRoute
-  FaviconIcoRoute: typeof FaviconIcoRoute
   ApiPublicWebhookCaktoRoute: typeof ApiPublicWebhookCaktoRoute
 }
 
@@ -136,13 +123,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/favicon/ico': {
-      id: '/favicon/ico'
-      path: '/favicon/ico'
-      fullPath: '/favicon/ico'
-      preLoaderRoute: typeof FaviconIcoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/$plano': {
@@ -185,7 +165,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CheckoutPlanoRoute: CheckoutPlanoRoute,
-  FaviconIcoRoute: FaviconIcoRoute,
   ApiPublicWebhookCaktoRoute: ApiPublicWebhookCaktoRoute,
 }
 export const routeTree = rootRouteImport
