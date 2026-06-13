@@ -139,7 +139,6 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
             border-color: #e5e7eb !important;
             outline-color: #e5e7eb !important;
             text-decoration-color: #111827 !important;
-            -webkit-text-fill-color: currentColor;
             caret-color: #111827 !important;
           }
           .ebook-pdf-root *::before,
@@ -336,8 +335,8 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
                   style={{
                     position: "absolute",
                     inset: 0,
-                    background:
-                      "radial-gradient(ellipse at top left, rgba(255,255,255,0.25), transparent 60%)",
+                    background: "linear-gradient(135deg, #ffffff, #d1d5db)",
+                    opacity: 0.2,
                   }}
                 />
               </div>
