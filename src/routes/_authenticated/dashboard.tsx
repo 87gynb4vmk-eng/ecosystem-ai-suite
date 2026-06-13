@@ -452,8 +452,14 @@ function EbookFlow() {
               disabled={!nicho}
               className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-6 disabled:opacity-40"
             >
-              <option value="">{nicho ? "Selecione um sub-nicho..." : "Escolha o nicho primeiro"}</option>
-              {subnichos.map((s) => <option key={s} value={s}>{s}</option>)}
+              <option value="">
+                {nicho ? "Selecione um sub-nicho..." : "Escolha o nicho primeiro"}
+              </option>
+              {subnichos.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
             </select>
 
             <button
@@ -462,7 +468,13 @@ function EbookFlow() {
               className="w-full text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
               style={{ background: AMBER }}
             >
-              {isGenerating ? <><Loader2 className="animate-spin" size={18}/> Gerando...</> : "Gerar Conteúdo"}
+              {isGenerating ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} /> Gerando...
+                </>
+              ) : (
+                "Gerar Conteúdo"
+              )}
             </button>
 
             {generated && (
