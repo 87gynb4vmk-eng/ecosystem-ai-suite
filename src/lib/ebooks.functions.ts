@@ -10,7 +10,7 @@ const Input = z.object({
 export const gerarEbook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => Input.parse(i))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const key = process.env.LOVABLE_API_KEY;
     if (!key) return { ok: false as const, error: "IA indisponível." };
 
@@ -68,7 +68,26 @@ CONCLUSÃO
       if (tituloMatch?.[1]) titulo = tituloMatch[1].trim();
       if (subtituloMatch?.[1]) subtitulo = subtituloMatch[1].trim();
 
-      return { ok: true as const, titulo, subtitulo, conteudo };
+      // Persistir o e-book no banco para a Etapa 3 conseguir carregar
+      const { data: row, error } = await context.supabase
+        .from("ebooks")
+        .insert({
+          usuario_id: context.userId,
+          nicho: data.nicho,
+          subnicho: data.subnicho,
+          titulo,
+          subtitulo,
+          conteudo,
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        console.error("[gerarEbook] DB insert error:", error);
+        return { ok: true as const, id: null, titulo, subtitulo, conteudo };
+      }
+
+      return { ok: true as const, id: row.id as string, titulo, subtitulo, conteudo };
     } catch (err) {
       const msg = (err as Error).message ?? "";
       console.error("[gerarEbook] AI error:", err);
@@ -83,4 +102,61 @@ CONCLUSÃO
         error: msg ? `Falha ao gerar e-book: ${msg}` : "Falha ao gerar e-book.",
       };
     }
+  });
+
+export const obterUltimoEbook = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("ebooks")
+      .select("id, nicho, subnicho, titulo, subtitulo, conteudo, affiliate_link, created_at")
+      .eq("usuario_id", context.userId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) {
+      console.error("[obterUltimoEbook]", error);
+      return { ok: false as const, error: "Falha ao carregar e-book." };
+    }
+    return { ok: true as const, ebook: data };
+  });
+
+const LinkInput = z.object({
+  id: z.string().uuid(),
+  affiliate_link: z.string().url().max(500).or(z.literal("")),
+});
+
+export const atualizarAffiliateLink = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => LinkInput.parse(i))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("ebooks")
+      .update({ affiliate_link: data.affiliate_link || null })
+      .eq("id", data.id)
+      .eq("usuario_id", context.userId);
+    if (error) {
+      console.error("[atualizarAffiliateLink]", error);
+      return { ok: false as const, error: "Falha ao salvar link." };
+    }
+    return { ok: true as const };
+  });
+
+const PubInput = z.object({ id: z.string().uuid() });
+
+export const obterEbookPublico = createServerFn({ method: "GET" })
+  .inputValidator((i: unknown) => PubInput.parse(i))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row, error } = await supabaseAdmin
+      .from("ebooks")
+      .select("id, nicho, subnicho, titulo, subtitulo, affiliate_link")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) {
+      console.error("[obterEbookPublico]", error);
+      return { ok: false as const, error: "Não encontrado." };
+    }
+    if (!row) return { ok: false as const, error: "Página não encontrada." };
+    return { ok: true as const, ebook: row };
   });
