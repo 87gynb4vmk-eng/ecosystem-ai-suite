@@ -4,8 +4,8 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   BookOpen, CreditCard, Layout, Video, Users, FileText,
-  Loader2, Download, ArrowRight, ArrowLeft, LogOut,
-  Home, User, Plus, TrendingUp, Activity,
+  Loader2, Download, ArrowRight, ArrowLeft,
+  Home, User, Plus, TrendingUp, Menu, FileText as FileIcon, Gift,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -24,11 +24,13 @@ const STEPS = [
   { id: 5, name: "Grupos", icon: Users },
 ];
 
+const AMBER = "#E0B43A";
+
 function DashboardRoot() {
   const [tab, setTab] = useState<Tab>("inicio");
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white font-sans pb-24">
+    <div className="min-h-screen bg-black text-white font-sans pb-28">
       {tab === "inicio" && <Overview />}
       {tab === "ebooks" && <EbookFlow />}
       {tab !== "inicio" && tab !== "ebooks" && <Placeholder tab={tab} />}
@@ -51,90 +53,126 @@ function Overview() {
   };
 
   const bars = [
-    { label: "Pix", value: 62, color: "bg-emerald-500" },
-    { label: "Cartão de Crédito", value: 28, color: "bg-sky-500" },
-    { label: "PicPay", value: 10, color: "bg-violet-500" },
+    { label: "Pix", value: 0 },
+    { label: "Cartão de Crédito", value: 0 },
+    { label: "PicPay", value: 0 },
   ];
 
+  const iconBtn =
+    "w-11 h-11 rounded-full border border-zinc-800/80 bg-zinc-900/40 flex items-center justify-center text-zinc-400 hover:text-white transition";
+
   return (
-    <div className="max-w-xl mx-auto px-5 pt-8">
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight">Visão Geral</h1>
-          <p className="text-zinc-500 text-sm mt-1 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Atualizado agora
-          </p>
-        </div>
+    <div className="relative max-w-xl mx-auto px-5 pt-6">
+      {/* subtle green glow behind title */}
+      <div className="pointer-events-none absolute -top-10 left-0 right-0 h-72 bg-[radial-gradient(ellipse_at_top_left,rgba(16,185,129,0.18),transparent_60%)]" />
+
+      <div className="relative flex items-center justify-between mb-6">
+        <button onClick={handleSignOut} className={iconBtn} aria-label="Menu">
+          <Menu size={18} />
+        </button>
+        <button className={iconBtn} aria-label="Documentos">
+          <FileIcon size={18} />
+        </button>
         <button
-          onClick={handleSignOut}
-          className="text-zinc-500 hover:text-white p-2"
-          aria-label="Sair"
+          className="w-11 h-11 rounded-full border flex items-center justify-center"
+          style={{ borderColor: AMBER, color: AMBER, boxShadow: `0 0 0 4px ${AMBER}10` }}
+          aria-label="Novo"
         >
-          <LogOut size={18} />
+          <Plus size={20} strokeWidth={2.5} />
         </button>
       </div>
 
-      <div className="flex items-center gap-2 mb-6">
-        <div className="flex bg-[#111] border border-zinc-800 rounded-full p-1 flex-1">
-          {([
-            ["hoje", "Hoje"],
-            ["7d", "7 dias"],
-            ["30d", "30 dias"],
-          ] as [Period, string][]).map(([id, label]) => (
-            <button
-              key={id}
-              onClick={() => setPeriod(id)}
-              className={`flex-1 text-xs font-semibold py-2 rounded-full transition-all ${
-                period === id
-                  ? "bg-white text-black"
-                  : "text-zinc-500 hover:text-zinc-300"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        <button className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm py-2.5 px-4 rounded-full flex items-center gap-1">
+      <div className="relative mb-6">
+        <h1 className="text-5xl font-bold tracking-tight">Visão Geral</h1>
+        <p className="text-zinc-500 text-sm mt-2">Atualizado agora</p>
+      </div>
+
+      {/* period filters + Novo */}
+      <div className="relative flex items-center gap-2 mb-6 flex-wrap">
+        {([
+          ["hoje", "Hoje"],
+          ["7d", "7 dias"],
+          ["30d", "30 dias"],
+        ] as [Period, string][]).map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setPeriod(id)}
+            className={`text-sm font-medium px-5 py-2.5 rounded-full border transition ${
+              period === id
+                ? "bg-black border-zinc-700 text-white"
+                : "bg-transparent border-zinc-800 text-zinc-500 hover:text-zinc-300"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+        <button
+          className="ml-auto text-sm font-bold px-5 py-2.5 rounded-full flex items-center gap-1.5 text-black"
+          style={{ background: `linear-gradient(135deg, ${AMBER}, #c89725)` }}
+        >
           <Plus size={16} strokeWidth={3} /> Novo
         </button>
       </div>
 
-      <div className="bg-gradient-to-br from-[#141414] to-[#0d0d0d] border border-zinc-800 rounded-3xl p-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-[10px] tracking-[0.2em] text-zinc-500 font-bold">
+      {/* Bonus banner */}
+      <div
+        className="relative rounded-2xl p-4 mb-6 flex items-center gap-3"
+        style={{
+          background: `${AMBER}0D`,
+          border: `1px solid ${AMBER}40`,
+        }}
+      >
+        <div
+          className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+          style={{ background: `${AMBER}1A` }}
+        >
+          <Gift size={20} style={{ color: AMBER }} />
+        </div>
+        <p className="text-sm leading-snug">
+          <span className="font-bold" style={{ color: AMBER }}>
+            Bônus disponível em 6 dias
+          </span>
+          <span className="text-zinc-400"> • Continue usando a plataforma para desbloquear</span>
+        </p>
+      </div>
+
+      {/* Faturamento card */}
+      <div className="relative rounded-3xl p-6 bg-gradient-to-br from-[#0d1410] to-[#0a0a0a] border border-zinc-800/80 overflow-hidden">
+        <div className="pointer-events-none absolute -top-20 -left-10 h-60 w-60 bg-[radial-gradient(circle,rgba(16,185,129,0.18),transparent_70%)]" />
+
+        <div className="relative flex items-center justify-between mb-3">
+          <span className="text-[11px] tracking-[0.18em] text-zinc-500 font-semibold">
             VOCÊ FATUROU HOJE
           </span>
-          <span className="flex items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded-full">
-            <TrendingUp size={12} /> +18,4%
+          <span className="flex items-center gap-1 text-zinc-400 text-xs font-semibold border border-zinc-800 px-2.5 py-1 rounded-full">
+            <TrendingUp size={12} /> 0%
           </span>
         </div>
 
-        <div className="flex items-end gap-2 mb-4">
-          <span className="text-5xl font-bold tracking-tight">R$ 2.847</span>
-          <span className="text-zinc-500 text-lg mb-1.5">,90</span>
+        <div className="relative text-5xl font-bold tracking-tight mb-5">R$ 0,00</div>
+
+        <div className="relative flex items-center justify-between text-xs text-zinc-500 mb-5">
+          <span>0 vendas aprovadas</span>
+          <span className="text-zinc-700">•</span>
+          <span>Ticket médio R$ 0,00</span>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-zinc-400 mb-6 pb-6 border-b border-zinc-800/80">
-          <Activity size={14} className="text-emerald-400" />
-          <span className="text-emerald-400 font-semibold">Sistema ativo</span>
-          <span className="text-zinc-600">·</span>
-          <span>34 vendas processadas</span>
+        <div className="relative flex items-center justify-end gap-1.5 text-xs text-zinc-300 mb-6">
+          <span className="w-2 h-2 rounded-full bg-emerald-400" />
+          Sistema ativo
         </div>
 
-        <div className="space-y-4">
+        <div className="relative space-y-4">
           {bars.map((b) => (
             <div key={b.label}>
-              <div className="flex justify-between text-xs mb-1.5">
-                <span className="text-zinc-400 font-medium">{b.label}</span>
-                <span className="text-zinc-300 font-bold tabular-nums">
-                  {b.value}%
-                </span>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-zinc-400">{b.label}</span>
+                <span className="text-zinc-400 tabular-nums">{b.value}%</span>
               </div>
-              <div className="h-2 bg-zinc-800/80 rounded-full overflow-hidden">
+              <div className="h-[3px] bg-zinc-800/80 rounded-full overflow-hidden">
                 <div
-                  className={`h-full ${b.color} rounded-full transition-all duration-700`}
-                  style={{ width: `${b.value}%` }}
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{ width: `${b.value}%`, background: AMBER }}
                 />
               </div>
             </div>
@@ -155,8 +193,8 @@ function Placeholder({ tab }: { tab: Tab }) {
     perfil: "Perfil",
   };
   return (
-    <div className="max-w-xl mx-auto px-5 pt-8">
-      <h1 className="text-4xl font-bold tracking-tight mb-6">{labels[tab]}</h1>
+    <div className="max-w-xl mx-auto px-5 pt-10">
+      <h1 className="text-5xl font-bold tracking-tight mb-6">{labels[tab]}</h1>
       <div className="text-center py-20 text-zinc-500 border border-dashed border-zinc-800 rounded-3xl">
         Em desenvolvimento...
       </div>
@@ -166,7 +204,7 @@ function Placeholder({ tab }: { tab: Tab }) {
 
 /* -------------------- BOTTOM NAV -------------------- */
 function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
-  const items: { id: Tab; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
+  const items: { id: Tab; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }> }[] = [
     { id: "inicio", label: "Início", icon: Home },
     { id: "ebooks", label: "Ebooks", icon: BookOpen },
     { id: "paginas", label: "Páginas", icon: Layout },
@@ -175,8 +213,8 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#111]/95 backdrop-blur-xl border-t border-zinc-800">
-      <div className="max-w-xl mx-auto flex justify-around items-center px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-t border-zinc-900">
+      <div className="max-w-xl mx-auto flex justify-around items-end px-2 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         {items.map((it) => {
           const Icon = it.icon;
           const active = tab === it.id;
@@ -184,14 +222,15 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
             <button
               key={it.id}
               onClick={() => setTab(it.id)}
-              className={`flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl transition-all ${
-                active ? "text-emerald-400" : "text-zinc-500 hover:text-zinc-300"
-              }`}
+              className="flex flex-col items-center gap-1 px-2 transition-all"
+              style={{ color: active ? AMBER : "#71717a" }}
             >
-              <Icon size={20} className={active ? "scale-110" : ""} />
-              <span className="text-[10px] font-bold tracking-wide">
-                {it.label}
-              </span>
+              <Icon size={22} strokeWidth={active ? 2.2 : 1.8} />
+              <span className="text-[11px] font-semibold tracking-wide">{it.label}</span>
+              <span
+                className="h-[2px] w-6 rounded-full mt-0.5"
+                style={{ background: active ? AMBER : "transparent" }}
+              />
             </button>
           );
         })}
@@ -200,7 +239,7 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   );
 }
 
-/* -------------------- EBOOK 5-STEP FLOW -------------------- */
+/* -------------------- EBOOK 5-STEP FLOW (unchanged) -------------------- */
 function EbookFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -218,9 +257,10 @@ function EbookFlow() {
               onClick={() => setCurrentStep(step.id)}
               className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
                 currentStep === step.id
-                  ? "text-emerald-400 bg-emerald-950/20"
+                  ? "bg-zinc-900"
                   : "text-zinc-600 hover:text-zinc-400"
               }`}
+              style={{ color: currentStep === step.id ? AMBER : undefined }}
             >
               <Icon className="w-5 h-5" />
               <span className="text-[9px] uppercase font-bold">{step.name}</span>
@@ -245,7 +285,8 @@ function EbookFlow() {
                   setGenerated(true);
                 }, 1500);
               }}
-              className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2"
+              className="w-full text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2"
+              style={{ background: AMBER }}
             >
               {isGenerating ? <Loader2 className="animate-spin" /> : "Gerar Conteúdo"}
             </button>
@@ -254,10 +295,10 @@ function EbookFlow() {
               <div className="mt-6 border-t border-zinc-800 pt-6">
                 <div className="bg-zinc-900 p-4 rounded-2xl flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <FileText className="text-emerald-500" />
+                    <FileText style={{ color: AMBER }} />
                     <span>Ebook_Final.pdf</span>
                   </div>
-                  <button className="bg-emerald-500 p-2 rounded-lg text-black">
+                  <button className="p-2 rounded-lg text-black" style={{ background: AMBER }}>
                     <Download size={18} />
                   </button>
                 </div>
@@ -275,8 +316,11 @@ function EbookFlow() {
         {currentStep === 2 && (
           <div className="bg-[#111] p-8 rounded-3xl border border-zinc-800">
             <h2 className="text-xl font-bold mb-6">Cadastro na Plataforma de Vendas</h2>
-            <div className="bg-emerald-950/20 border border-emerald-900/30 p-4 rounded-xl mb-6">
-              <p className="text-emerald-400 text-sm font-bold flex items-center gap-2">
+            <div
+              className="p-4 rounded-xl mb-6"
+              style={{ background: `${AMBER}10`, border: `1px solid ${AMBER}40` }}
+            >
+              <p className="text-sm font-bold flex items-center gap-2" style={{ color: AMBER }}>
                 <FileText size={16} /> E-book gerado com sucesso!
               </p>
             </div>
@@ -300,7 +344,8 @@ function EbookFlow() {
               </button>
               <button
                 onClick={() => setCurrentStep(3)}
-                className="flex-1 bg-emerald-500 text-black py-3 rounded-xl font-bold"
+                className="flex-1 text-black py-3 rounded-xl font-bold"
+                style={{ background: AMBER }}
               >
                 Próxima Etapa
               </button>
