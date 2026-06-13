@@ -2,9 +2,13 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import type { ComponentType } from "react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { gerarEbook } from "@/lib/ebooks.functions";
+import {
+  gerarEbook,
+  obterUltimoEbook,
+  atualizarAffiliateLink,
+} from "@/lib/ebooks.functions";
 import { EbookDocument } from "@/components/EbookDocument";
 import { LandingPageTemplate } from "@/components/LandingPageTemplate";
 import { toast } from "sonner";
