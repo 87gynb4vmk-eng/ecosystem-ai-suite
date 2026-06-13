@@ -355,6 +355,22 @@ function EbookFlow() {
     try {
       setPdfRenderKey((key) => key + 1);
       await new Promise((resolve) => window.setTimeout(resolve, 800));
+      // Wait for all images in the template to finish loading (cover + chapter banners)
+      if (docRef.current) {
+        const imgs = Array.from(docRef.current.querySelectorAll("img"));
+        await Promise.all(
+          imgs.map((img) =>
+            img.complete && img.naturalWidth > 0
+              ? Promise.resolve()
+              : new Promise<void>((resolve) => {
+                  const done = () => resolve();
+                  img.addEventListener("load", done, { once: true });
+                  img.addEventListener("error", done, { once: true });
+                  window.setTimeout(done, 6000);
+                }),
+          ),
+        );
+      }
       if (!docRef.current) throw new Error("Template do e-book não foi renderizado.");
 
       const html2pdf = ((await import("html2pdf.js")) as { default: unknown }).default as (
