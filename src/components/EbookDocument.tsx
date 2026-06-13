@@ -119,6 +119,17 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
       return entry;
     });
 
+    const slug = (s: string) =>
+      s
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "")
+        .slice(0, 40) || "ebook";
+
+    const coverImg = `https://picsum.photos/seed/${slug(titulo)}-${slug(nicho)}/900/1200`;
+
     return (
       <div
         ref={ref}
@@ -154,10 +165,33 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
+            position: "relative",
+            overflow: "hidden",
           }}
         >
+          <img
+            src={coverImg}
+            crossOrigin="anonymous"
+            alt=""
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              opacity: 0.45,
+            }}
+          />
           <div
             style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.9) 100%)",
+            }}
+          />
+          <div
+            style={{
+              position: "relative",
               display: "inline-block",
               alignSelf: "flex-start",
               padding: "8px 16px",
@@ -174,7 +208,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
             {nicho}
           </div>
 
-          <div style={{ marginTop: "auto" }}>
+          <div style={{ marginTop: "auto", position: "relative" }}>
             <h1
               style={{
                 fontSize: "56px",
@@ -192,7 +226,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
                 marginTop: "24px",
                 fontSize: "20px",
                 lineHeight: 1.5,
-                color: "#9ca3af",
+                color: "#e5e7eb",
                 fontWeight: 400,
               }}
             >
@@ -211,8 +245,9 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
 
           <div
             style={{
+              position: "relative",
               fontSize: "11px",
-              color: "#6b7280",
+              color: "#d4d4d8",
               letterSpacing: "0.12em",
               textTransform: "uppercase",
             }}
@@ -220,6 +255,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
             Alevi.ai · E-book Digital
           </div>
         </div>
+
 
         {/* TOC */}
         <div style={pageStyle}>
