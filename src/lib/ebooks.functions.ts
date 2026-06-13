@@ -62,9 +62,9 @@ CONCLUSÃO
     } catch (err) {
       const msg = (err as Error).message ?? "";
       console.error("[gerarEbook] AI error:", err);
-      if (msg.includes("429")) throw new Error("Limite de requisições. Tente novamente em instantes.");
-      if (msg.includes("402")) throw new Error("Créditos de IA esgotados.");
-      throw new Error(`Falha ao gerar e-book: ${msg}`);
+      if (msg.includes("429")) return { ok: false, error: "Limite de requisições. Tente novamente em instantes." };
+      if (msg.includes("402")) return { ok: false, error: "Créditos de IA esgotados." };
+      return { ok: false, error: msg ? `Falha ao gerar e-book: ${msg}` : "Falha ao gerar e-book." };
     }
 
     const { PDFDocument, StandardFonts, rgb } = await import("pdf-lib");
@@ -125,5 +125,5 @@ CONCLUSÃO
     }
     const base64 = btoa(bin);
 
-    return { titulo, pdfBase64: base64 };
+    return { ok: true, titulo, pdfBase64: base64 };
   });
