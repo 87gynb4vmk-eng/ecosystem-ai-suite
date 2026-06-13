@@ -366,14 +366,50 @@ function EbookFlow() {
             onclone: (doc: Document) => {
               const style = doc.createElement("style");
               style.textContent = `
-                .ebook-pdf-root, .ebook-pdf-root * {
+                :root, html, body {
+                  color: #111827 !important;
+                  background: #ffffff !important;
+                }
+                .ebook-pdf-root, .ebook-pdf-root *,
+                .ebook-pdf-root *::before, .ebook-pdf-root *::after {
                   border-color: #e5e7eb !important;
                   outline-color: #e5e7eb !important;
                   text-decoration-color: currentColor !important;
                   box-shadow: none !important;
+                  caret-color: auto !important;
                 }
               `;
               doc.head.appendChild(style);
+
+              // Scrub any remaining lab()/oklch()/lch()/oklab() computed colors
+              const root = doc.querySelector(".ebook-pdf-root");
+              if (!root) return;
+              const view = doc.defaultView;
+              if (!view) return;
+              const targets: Element[] = [root, ...Array.from(root.querySelectorAll("*"))];
+              const props: Array<[string, string, string]> = [
+                ["color", "color", "#111827"],
+                ["background-color", "backgroundColor", "transparent"],
+                ["border-color", "borderColor", "#e5e7eb"],
+                ["border-top-color", "borderTopColor", "#e5e7eb"],
+                ["border-right-color", "borderRightColor", "#e5e7eb"],
+                ["border-bottom-color", "borderBottomColor", "#e5e7eb"],
+                ["border-left-color", "borderLeftColor", "#e5e7eb"],
+                ["outline-color", "outlineColor", "#e5e7eb"],
+                ["fill", "fill", "#111827"],
+                ["stroke", "stroke", "#111827"],
+              ];
+              const bad = /lab\(|lch\(|oklab\(|oklch\(/i;
+              for (const el of targets) {
+                const cs = view.getComputedStyle(el);
+                for (const [cssProp, jsProp, fallback] of props) {
+                  const v = cs.getPropertyValue(cssProp);
+                  if (v && bad.test(v)) {
+                    (el as HTMLElement).style.setProperty(cssProp, fallback, "important");
+                    void jsProp;
+                  }
+                }
+              }
             },
           },
           jsPDF: { unit: "px", format: [794, 1123], orientation: "portrait" },
