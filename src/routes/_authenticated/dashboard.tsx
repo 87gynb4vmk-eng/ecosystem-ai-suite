@@ -2,9 +2,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import type { ComponentType } from "react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { gerarEbook } from "@/lib/ebooks.functions";
+import { EbookDocument } from "@/components/EbookDocument";
 import { toast } from "sonner";
 import {
   BookOpen,
@@ -319,6 +320,7 @@ function EbookFlow() {
   const [nicho, setNicho] = useState("");
   const [subnicho, setSubnicho] = useState("");
   const gerar = useServerFn(gerarEbook);
+  const docRef = useRef<HTMLDivElement>(null);
 
   const subnichos = useMemo(() => (nicho ? (NICHOS[nicho] ?? []) : []), [nicho]);
   const canGenerate = !!nicho && !!subnicho && !isGenerating;
@@ -343,56 +345,26 @@ function EbookFlow() {
   };
 
   const handleDownload = async () => {
-    if (!generated) return;
+    if (!generated || !docRef.current) return;
     try {
-      const { jsPDF } = await import("jspdf");
-      const doc = new jsPDF({ unit: "pt", format: "a4" });
-      const pageW = doc.internal.pageSize.getWidth();
-      const pageH = doc.internal.pageSize.getHeight();
-      const margin = 56;
-      const maxW = pageW - margin * 2;
-
-      // Cover
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(26);
-      const titleLines = doc.splitTextToSize(generated.titulo, maxW);
-      doc.text(titleLines, pageW / 2, pageH / 2 - 20, { align: "center" });
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(14);
-      const subLines = doc.splitTextToSize(generated.subtitulo, maxW);
-      doc.text(subLines, pageW / 2, pageH / 2 + 20, { align: "center" });
-
-      doc.addPage();
-      let y = margin;
-      const blocos = generated.conteudo
-        .split(/\n{2,}/)
-        .map((p) => p.trim())
-        .filter(Boolean);
-
-      for (const raw of blocos) {
-        const bloco = raw
-          .replace(/^T[IÍ]TULO\s*:.+$/im, "")
-          .replace(/^SUBT[IÍ]TULO\s*:.+$/im, "")
-          .trim();
-        if (!bloco) continue;
-        const isHeading = /^(INTRODUÇÃO|CONCLUSÃO|CAP[IÍ]TULO\s+\d+)/i.test(bloco);
-        const size = isHeading ? 16 : 11;
-        doc.setFont("helvetica", isHeading ? "bold" : "normal");
-        doc.setFontSize(size);
-        const lines = doc.splitTextToSize(bloco, maxW);
-        const lh = size * 1.4;
-        for (const ln of lines) {
-          if (y + lh > pageH - margin) {
-            doc.addPage();
-            y = margin;
-          }
-          doc.text(ln, margin, y);
-          y += lh;
-        }
-        y += isHeading ? 10 : 8;
-      }
-
-      doc.save(generated.filename);
+      const html2pdf = ((await import("html2pdf.js")) as { default: unknown }).default as (
+        ...args: unknown[]
+      ) => {
+        set: (opts: Record<string, unknown>) => {
+          from: (el: HTMLElement) => { save: () => Promise<void> };
+        };
+      };
+      await html2pdf()
+        .set({
+          margin: 0,
+          filename: generated.filename,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+          jsPDF: { unit: "px", format: [794, 1123], orientation: "portrait" },
+          pagebreak: { mode: ["css", "legacy"] },
+        })
+        .from(docRef.current)
+        .save();
     } catch (e) {
       toast.error((e as Error).message || "Falha ao baixar PDF.");
     }
@@ -550,6 +522,29 @@ function EbookFlow() {
           </div>
         )}
       </div>
+
+      {/* Hidden printable document */}
+      {generated && (
+        <div
+          style={{
+            position: "fixed",
+            left: "-10000px",
+            top: 0,
+            zIndex: -1,
+            pointerEvents: "none",
+            opacity: 0,
+          }}
+          aria-hidden
+        >
+          <EbookDocument
+            ref={docRef}
+            titulo={generated.titulo}
+            subtitulo={generated.subtitulo}
+            nicho={nicho}
+            conteudo={generated.conteudo}
+          />
+        </div>
+      )}
     </div>
   );
 }
