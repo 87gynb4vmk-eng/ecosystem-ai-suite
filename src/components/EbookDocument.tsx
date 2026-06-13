@@ -2,6 +2,7 @@ import { forwardRef, useMemo } from "react";
 
 const AMBER = "#E0B43A";
 const GREEN = "#10B981";
+const PDF_SAFE_COLORS = ["#115E59", "#1D4ED8", "#7C3AED", "#BE123C", "#B45309", "#047857"];
 
 type Section = {
   type: "intro" | "chapter" | "conclusion";
@@ -124,13 +125,22 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
     });
 
     return (
-      <div ref={ref} className="ebook-pdf-root" style={{ background: "#fff" }}>
+      <div
+        ref={ref}
+        className="ebook-pdf-root"
+        style={{
+          background: "#ffffff",
+          color: "#111827",
+          fontFamily: "Inter, Helvetica Neue, Arial, sans-serif",
+        }}
+      >
         <style>{`
           .ebook-pdf-root, .ebook-pdf-root * {
             border-color: #e5e7eb !important;
             outline-color: #e5e7eb !important;
-            text-decoration-color: currentColor !important;
+            text-decoration-color: #111827 !important;
             -webkit-text-fill-color: currentColor;
+            caret-color: #111827 !important;
           }
           .ebook-pdf-root *::before,
           .ebook-pdf-root *::after {
@@ -271,7 +281,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
         {/* SECTIONS */}
         {sections.map((s, idx) => {
           const isChapter = s.type === "chapter";
-          const bannerHue = (idx * 47) % 360;
+          const bannerColor = PDF_SAFE_COLORS[idx % PDF_SAFE_COLORS.length];
           return (
             <div key={idx} style={pageStyle}>
               {/* Heading block */}
@@ -317,7 +327,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
                   marginTop: "20px",
                   height: "180px",
                   borderRadius: "16px",
-                  background: `linear-gradient(135deg, hsl(${bannerHue} 70% 55%), hsl(${(bannerHue + 60) % 360} 70% 35%))`,
+                  background: `linear-gradient(135deg, ${bannerColor}, #0a0a0a)`,
                   position: "relative",
                   overflow: "hidden",
                 }}
