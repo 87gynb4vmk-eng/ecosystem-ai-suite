@@ -1,6 +1,5 @@
 import { forwardRef, useMemo } from "react";
 
-const AMBER = "#E0B43A";
 const GREEN = "#10B981";
 const PDF_SAFE_COLORS = ["#115E59", "#1D4ED8", "#7C3AED", "#BE123C", "#B45309", "#047857"];
 
@@ -151,7 +150,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
           style={{
             ...pageStyle,
             backgroundColor: "#0a0a0a",
-            color: "#fff",
+            color: "#ffffff",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -163,9 +162,9 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
               alignSelf: "flex-start",
               padding: "8px 16px",
               borderRadius: "999px",
-              backgroundColor: `${GREEN}1F`,
+              backgroundColor: "#D1FAE5",
               color: GREEN,
-              border: `1px solid ${GREEN}66`,
+              border: "1px solid #6EE7B7",
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "0.14em",
@@ -182,7 +181,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
                 lineHeight: 1.05,
                 fontWeight: 800,
                 margin: 0,
-                color: "#fff",
+                color: "#ffffff",
                 letterSpacing: "-0.02em",
               }}
             >
