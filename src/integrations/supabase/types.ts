@@ -115,6 +115,50 @@ export type Database = {
         }
         Relationships: []
       }
+      videos: {
+        Row: {
+          created_at: string
+          ebook_id: string
+          erro: string | null
+          id: string
+          render_id: string | null
+          status: string
+          updated_at: string
+          usuario_id: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          ebook_id: string
+          erro?: string | null
+          id?: string
+          render_id?: string | null
+          status?: string
+          updated_at?: string
+          usuario_id: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          ebook_id?: string
+          erro?: string | null
+          id?: string
+          render_id?: string | null
+          status?: string
+          updated_at?: string
+          usuario_id?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "videos_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
