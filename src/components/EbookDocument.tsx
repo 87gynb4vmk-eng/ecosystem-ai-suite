@@ -355,26 +355,39 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
                 </h2>
               </div>
 
-              {/* Banner */}
+              {/* Banner image */}
               <div
                 style={{
                   marginTop: "20px",
-                  height: "180px",
+                  height: "240px",
                   borderRadius: "16px",
                   background: `linear-gradient(135deg, ${bannerColor}, #0a0a0a)`,
                   position: "relative",
                   overflow: "hidden",
                 }}
               >
+                <img
+                  src={`https://picsum.photos/seed/${slug(s.heading)}-${idx}/900/500`}
+                  crossOrigin="anonymous"
+                  alt=""
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
                 <div
                   style={{
                     position: "absolute",
                     inset: 0,
-                    background: "linear-gradient(135deg, #ffffff, #d1d5db)",
-                    opacity: 0.2,
+                    background: `linear-gradient(135deg, ${bannerColor}99, #0a0a0a55)`,
+                    mixBlendMode: "multiply",
                   }}
                 />
               </div>
+
 
               {/* Body */}
               <div style={{ marginTop: "32px" }}>
