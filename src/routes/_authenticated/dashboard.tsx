@@ -322,6 +322,7 @@ function EbookFlow() {
   const [isPdfCaptureActive, setIsPdfCaptureActive] = useState(false);
   const [pdfRenderKey, setPdfRenderKey] = useState(0);
   const [generated, setGenerated] = useState<{
+    id: string | null;
     titulo: string;
     subtitulo: string;
     conteudo: string;
@@ -331,7 +332,12 @@ function EbookFlow() {
   const [nicho, setNicho] = useState("");
   const [subnicho, setSubnicho] = useState("");
   const [affiliateLink, setAffiliateLink] = useState("");
+  const [publishedUrl, setPublishedUrl] = useState<string | null>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [isLoadingLast, setIsLoadingLast] = useState(false);
   const gerar = useServerFn(gerarEbook);
+  const obterUltimo = useServerFn(obterUltimoEbook);
+  const salvarLink = useServerFn(atualizarAffiliateLink);
   const docRef = useRef<HTMLDivElement>(null);
 
   const subnichos = useMemo(() => (nicho ? (NICHOS[nicho] ?? []) : []), [nicho]);
