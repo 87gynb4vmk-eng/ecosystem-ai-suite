@@ -124,9 +124,13 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
         ref={ref}
         className="ebook-pdf-root"
         style={{
+          width: "794px",
+          minWidth: "794px",
+          maxWidth: "794px",
           background: "#ffffff",
           color: "#111827",
           fontFamily: "Inter, Helvetica Neue, Arial, sans-serif",
+          boxSizing: "border-box",
         }}
       >
         <style>{`
