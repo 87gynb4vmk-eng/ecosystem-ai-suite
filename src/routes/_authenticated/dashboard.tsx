@@ -30,6 +30,9 @@ import {
   Menu,
   FileText as FileIcon,
   Gift,
+  Link as LinkIcon,
+  Copy,
+  ExternalLink,
 } from "lucide-react";
 
 const NICHOS: Record<string, string[]> = {
