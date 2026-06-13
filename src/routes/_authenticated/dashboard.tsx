@@ -512,18 +512,25 @@ function EbookFlow() {
 
             {generated && (
               <div className="mt-6 border-t border-zinc-800 pt-6">
-                <div className="bg-zinc-900 p-4 rounded-2xl flex items-center justify-between mb-4">
+                <div className="bg-zinc-900 p-4 rounded-2xl flex items-center justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3 min-w-0">
                     <FileText style={{ color: AMBER }} className="shrink-0" />
                     <span className="truncate text-sm">{generated.filename}</span>
                   </div>
                   <button
                     onClick={handleDownload}
-                    className="p-2 rounded-lg text-black shrink-0"
+                    disabled={isDownloading}
+                    className="px-3 py-2 rounded-lg text-black shrink-0 flex items-center gap-2 text-xs font-bold disabled:opacity-60 disabled:cursor-not-allowed"
                     style={{ background: AMBER }}
                     aria-label="Baixar PDF"
                   >
-                    <Download size={18} />
+                    {isDownloading ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" /> Gerando PDF...
+                      </>
+                    ) : (
+                      <Download size={18} />
+                    )}
                   </button>
                 </div>
                 <button
