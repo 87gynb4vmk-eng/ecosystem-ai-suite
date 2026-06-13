@@ -25,7 +25,7 @@ export const gerarEbook = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("IA indisponível.");
 
-    const { generateText, Output } = await import("ai");
+    const { generateText } = await import("ai");
     const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
     const gateway = createLovableAiGatewayProvider(key);
 
@@ -34,10 +34,23 @@ export const gerarEbook = createServerFn({ method: "POST" })
       const result = await generateText({
         model: gateway("google/gemini-3-flash-preview"),
         prompt: `Escreva um e-book completo em português brasileiro sobre o sub-nicho "${data.subnicho}" dentro do nicho "${data.nicho}".
-Tom profissional, prático e envolvente. Inclua título marcante, subtítulo, introdução, 5 capítulos com 4-6 parágrafos cada, e uma conclusão.`,
-        experimental_output: Output.object({ schema: EbookSchema }),
+Tom profissional, prático e envolvente.
+
+Retorne APENAS um JSON válido (sem markdown, sem \`\`\`), exatamente neste formato:
+{
+  "titulo": "string",
+  "subtitulo": "string",
+  "introducao": "string (2-4 parágrafos separados por \\n\\n)",
+  "capitulos": [
+    { "titulo": "string", "paragrafos": ["string", "string", "string", "string"] }
+  ],
+  "conclusao": "string"
+}
+Inclua exatamente 5 capítulos, cada um com 4 a 6 parágrafos.`,
       });
-      ebook = (result as { experimental_output: z.infer<typeof EbookSchema> }).experimental_output;
+      const raw = result.text.trim().replace(/^```json\s*|\s*```$/g, "");
+      const parsed = JSON.parse(raw);
+      ebook = EbookSchema.parse(parsed);
     } catch (err) {
       const msg = (err as Error).message ?? "";
       console.error("[gerarEbook] AI error:", err);
