@@ -356,7 +356,7 @@ function EbookFlow() {
           html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
           jsPDF: { unit: "px", format: [794, 1123], orientation: "portrait" },
           pagebreak: { mode: ["css", "legacy"] },
-        })
+        } as Parameters<ReturnType<typeof html2pdf>["set"]>[0])
         .from(docRef.current)
         .save();
     } catch (e) {
