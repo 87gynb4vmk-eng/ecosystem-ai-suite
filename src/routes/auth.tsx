@@ -7,7 +7,11 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Entrar | Alevi.ai" },
-      { name: "description", content: "Acesse seu painel Alevi.ai com o e-mail e a senha temporária enviados após a compra." },
+      {
+        name: "description",
+        content:
+          "Acesse seu painel Alevi.ai com o e-mail e a senha temporária enviados após a compra.",
+      },
     ],
   }),
   component: AuthPage,
