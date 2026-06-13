@@ -347,7 +347,13 @@ function EbookFlow() {
   const handleDownload = async () => {
     if (!generated || !docRef.current) return;
     try {
-      const html2pdf = (await import("html2pdf.js")).default;
+      const html2pdf = ((await import("html2pdf.js")) as { default: unknown }).default as (
+        ...args: unknown[]
+      ) => {
+        set: (opts: Record<string, unknown>) => {
+          from: (el: HTMLElement) => { save: () => Promise<void> };
+        };
+      };
       await html2pdf()
         .set({
           margin: 0,
@@ -356,7 +362,7 @@ function EbookFlow() {
           html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
           jsPDF: { unit: "px", format: [794, 1123], orientation: "portrait" },
           pagebreak: { mode: ["css", "legacy"] },
-        } as Parameters<ReturnType<typeof html2pdf>["set"]>[0])
+        })
         .from(docRef.current)
         .save();
     } catch (e) {
