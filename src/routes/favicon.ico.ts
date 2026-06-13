@@ -1,0 +1,20 @@
+import { createFileRoute } from "@tanstack/react-router";
+
+const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="16" fill="#000000"/>
+  <text x="32" y="42" font-family="Arial, sans-serif" font-size="34" font-weight="700" text-anchor="middle" fill="#E0B43A">A</text>
+</svg>`;
+
+export const Route = createFileRoute("/favicon/ico")({
+  server: {
+    handlers: {
+      GET: async () =>
+        new Response(faviconSvg, {
+          headers: {
+            "content-type": "image/svg+xml; charset=utf-8",
+            "cache-control": "public, max-age=86400",
+          },
+        }),
+    },
+  },
+});
