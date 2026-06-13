@@ -1,7 +1,7 @@
 import { forwardRef, useMemo } from "react";
 
-const AMBER = "#E0B43A";
 const GREEN = "#10B981";
+const PDF_SAFE_COLORS = ["#115E59", "#1D4ED8", "#7C3AED", "#BE123C", "#B45309", "#047857"];
 
 type Section = {
   type: "intro" | "chapter" | "conclusion";
@@ -87,8 +87,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
       boxSizing: "border-box",
       backgroundColor: "#ffffff",
       color: "#111827",
-      fontFamily:
-        "'Inter', 'Helvetica Neue', Arial, sans-serif",
+      fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
       position: "relative",
       pageBreakAfter: "always",
       breakAfter: "page",
@@ -114,23 +113,28 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
     // TOC pages assumption: cover=1, toc=2, then each section starts on a new page
     let pageCursor = 3;
     const tocEntries = sections.map((s) => {
-      const label =
-        s.type === "chapter"
-          ? `Capítulo ${s.number} — ${s.heading}`
-          : s.heading;
+      const label = s.type === "chapter" ? `Capítulo ${s.number} — ${s.heading}` : s.heading;
       const entry = { label, page: pageCursor };
       pageCursor += 1; // assume 1 page per section (best-effort)
       return entry;
     });
 
     return (
-      <div ref={ref} className="ebook-pdf-root" style={{ background: "#fff" }}>
+      <div
+        ref={ref}
+        className="ebook-pdf-root"
+        style={{
+          background: "#ffffff",
+          color: "#111827",
+          fontFamily: "Inter, Helvetica Neue, Arial, sans-serif",
+        }}
+      >
         <style>{`
           .ebook-pdf-root, .ebook-pdf-root * {
             border-color: #e5e7eb !important;
             outline-color: #e5e7eb !important;
-            text-decoration-color: currentColor !important;
-            -webkit-text-fill-color: currentColor;
+            text-decoration-color: #111827 !important;
+            caret-color: #111827 !important;
           }
           .ebook-pdf-root *::before,
           .ebook-pdf-root *::after {
@@ -142,7 +146,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
           style={{
             ...pageStyle,
             backgroundColor: "#0a0a0a",
-            color: "#fff",
+            color: "#ffffff",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -154,9 +158,9 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
               alignSelf: "flex-start",
               padding: "8px 16px",
               borderRadius: "999px",
-              backgroundColor: `${GREEN}1F`,
+              backgroundColor: "#D1FAE5",
               color: GREEN,
-              border: `1px solid ${GREEN}66`,
+              border: "1px solid #6EE7B7",
               fontSize: "12px",
               fontWeight: 700,
               letterSpacing: "0.14em",
@@ -173,7 +177,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
                 lineHeight: 1.05,
                 fontWeight: 800,
                 margin: 0,
-                color: "#fff",
+                color: "#ffffff",
                 letterSpacing: "-0.02em",
               }}
             >
@@ -271,14 +275,14 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
         {/* SECTIONS */}
         {sections.map((s, idx) => {
           const isChapter = s.type === "chapter";
-          const bannerHue = (idx * 47) % 360;
+          const bannerColor = PDF_SAFE_COLORS[idx % PDF_SAFE_COLORS.length];
           return (
             <div key={idx} style={pageStyle}>
               {/* Heading block */}
               <div
                 style={{
                   backgroundColor: "#0a0a0a",
-                  color: "#fff",
+                  color: "#ffffff",
                   padding: "28px 32px",
                   borderRadius: "16px",
                 }}
@@ -302,7 +306,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
                     margin: 0,
                     fontSize: "30px",
                     fontWeight: 800,
-                    color: "#fff",
+                    color: "#ffffff",
                     letterSpacing: "-0.01em",
                     lineHeight: 1.15,
                   }}
@@ -317,7 +321,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
                   marginTop: "20px",
                   height: "180px",
                   borderRadius: "16px",
-                  background: `linear-gradient(135deg, hsl(${bannerHue} 70% 55%), hsl(${(bannerHue + 60) % 360} 70% 35%))`,
+                  background: `linear-gradient(135deg, ${bannerColor}, #0a0a0a)`,
                   position: "relative",
                   overflow: "hidden",
                 }}
@@ -326,8 +330,8 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
                   style={{
                     position: "absolute",
                     inset: 0,
-                    background:
-                      "radial-gradient(ellipse at top left, rgba(255,255,255,0.25), transparent 60%)",
+                    background: "linear-gradient(135deg, #ffffff, #d1d5db)",
+                    opacity: 0.2,
                   }}
                 />
               </div>
