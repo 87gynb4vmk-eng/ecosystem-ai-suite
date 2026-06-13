@@ -365,6 +365,13 @@ function EbookFlow() {
   const handleDownload = async () => {
     if (!generated || !docRef.current) return;
     try {
+      const html2pdf = ((await import("html2pdf.js")) as { default: unknown }).default as (
+        ...args: unknown[]
+      ) => {
+        set: (opts: Record<string, unknown>) => {
+          from: (el: HTMLElement) => { save: () => Promise<void> };
+        };
+      };
       const pdfElement = createPdfSafeClone(docRef.current);
       pdfElement.style.position = "fixed";
       pdfElement.style.left = "0";
@@ -375,13 +382,6 @@ function EbookFlow() {
       pdfElement.style.background = "#ffffff";
       document.body.appendChild(pdfElement);
 
-      const html2pdf = ((await import("html2pdf.js")) as { default: unknown }).default as (
-        ...args: unknown[]
-      ) => {
-        set: (opts: Record<string, unknown>) => {
-          from: (el: HTMLElement) => { save: () => Promise<void> };
-        };
-      };
       try {
         await html2pdf()
           .set({
