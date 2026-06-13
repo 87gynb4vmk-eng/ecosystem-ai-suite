@@ -144,53 +144,86 @@ export default function EbookGenerator() {
 
   if (screen === "select") {
     return (
-      <div className="space-y-5">
-        <div className="text-center space-y-1.5">
-          <div className="inline-flex bg-emerald-950/30 border border-emerald-900/30 p-2.5 rounded-xl text-emerald-400 mb-1"><BookOpen className="w-5 h-5" /></div>
-          <h2 className="text-xl font-bold tracking-tight">Configurar Estrutura</h2>
-          <p className="text-xs text-zinc-500 max-w-xs mx-auto">Filtre por nicho principal para ver os sub-nichos mapeados</p>
+      <div className="space-y-6">
+        {/* Título */}
+        <div className="text-center space-y-2">
+          <div className="inline-flex bg-emerald-950/30 border border-emerald-900/40 p-3 rounded-2xl text-emerald-400 mb-1">
+            <BookOpen className="w-6 h-6" />
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight text-white">Configurar Estrutura</h2>
+          <p className="text-xs text-zinc-500 max-w-xs mx-auto">
+            Filtre por nicho principal para ver os sub-nichos mapeados
+          </p>
         </div>
-        <div className="space-y-2">
-          <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider pl-0.5">1. Nicho Principal</label>
+
+        {/* Seção 1 - Nicho Principal */}
+        <div className="bg-[#0d0d0f] border border-zinc-900 rounded-2xl p-4 space-y-3">
+          <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+            1. Nicho Principal
+          </label>
           <div className="grid grid-cols-2 gap-2">
             {Object.keys(nicheStructure).map((mainNiche) => (
               <button
                 key={mainNiche}
                 onClick={() => handleMainNicheChange(mainNiche)}
-                className={`p-3 rounded-xl text-xs text-left transition-all border ${selectedMainNiche === mainNiche ? "bg-[#141417] border-[#e2b35c] text-[#e2b35c] font-semibold" : "bg-[#0a0a0c] text-zinc-500 border-zinc-900 hover:border-zinc-800"}`}
+                className={`p-3 rounded-xl text-xs text-left transition-all border ${
+                  selectedMainNiche === mainNiche
+                    ? "bg-[#141417] border-[#e2b35c] text-[#e2b35c] font-semibold"
+                    : "bg-black/40 text-zinc-400 border-zinc-900 hover:border-zinc-800"
+                }`}
               >
                 {mainNiche}
               </button>
             ))}
           </div>
         </div>
-        <div className="space-y-2 pt-1">
-          <div className="flex justify-between items-center pl-0.5">
-            <label className="text-xs font-bold text-[#e2b35c] uppercase tracking-wider">2. Sub-nichos Disponíveis</label>
+
+        {/* Seção 2 - Sub-nichos */}
+        <div className="bg-[#0d0d0f] border border-zinc-900 rounded-2xl p-4 space-y-3">
+          <div className="flex justify-between items-center">
+            <label className="text-[11px] font-bold text-[#e2b35c] uppercase tracking-wider">
+              2. Sub-nichos Disponíveis
+            </label>
             <span className="text-[10px] bg-zinc-900 text-zinc-500 px-2 py-0.5 rounded-full font-medium">
               {nicheStructure[selectedMainNiche]?.length || 0} opções
             </span>
           </div>
-          <div className="flex flex-wrap gap-1.5 max-h-[190px] overflow-y-auto p-2 border border-zinc-900 rounded-xl bg-zinc-950/40">
+          <div className="flex flex-wrap gap-1.5 max-h-[200px] overflow-y-auto">
             {nicheStructure[selectedMainNiche]?.map((subNiche) => (
               <button
                 key={subNiche}
                 onClick={() => setSelectedSubNiche(subNiche)}
-                className={`px-3 py-2 rounded-lg text-xs transition-all border ${selectedSubNiche === subNiche ? "bg-emerald-950/60 border-emerald-500 text-emerald-400 font-medium" : "bg-black text-zinc-400 border-zinc-900 hover:border-zinc-800"}`}
+                className={`px-3 py-2 rounded-lg text-xs transition-all border ${
+                  selectedSubNiche === subNiche
+                    ? "bg-emerald-950/60 border-emerald-500 text-emerald-400 font-medium"
+                    : "bg-black text-zinc-400 border-zinc-900 hover:border-zinc-800"
+                }`}
               >
                 {subNiche}
               </button>
             ))}
           </div>
         </div>
-        <div className="pt-3">
-          <button onClick={handleGenerateEbook} disabled={isGenerating} className="w-full bg-[#e2b35c] hover:bg-[#d0a34c] text-black py-3.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition">
-            {isGenerating ? <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> : <><BookOpen className="w-4 h-4 text-black" /><Sparkles className="w-3.5 h-3.5 text-black" /><span>Criar E-book do Sub-nicho</span></>}
-          </button>
-        </div>
+
+        <button
+          onClick={handleGenerateEbook}
+          disabled={isGenerating}
+          className="w-full bg-[#e2b35c] hover:bg-[#d0a34c] text-black py-3.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition"
+        >
+          {isGenerating ? (
+            <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <>
+              <BookOpen className="w-4 h-4 text-black" />
+              <Sparkles className="w-3.5 h-3.5 text-black" />
+              <span>Criar E-book do Sub-nicho</span>
+            </>
+          )}
+        </button>
       </div>
     );
   }
+
 
   return (
     <div className="space-y-4 flex flex-col items-center">
