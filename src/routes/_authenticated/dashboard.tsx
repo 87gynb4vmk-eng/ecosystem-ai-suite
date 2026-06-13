@@ -399,14 +399,14 @@ function EbookFlow() {
                     <FileText style={{ color: AMBER }} className="shrink-0" />
                     <span className="truncate text-sm">{generated.filename}</span>
                   </div>
-                  <a
-                    href={generated.url}
-                    download={generated.filename}
+                  <button
+                    onClick={handleDownload}
                     className="p-2 rounded-lg text-black shrink-0"
                     style={{ background: AMBER }}
+                    aria-label="Baixar PDF"
                   >
                     <Download size={18} />
-                  </a>
+                  </button>
                 </div>
                 <button
                   onClick={() => setCurrentStep(2)}
