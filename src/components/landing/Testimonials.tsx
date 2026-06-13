@@ -82,11 +82,15 @@ export function TestimonialsResultado() {
     <section id="depoimentos" className="py-24 bg-muted/40">
       <div className="container mx-auto max-w-6xl px-6">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">Resultados Reais</span>
+          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+            Resultados Reais
+          </span>
           <h2 className="mt-4 text-4xl md:text-5xl font-bold">Faturando desde o primeiro dia</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
-          {grupo1.map((d) => <Card key={d.nome} d={d} />)}
+          {grupo1.map((d) => (
+            <Card key={d.nome} d={d} />
+          ))}
         </div>
       </div>
     </section>
@@ -98,11 +102,15 @@ export function TestimonialsObjecao() {
     <section className="py-24 bg-background">
       <div className="container mx-auto max-w-6xl px-6">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">Por que escolher Alevi.ai</span>
+          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+            Por que escolher Alevi.ai
+          </span>
           <h2 className="mt-4 text-4xl md:text-5xl font-bold">Quem entra, não volta atrás</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
-          {grupo2.map((d) => <Card key={d.nome} d={d} />)}
+          {grupo2.map((d) => (
+            <Card key={d.nome} d={d} />
+          ))}
         </div>
       </div>
     </section>
