@@ -311,35 +311,53 @@ function EbookFlow() {
       <div className="space-y-6 animate-in fade-in duration-500">
         {currentStep === 1 && (
           <div className="bg-[#111] p-8 rounded-3xl border border-zinc-800">
-            <h2 className="text-2xl font-bold mb-2">Gerar E-book</h2>
-            <input
-              placeholder="Ex: Emagrecimento..."
-              className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-4"
-            />
+            <h2 className="text-2xl font-bold mb-6">Gerar E-book</h2>
+
+            <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">Nicho principal</label>
+            <select
+              value={nicho}
+              onChange={(e) => { setNicho(e.target.value); setSubnicho(""); }}
+              className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-5"
+            >
+              <option value="">Selecione um nicho...</option>
+              {Object.keys(NICHOS).map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
+
+            <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">Sub-nicho</label>
+            <select
+              value={subnicho}
+              onChange={(e) => setSubnicho(e.target.value)}
+              disabled={!nicho}
+              className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-6 disabled:opacity-40"
+            >
+              <option value="">{nicho ? "Selecione um sub-nicho..." : "Escolha o nicho primeiro"}</option>
+              {subnichos.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+
             <button
-              onClick={() => {
-                setIsGenerating(true);
-                setTimeout(() => {
-                  setIsGenerating(false);
-                  setGenerated(true);
-                }, 1500);
-              }}
-              className="w-full text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2"
+              onClick={handleGenerate}
+              disabled={!canGenerate}
+              className="w-full text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
               style={{ background: AMBER }}
             >
-              {isGenerating ? <Loader2 className="animate-spin" /> : "Gerar Conteúdo"}
+              {isGenerating ? <><Loader2 className="animate-spin" size={18}/> Gerando...</> : "Gerar Conteúdo"}
             </button>
 
             {generated && (
               <div className="mt-6 border-t border-zinc-800 pt-6">
                 <div className="bg-zinc-900 p-4 rounded-2xl flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <FileText style={{ color: AMBER }} />
-                    <span>Ebook_Final.pdf</span>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <FileText style={{ color: AMBER }} className="shrink-0" />
+                    <span className="truncate text-sm">{generated.filename}</span>
                   </div>
-                  <button className="p-2 rounded-lg text-black" style={{ background: AMBER }}>
+                  <a
+                    href={generated.url}
+                    download={generated.filename}
+                    className="p-2 rounded-lg text-black shrink-0"
+                    style={{ background: AMBER }}
+                  >
                     <Download size={18} />
-                  </button>
+                  </a>
                 </div>
                 <button
                   onClick={() => setCurrentStep(2)}
