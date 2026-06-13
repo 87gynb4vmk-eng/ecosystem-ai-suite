@@ -87,24 +87,6 @@ const STEPS = [
 
 const AMBER = "#E0B43A";
 
-function createPdfSafeClone(source: HTMLElement): HTMLElement {
-  const clone = source.cloneNode(true) as HTMLElement;
-  clone.querySelectorAll("style, link[rel='stylesheet']").forEach((node) => node.remove());
-  const safeColor = "#111827";
-  const safeBorder = "#e5e7eb";
-  const targets = [clone, ...Array.from(clone.querySelectorAll<HTMLElement>("*"))];
-  for (const el of targets) {
-    el.removeAttribute("class");
-    el.style.color ||= safeColor;
-    el.style.borderColor ||= safeBorder;
-    el.style.outlineColor = safeBorder;
-    el.style.textDecorationColor = safeColor;
-    el.style.boxShadow = "none";
-    el.style.caretColor = safeColor;
-  }
-  return clone;
-}
-
 function DashboardRoot() {
   const [tab, setTab] = useState<Tab>("inicio");
 
@@ -329,6 +311,7 @@ function EbookFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isPdfCaptureActive, setIsPdfCaptureActive] = useState(false);
   const [pdfRenderKey, setPdfRenderKey] = useState(0);
   const [generated, setGenerated] = useState<{
     titulo: string;
@@ -367,7 +350,8 @@ function EbookFlow() {
   const handleDownload = async () => {
     if (!generated || isDownloading) return;
     setIsDownloading(true);
-    let pdfElement: HTMLElement | null = null;
+    setIsPdfCaptureActive(true);
+    let blobUrl: string | null = null;
     try {
       setPdfRenderKey((key) => key + 1);
       await new Promise((resolve) => window.setTimeout(resolve, 800));
@@ -383,20 +367,9 @@ function EbookFlow() {
           };
         };
       };
-      pdfElement = createPdfSafeClone(docRef.current);
-      pdfElement.style.position = "absolute";
-      pdfElement.style.left = "-9999px";
-      pdfElement.style.top = "0";
-      pdfElement.style.zIndex = "0";
-      pdfElement.style.opacity = "1";
-      pdfElement.style.pointerEvents = "none";
-      pdfElement.style.display = "block";
-      pdfElement.style.visibility = "visible";
-      pdfElement.style.width = "794px";
-      pdfElement.style.minWidth = "794px";
-      pdfElement.style.maxWidth = "794px";
-      pdfElement.style.background = "#ffffff";
-      document.body.appendChild(pdfElement);
+      const pdfElement = docRef.current;
+      const pdfHeight = Math.max(pdfElement.scrollHeight, 1123);
+      const canvasScale = window.innerWidth < 768 ? 1.35 : 2;
 
       const worker = html2pdf()
         .set({
@@ -404,9 +377,15 @@ function EbookFlow() {
           filename: generated.filename,
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: {
-            scale: 2,
+            scale: canvasScale,
             useCORS: true,
             backgroundColor: "#ffffff",
+            width: 794,
+            height: pdfHeight,
+            windowWidth: 794,
+            windowHeight: pdfHeight,
+            scrollX: 0,
+            scrollY: 0,
             onclone: (doc: Document) => {
               doc
                 .querySelectorAll("style, link[rel='stylesheet']")
@@ -422,7 +401,8 @@ function EbookFlow() {
         .from(pdfElement);
 
       const blob: Blob = await worker.output("blob");
-      const blobUrl = URL.createObjectURL(blob);
+      if (!blob.size) throw new Error("O PDF foi gerado vazio.");
+      blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = blobUrl;
       a.download = generated.filename || "ebook.pdf";
@@ -430,13 +410,14 @@ function EbookFlow() {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     } catch (e) {
       toast.error(
         `Ocorreu um erro ao gerar o PDF: ${(e as Error).message || "Falha ao baixar PDF."}`,
       );
     } finally {
-      if (pdfElement) pdfElement.remove();
+      const urlToRevoke = blobUrl;
+      if (urlToRevoke) window.setTimeout(() => URL.revokeObjectURL(urlToRevoke), 1000);
+      setIsPdfCaptureActive(false);
       setIsDownloading(false);
     }
   };
@@ -603,8 +584,19 @@ function EbookFlow() {
 
       {/* Printable document rendered off-screen for PDF capture */}
       <div
-        className="absolute -left-[9999px] top-0 opacity-0 pointer-events-none"
-        style={{ width: "794px", minWidth: "794px", maxWidth: "794px" }}
+        className="pointer-events-none"
+        style={{
+          position: isPdfCaptureActive ? "fixed" : "absolute",
+          left: isPdfCaptureActive ? "0" : "-9999px",
+          top: "0",
+          width: "794px",
+          minWidth: "794px",
+          maxWidth: "794px",
+          opacity: isPdfCaptureActive ? 1 : 0,
+          zIndex: -1,
+          overflow: "visible",
+          background: "#ffffff",
+        }}
         aria-hidden="true"
       >
         <EbookDocument
