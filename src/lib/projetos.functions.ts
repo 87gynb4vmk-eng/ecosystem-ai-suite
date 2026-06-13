@@ -19,12 +19,15 @@ const PaginasIaSchema = z.object({
     titulo: z.string(),
     texto: z.string(),
   }),
-  servicos: z.array(
-    z.object({
-      titulo: z.string(),
-      descricao: z.string(),
-    }),
-  ).min(3).max(6),
+  servicos: z
+    .array(
+      z.object({
+        titulo: z.string(),
+        descricao: z.string(),
+      }),
+    )
+    .min(3)
+    .max(6),
   contato: z.object({
     titulo: z.string(),
     cta: z.string(),
@@ -106,11 +109,14 @@ Gere copy persuasivo, sofisticado e em português brasileiro. Headlines diretas,
         prompt,
         experimental_output: Output.object({ schema: PaginasIaSchema }),
       });
-      paginas = (result as { experimental_output: z.infer<typeof PaginasIaSchema> }).experimental_output;
+      paginas = (result as { experimental_output: z.infer<typeof PaginasIaSchema> })
+        .experimental_output;
     } catch (err) {
       const msg = (err as Error).message ?? "";
-      if (msg.includes("429")) throw new Error("Limite de requisições atingido. Tente novamente em alguns instantes.");
-      if (msg.includes("402")) throw new Error("Créditos de IA esgotados no workspace. Adicione créditos para continuar.");
+      if (msg.includes("429"))
+        throw new Error("Limite de requisições atingido. Tente novamente em alguns instantes.");
+      if (msg.includes("402"))
+        throw new Error("Créditos de IA esgotados no workspace. Adicione créditos para continuar.");
       throw new Error("Falha ao gerar conteúdo com IA. Tente novamente.");
     }
 

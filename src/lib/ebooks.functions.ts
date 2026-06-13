@@ -63,8 +63,15 @@ CONCLUSÃO
     } catch (err) {
       const msg = (err as Error).message ?? "";
       console.error("[gerarEbook] AI error:", err);
-      if (msg.includes("429")) return { ok: false as const, error: "Limite de requisições. Tente novamente em instantes." };
+      if (msg.includes("429"))
+        return {
+          ok: false as const,
+          error: "Limite de requisições. Tente novamente em instantes.",
+        };
       if (msg.includes("402")) return { ok: false as const, error: "Créditos de IA esgotados." };
-      return { ok: false as const, error: msg ? `Falha ao gerar e-book: ${msg}` : "Falha ao gerar e-book." };
+      return {
+        ok: false as const,
+        error: msg ? `Falha ao gerar e-book: ${msg}` : "Falha ao gerar e-book.",
+      };
     }
   });

@@ -1,26 +1,71 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import type { ComponentType } from "react";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { gerarEbook } from "@/lib/ebooks.functions";
 import { toast } from "sonner";
 import {
-  BookOpen, CreditCard, Layout, Video, Users, FileText,
-  Loader2, Download, ArrowRight, ArrowLeft,
-  Home, User, Plus, TrendingUp, Menu, FileText as FileIcon, Gift,
+  BookOpen,
+  CreditCard,
+  Layout,
+  Video,
+  Users,
+  FileText,
+  Loader2,
+  Download,
+  ArrowRight,
+  ArrowLeft,
+  Home,
+  User,
+  Plus,
+  TrendingUp,
+  Menu,
+  FileText as FileIcon,
+  Gift,
 } from "lucide-react";
 
 const NICHOS: Record<string, string[]> = {
-  "Emagrecimento": ["Receitas Saudáveis", "Treino em Casa", "Biohacking", "Sono e Bem-estar"],
-  "Finanças": ["Investimentos para Iniciantes", "Planejamento Financeiro", "Milhas Aéreas", "Finanças para Crianças"],
+  Emagrecimento: ["Receitas Saudáveis", "Treino em Casa", "Biohacking", "Sono e Bem-estar"],
+  Finanças: [
+    "Investimentos para Iniciantes",
+    "Planejamento Financeiro",
+    "Milhas Aéreas",
+    "Finanças para Crianças",
+  ],
   "Marketing Digital": ["Vendas Online", "Marketing para Afiliados", "Dropshipping", "E-commerce"],
   "Saúde Mental": ["Ansiedade Digital", "Autoconhecimento", "Terapias Naturais"],
-  "Desenvolvimento Pessoal": ["Produtividade", "Gestão de Tempo", "Carreira", "Estudo para Concursos"],
-  "Beleza": ["Beleza Natural", "Skincare Masculino", "Moda Feminina"],
-  "Casa e Estilo": ["Air Fryer Gourmet", "Horta Urbana", "Jardinagem", "Casa e Organização", "Crochê Moderno", "Pet"],
+  "Desenvolvimento Pessoal": [
+    "Produtividade",
+    "Gestão de Tempo",
+    "Carreira",
+    "Estudo para Concursos",
+  ],
+  Beleza: ["Beleza Natural", "Skincare Masculino", "Moda Feminina"],
+  "Casa e Estilo": [
+    "Air Fryer Gourmet",
+    "Horta Urbana",
+    "Jardinagem",
+    "Casa e Organização",
+    "Crochê Moderno",
+    "Pet",
+  ],
   "Educação e Idiomas": ["Alfabetização em Casa", "Idiomas"],
-  "Outros": ["Relacionamento", "Religião", "Empreendedorismo", "Gestão de Negócios", "Artesanato", "Espiritualidade", "Tecnologia", "Escrita", "Fotografia com Celular", "Viagem Low Cost", "Fitness", "Musculação"],
+  Outros: [
+    "Relacionamento",
+    "Religião",
+    "Empreendedorismo",
+    "Gestão de Negócios",
+    "Artesanato",
+    "Espiritualidade",
+    "Tecnologia",
+    "Escrita",
+    "Fotografia com Celular",
+    "Viagem Low Cost",
+    "Fitness",
+    "Musculação",
+  ],
 };
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -104,11 +149,13 @@ function Overview() {
 
       {/* period filters + Novo */}
       <div className="relative flex items-center gap-2 mb-6 flex-wrap">
-        {([
-          ["hoje", "Hoje"],
-          ["7d", "7 dias"],
-          ["30d", "30 dias"],
-        ] as [Period, string][]).map(([id, label]) => (
+        {(
+          [
+            ["hoje", "Hoje"],
+            ["7d", "7 dias"],
+            ["30d", "30 dias"],
+          ] as [Period, string][]
+        ).map(([id, label]) => (
           <button
             key={id}
             onClick={() => setPeriod(id)}
@@ -219,7 +266,11 @@ function Placeholder({ tab }: { tab: Tab }) {
 
 /* -------------------- BOTTOM NAV -------------------- */
 function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
-  const items: { id: Tab; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }> }[] = [
+  const items: {
+    id: Tab;
+    label: string;
+    icon: ComponentType<{ size?: number; strokeWidth?: number }>;
+  }[] = [
     { id: "inicio", label: "Início", icon: Home },
     { id: "ebooks", label: "Ebooks", icon: BookOpen },
     { id: "paginas", label: "Páginas", icon: Layout },
@@ -258,13 +309,18 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
 function EbookFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generated, setGenerated] = useState<{ titulo: string; subtitulo: string; conteudo: string; filename: string } | null>(null);
+  const [generated, setGenerated] = useState<{
+    titulo: string;
+    subtitulo: string;
+    conteudo: string;
+    filename: string;
+  } | null>(null);
   const [price, setPrice] = useState("");
   const [nicho, setNicho] = useState("");
   const [subnicho, setSubnicho] = useState("");
   const gerar = useServerFn(gerarEbook);
 
-  const subnichos = useMemo(() => (nicho ? NICHOS[nicho] ?? [] : []), [nicho]);
+  const subnichos = useMemo(() => (nicho ? (NICHOS[nicho] ?? []) : []), [nicho]);
   const canGenerate = !!nicho && !!subnicho && !isGenerating;
 
   const handleGenerate = async () => {
@@ -273,7 +329,12 @@ function EbookFlow() {
       const res = await gerar({ data: { nicho, subnicho } });
       if (!res.ok) throw new Error(res.error);
       const filename = `${res.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`;
-      setGenerated({ titulo: res.titulo, subtitulo: res.subtitulo, conteudo: res.conteudo, filename });
+      setGenerated({
+        titulo: res.titulo,
+        subtitulo: res.subtitulo,
+        conteudo: res.conteudo,
+        filename,
+      });
     } catch (e) {
       toast.error((e as Error).message || "Falha ao gerar e-book.");
     } finally {
@@ -321,7 +382,10 @@ function EbookFlow() {
         const lines = doc.splitTextToSize(bloco, maxW);
         const lh = size * 1.4;
         for (const ln of lines) {
-          if (y + lh > pageH - margin) { doc.addPage(); y = margin; }
+          if (y + lh > pageH - margin) {
+            doc.addPage();
+            y = margin;
+          }
           doc.text(ln, margin, y);
           y += lh;
         }
@@ -344,9 +408,7 @@ function EbookFlow() {
               key={step.id}
               onClick={() => setCurrentStep(step.id)}
               className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
-                currentStep === step.id
-                  ? "bg-zinc-900"
-                  : "text-zinc-600 hover:text-zinc-400"
+                currentStep === step.id ? "bg-zinc-900" : "text-zinc-600 hover:text-zinc-400"
               }`}
               style={{ color: currentStep === step.id ? AMBER : undefined }}
             >
@@ -362,25 +424,42 @@ function EbookFlow() {
           <div className="bg-[#111] p-8 rounded-3xl border border-zinc-800">
             <h2 className="text-2xl font-bold mb-6">Gerar E-book</h2>
 
-            <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">Nicho principal</label>
+            <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">
+              Nicho principal
+            </label>
             <select
               value={nicho}
-              onChange={(e) => { setNicho(e.target.value); setSubnicho(""); }}
+              onChange={(e) => {
+                setNicho(e.target.value);
+                setSubnicho("");
+              }}
               className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-5"
             >
               <option value="">Selecione um nicho...</option>
-              {Object.keys(NICHOS).map((n) => <option key={n} value={n}>{n}</option>)}
+              {Object.keys(NICHOS).map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
             </select>
 
-            <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">Sub-nicho</label>
+            <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">
+              Sub-nicho
+            </label>
             <select
               value={subnicho}
               onChange={(e) => setSubnicho(e.target.value)}
               disabled={!nicho}
               className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-6 disabled:opacity-40"
             >
-              <option value="">{nicho ? "Selecione um sub-nicho..." : "Escolha o nicho primeiro"}</option>
-              {subnichos.map((s) => <option key={s} value={s}>{s}</option>)}
+              <option value="">
+                {nicho ? "Selecione um sub-nicho..." : "Escolha o nicho primeiro"}
+              </option>
+              {subnichos.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
             </select>
 
             <button
@@ -389,7 +468,13 @@ function EbookFlow() {
               className="w-full text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
               style={{ background: AMBER }}
             >
-              {isGenerating ? <><Loader2 className="animate-spin" size={18}/> Gerando...</> : "Gerar Conteúdo"}
+              {isGenerating ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} /> Gerando...
+                </>
+              ) : (
+                "Gerar Conteúdo"
+              )}
             </button>
 
             {generated && (

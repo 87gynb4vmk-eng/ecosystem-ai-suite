@@ -12,19 +12,22 @@ const grupo1: Depoimento[] = [
     nome: "Thiago M.",
     cargo: "Infoprodutor Premium",
     inicial: "T",
-    texto: "Lancei meu ecossistema na sexta e fiz minha primeira venda no sábado. A copy gerada pela Alevi.ai converte de um jeito que eu não conseguia sozinho.",
+    texto:
+      "Lancei meu ecossistema na sexta e fiz minha primeira venda no sábado. A copy gerada pela Alevi.ai converte de um jeito que eu não conseguia sozinho.",
   },
   {
     nome: "Camila P.",
     cargo: "Coach de Alta Performance",
     inicial: "C",
-    texto: "Em uma semana eu já tinha faturado mais do que em três meses tentando montar tudo manualmente. O nível de profissionalismo é absurdo.",
+    texto:
+      "Em uma semana eu já tinha faturado mais do que em três meses tentando montar tudo manualmente. O nível de profissionalismo é absurdo.",
   },
   {
     nome: "Rafael D.",
     cargo: "Consultor de Tráfego Pago",
     inicial: "R",
-    texto: "Uso a Alevi.ai para entregar para meus clientes. Eles ficam impressionados. Aumentei meu ticket médio em 3x.",
+    texto:
+      "Uso a Alevi.ai para entregar para meus clientes. Eles ficam impressionados. Aumentei meu ticket médio em 3x.",
   },
 ];
 
@@ -33,19 +36,22 @@ const grupo2: Depoimento[] = [
     nome: "Sofia R.",
     cargo: "Mentora de Negócios",
     inicial: "S",
-    texto: "Eu já paguei agências caríssimas que entregaram menos do que a Alevi.ai faz em minutos. O plano vitalício se pagou na primeira mentoria que vendi.",
+    texto:
+      "Eu já paguei agências caríssimas que entregaram menos do que a Alevi.ai faz em minutos. O plano vitalício se pagou na primeira mentoria que vendi.",
   },
   {
     nome: "Lucas V.",
     cargo: "Especialista em Vendas",
     inicial: "L",
-    texto: "O diferencial é a inteligência da IA na hora de quebrar objeções. Cada página vem com argumentos que eu, com 10 anos de mercado, ainda não tinha pensado.",
+    texto:
+      "O diferencial é a inteligência da IA na hora de quebrar objeções. Cada página vem com argumentos que eu, com 10 anos de mercado, ainda não tinha pensado.",
   },
   {
     nome: "Aline T.",
     cargo: "Fundadora de E-commerce",
     inicial: "A",
-    texto: "Comprei o vitalício e nunca mais precisei pagar mensalidade de copywriter ou designer. Vale cada centavo.",
+    texto:
+      "Comprei o vitalício e nunca mais precisei pagar mensalidade de copywriter ou designer. Vale cada centavo.",
   },
 ];
 
@@ -76,11 +82,15 @@ export function TestimonialsResultado() {
     <section id="depoimentos" className="py-24 bg-muted/40">
       <div className="container mx-auto max-w-6xl px-6">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">Resultados Reais</span>
+          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+            Resultados Reais
+          </span>
           <h2 className="mt-4 text-4xl md:text-5xl font-bold">Faturando desde o primeiro dia</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
-          {grupo1.map((d) => <Card key={d.nome} d={d} />)}
+          {grupo1.map((d) => (
+            <Card key={d.nome} d={d} />
+          ))}
         </div>
       </div>
     </section>
@@ -92,11 +102,15 @@ export function TestimonialsObjecao() {
     <section className="py-24 bg-background">
       <div className="container mx-auto max-w-6xl px-6">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">Por que escolher Alevi.ai</span>
+          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+            Por que escolher Alevi.ai
+          </span>
           <h2 className="mt-4 text-4xl md:text-5xl font-bold">Quem entra, não volta atrás</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
-          {grupo2.map((d) => <Card key={d.nome} d={d} />)}
+          {grupo2.map((d) => (
+            <Card key={d.nome} d={d} />
+          ))}
         </div>
       </div>
     </section>
