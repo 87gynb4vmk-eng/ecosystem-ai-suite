@@ -149,11 +149,13 @@ function Overview() {
 
       {/* period filters + Novo */}
       <div className="relative flex items-center gap-2 mb-6 flex-wrap">
-        {([
-          ["hoje", "Hoje"],
-          ["7d", "7 dias"],
-          ["30d", "30 dias"],
-        ] as [Period, string][]).map(([id, label]) => (
+        {(
+          [
+            ["hoje", "Hoje"],
+            ["7d", "7 dias"],
+            ["30d", "30 dias"],
+          ] as [Period, string][]
+        ).map(([id, label]) => (
           <button
             key={id}
             onClick={() => setPeriod(id)}
@@ -264,7 +266,11 @@ function Placeholder({ tab }: { tab: Tab }) {
 
 /* -------------------- BOTTOM NAV -------------------- */
 function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
-  const items: { id: Tab; label: string; icon: React.ComponentType<{ size?: number; strokeWidth?: number }> }[] = [
+  const items: {
+    id: Tab;
+    label: string;
+    icon: ComponentType<{ size?: number; strokeWidth?: number }>;
+  }[] = [
     { id: "inicio", label: "Início", icon: Home },
     { id: "ebooks", label: "Ebooks", icon: BookOpen },
     { id: "paginas", label: "Páginas", icon: Layout },
@@ -303,7 +309,12 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
 function EbookFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generated, setGenerated] = useState<{ titulo: string; subtitulo: string; conteudo: string; filename: string } | null>(null);
+  const [generated, setGenerated] = useState<{
+    titulo: string;
+    subtitulo: string;
+    conteudo: string;
+    filename: string;
+  } | null>(null);
   const [price, setPrice] = useState("");
   const [nicho, setNicho] = useState("");
   const [subnicho, setSubnicho] = useState("");
