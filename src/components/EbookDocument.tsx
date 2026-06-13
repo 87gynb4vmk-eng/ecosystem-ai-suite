@@ -87,8 +87,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
       boxSizing: "border-box",
       backgroundColor: "#ffffff",
       color: "#111827",
-      fontFamily:
-        "'Inter', 'Helvetica Neue', Arial, sans-serif",
+      fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
       position: "relative",
       pageBreakAfter: "always",
       breakAfter: "page",
@@ -114,10 +113,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
     // TOC pages assumption: cover=1, toc=2, then each section starts on a new page
     let pageCursor = 3;
     const tocEntries = sections.map((s) => {
-      const label =
-        s.type === "chapter"
-          ? `Capítulo ${s.number} — ${s.heading}`
-          : s.heading;
+      const label = s.type === "chapter" ? `Capítulo ${s.number} — ${s.heading}` : s.heading;
       const entry = { label, page: pageCursor };
       pageCursor += 1; // assume 1 page per section (best-effort)
       return entry;
@@ -286,7 +282,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
               <div
                 style={{
                   backgroundColor: "#0a0a0a",
-                      color: "#ffffff",
+                  color: "#ffffff",
                   padding: "28px 32px",
                   borderRadius: "16px",
                 }}
