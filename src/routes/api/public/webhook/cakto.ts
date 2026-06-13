@@ -9,12 +9,14 @@ const PayloadSchema = z.object({
       email: z.string().email(),
       name: z.string().optional(),
     }),
-    product: z.object({
-      // Mensal vs vitalicio: identificar por preço ou id
-      price: z.number().optional(),
-      id: z.string().optional(),
-      name: z.string().optional(),
-    }).optional(),
+    product: z
+      .object({
+        // Mensal vs vitalicio: identificar por preço ou id
+        price: z.number().optional(),
+        id: z.string().optional(),
+        name: z.string().optional(),
+      })
+      .optional(),
     plano: z.enum(["mensal", "vitalicio"]).optional(),
   }),
 });
@@ -93,10 +95,7 @@ export const Route = createFileRoute("/api/public/webhook/cakto")({
 
         await supabaseAdmin
           .from("usuarios")
-          .upsert(
-            { id: userId, email, senha_temporaria: senha, plano },
-            { onConflict: "id" },
-          );
+          .upsert({ id: userId, email, senha_temporaria: senha, plano }, { onConflict: "id" });
 
         console.log(`[Cakto webhook] usuário ${email} provisionado plano=${plano}`);
         return Response.json({ ok: true });
