@@ -320,6 +320,7 @@ function EbookFlow() {
   const [nicho, setNicho] = useState("");
   const [subnicho, setSubnicho] = useState("");
   const gerar = useServerFn(gerarEbook);
+  const docRef = useRef<HTMLDivElement>(null);
 
   const subnichos = useMemo(() => (nicho ? (NICHOS[nicho] ?? []) : []), [nicho]);
   const canGenerate = !!nicho && !!subnicho && !isGenerating;
