@@ -393,7 +393,9 @@ function EbookFlow() {
               useCORS: true,
               backgroundColor: "#ffffff",
               onclone: (doc: Document) => {
-                doc.querySelectorAll("style, link[rel='stylesheet']").forEach((node) => node.remove());
+                doc
+                  .querySelectorAll("style, link[rel='stylesheet']")
+                  .forEach((node) => node.remove());
                 doc.documentElement.style.background = "#ffffff";
                 doc.body.style.background = "#ffffff";
                 doc.body.style.color = "#111827";
@@ -408,7 +410,9 @@ function EbookFlow() {
         pdfElement.remove();
       }
     } catch (e) {
-      toast.error(`Ocorreu um erro ao gerar o PDF: ${(e as Error).message || "Falha ao baixar PDF."}`);
+      toast.error(
+        `Ocorreu um erro ao gerar o PDF: ${(e as Error).message || "Falha ao baixar PDF."}`,
+      );
     }
   };
 
