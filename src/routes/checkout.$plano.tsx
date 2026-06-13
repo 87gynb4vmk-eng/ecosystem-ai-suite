@@ -30,7 +30,9 @@ function CheckoutPage() {
       <main className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">Plano inválido</h1>
-          <Link to="/" className="text-gold underline">Voltar ao início</Link>
+          <Link to="/" className="text-gold underline">
+            Voltar ao início
+          </Link>
         </div>
       </main>
     );
@@ -142,7 +144,9 @@ function CheckoutPage() {
             className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-gradient-gold px-4 py-3.5 text-base font-bold text-gold-foreground shadow-gold-glow hover:opacity-95 transition disabled:opacity-60"
           >
             {loading ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> Processando pagamento...</>
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Processando pagamento...
+              </>
             ) : (
               <>Pagar agora</>
             )}
