@@ -359,7 +359,23 @@ function EbookFlow() {
           margin: 0,
           filename: generated.filename,
           image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: "#ffffff",
+            onclone: (doc: Document) => {
+              const style = doc.createElement("style");
+              style.textContent = `
+                .ebook-pdf-root, .ebook-pdf-root * {
+                  border-color: #e5e7eb !important;
+                  outline-color: #e5e7eb !important;
+                  text-decoration-color: currentColor !important;
+                  box-shadow: none !important;
+                }
+              `;
+              doc.head.appendChild(style);
+            },
+          },
           jsPDF: { unit: "px", format: [794, 1123], orientation: "portrait" },
           pagebreak: { mode: ["css", "legacy"] },
         })
