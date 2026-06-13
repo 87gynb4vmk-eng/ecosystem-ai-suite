@@ -343,6 +343,75 @@ function EbookFlow() {
   const subnichos = useMemo(() => (nicho ? (NICHOS[nicho] ?? []) : []), [nicho]);
   const canGenerate = !!nicho && !!subnicho && !isGenerating;
 
+  // Carrega automaticamente o último e-book gerado pelo usuário
+  useEffect(() => {
+    let cancelled = false;
+    if (generated) return;
+    setIsLoadingLast(true);
+    obterUltimo()
+      .then((res) => {
+        if (cancelled) return;
+        if (res.ok && res.ebook) {
+          setGenerated({
+            id: res.ebook.id,
+            titulo: res.ebook.titulo,
+            subtitulo: res.ebook.subtitulo,
+            conteudo: res.ebook.conteudo,
+            filename: `${res.ebook.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`,
+          });
+          setNicho(res.ebook.nicho);
+          setSubnicho(res.ebook.subnicho);
+          setAffiliateLink(res.ebook.affiliate_link ?? "");
+          if (res.ebook.affiliate_link || res.ebook.id) {
+            setPublishedUrl(
+              typeof window !== "undefined"
+                ? `${window.location.origin}/view-page/${res.ebook.id}`
+                : null,
+            );
+          }
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingLast(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handlePublish = async () => {
+    if (!generated?.id) {
+      toast.error("Gere um e-book antes de criar a página.");
+      return;
+    }
+    setIsPublishing(true);
+    try {
+      const res = await salvarLink({
+        data: { id: generated.id, affiliate_link: affiliateLink.trim() },
+      });
+      if (!res.ok) throw new Error(res.error);
+      const url = `${window.location.origin}/view-page/${generated.id}`;
+      setPublishedUrl(url);
+      toast.success("Página gerada! Copie e divulgue.");
+    } catch (e) {
+      toast.error((e as Error).message || "Falha ao gerar página.");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!publishedUrl) return;
+    try {
+      await navigator.clipboard.writeText(publishedUrl);
+      toast.success("Link copiado!");
+    } catch {
+      toast.error("Não foi possível copiar.");
+    }
+  };
+
+
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
