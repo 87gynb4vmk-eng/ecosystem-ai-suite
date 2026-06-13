@@ -1,12 +1,27 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { gerarEbook } from "@/lib/ebooks.functions";
+import { toast } from "sonner";
 import {
   BookOpen, CreditCard, Layout, Video, Users, FileText,
   Loader2, Download, ArrowRight, ArrowLeft,
   Home, User, Plus, TrendingUp, Menu, FileText as FileIcon, Gift,
 } from "lucide-react";
+
+const NICHOS: Record<string, string[]> = {
+  "Emagrecimento": ["Receitas Saudáveis", "Treino em Casa", "Biohacking", "Sono e Bem-estar"],
+  "Finanças": ["Investimentos para Iniciantes", "Planejamento Financeiro", "Milhas Aéreas", "Finanças para Crianças"],
+  "Marketing Digital": ["Vendas Online", "Marketing para Afiliados", "Dropshipping", "E-commerce"],
+  "Saúde Mental": ["Ansiedade Digital", "Autoconhecimento", "Terapias Naturais"],
+  "Desenvolvimento Pessoal": ["Produtividade", "Gestão de Tempo", "Carreira", "Estudo para Concursos"],
+  "Beleza": ["Beleza Natural", "Skincare Masculino", "Moda Feminina"],
+  "Casa e Estilo": ["Air Fryer Gourmet", "Horta Urbana", "Jardinagem", "Casa e Organização", "Crochê Moderno", "Pet"],
+  "Educação e Idiomas": ["Alfabetização em Casa", "Idiomas"],
+  "Outros": ["Relacionamento", "Religião", "Empreendedorismo", "Gestão de Negócios", "Artesanato", "Espiritualidade", "Tecnologia", "Escrita", "Fotografia com Celular", "Viagem Low Cost", "Fitness", "Musculação"],
+};
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Início | Alevi.ai" }] }),
