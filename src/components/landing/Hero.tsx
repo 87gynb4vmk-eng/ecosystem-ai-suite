@@ -25,7 +25,8 @@ export function Hero() {
         </h1>
 
         <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-white/70 md:text-xl">
-          Sua estrutura completa de vendas, configurada automaticamente por IA, do zero ao faturamento.
+          Sua estrutura completa de vendas, configurada automaticamente por IA, do zero ao
+          faturamento.
         </p>
 
         <div className="mt-12 flex justify-center">
