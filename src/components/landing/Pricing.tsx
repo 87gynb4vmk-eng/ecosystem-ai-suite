@@ -21,7 +21,9 @@ export function Pricing() {
     <section id="planos" className="py-24 bg-gradient-to-b from-muted/40 to-background">
       <div className="container mx-auto max-w-6xl px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">Escolha seu plano</span>
+          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+            Escolha seu plano
+          </span>
           <h2 className="mt-4 text-4xl md:text-5xl font-bold">Acesse o ecossistema agora</h2>
           <p className="mt-4 text-muted-foreground text-lg">
             Comece hoje e gere seu primeiro ecossistema em minutos.
