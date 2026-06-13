@@ -286,7 +286,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
               <div
                 style={{
                   backgroundColor: "#0a0a0a",
-                  color: "#fff",
+                      color: "#ffffff",
                   padding: "28px 32px",
                   borderRadius: "16px",
                 }}
@@ -310,7 +310,7 @@ export const EbookDocument = forwardRef<HTMLDivElement, EbookDocumentProps>(
                     margin: 0,
                     fontSize: "30px",
                     fontWeight: 800,
-                    color: "#fff",
+                    color: "#ffffff",
                     letterSpacing: "-0.01em",
                     lineHeight: 1.15,
                   }}
