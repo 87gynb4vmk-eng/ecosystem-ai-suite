@@ -329,6 +329,7 @@ function EbookFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [pdfRenderKey, setPdfRenderKey] = useState(0);
   const [generated, setGenerated] = useState<{
     titulo: string;
     subtitulo: string;
@@ -364,10 +365,14 @@ function EbookFlow() {
   };
 
   const handleDownload = async () => {
-    if (!generated || !docRef.current || isDownloading) return;
+    if (!generated || isDownloading) return;
     setIsDownloading(true);
     let pdfElement: HTMLElement | null = null;
     try {
+      setPdfRenderKey((key) => key + 1);
+      await new Promise((resolve) => window.setTimeout(resolve, 800));
+      if (!docRef.current) throw new Error("Template do e-book não foi renderizado.");
+
       const html2pdf = ((await import("html2pdf.js")) as { default: unknown }).default as (
         ...args: unknown[]
       ) => {
@@ -379,12 +384,17 @@ function EbookFlow() {
         };
       };
       pdfElement = createPdfSafeClone(docRef.current);
-      pdfElement.style.position = "fixed";
-      pdfElement.style.left = "0";
+      pdfElement.style.position = "absolute";
+      pdfElement.style.left = "-9999px";
       pdfElement.style.top = "0";
-      pdfElement.style.zIndex = "-1";
+      pdfElement.style.zIndex = "0";
       pdfElement.style.opacity = "1";
       pdfElement.style.pointerEvents = "none";
+      pdfElement.style.display = "block";
+      pdfElement.style.visibility = "visible";
+      pdfElement.style.width = "794px";
+      pdfElement.style.minWidth = "794px";
+      pdfElement.style.maxWidth = "794px";
       pdfElement.style.background = "#ffffff";
       document.body.appendChild(pdfElement);
 
@@ -591,28 +601,21 @@ function EbookFlow() {
         )}
       </div>
 
-      {/* Hidden printable document */}
-      {generated && (
-        <div
-          style={{
-            position: "fixed",
-            left: "-10000px",
-            top: 0,
-            zIndex: -1,
-            pointerEvents: "none",
-            opacity: 0,
-          }}
-          aria-hidden
-        >
-          <EbookDocument
-            ref={docRef}
-            titulo={generated.titulo}
-            subtitulo={generated.subtitulo}
-            nicho={nicho}
-            conteudo={generated.conteudo}
-          />
-        </div>
-      )}
+      {/* Printable document rendered off-screen for PDF capture */}
+      <div
+        className="absolute -left-[9999px] top-0 opacity-0 pointer-events-none"
+        style={{ width: "794px", minWidth: "794px", maxWidth: "794px" }}
+        aria-hidden="true"
+      >
+        <EbookDocument
+          key={pdfRenderKey}
+          ref={docRef}
+          titulo={generated?.titulo ?? ""}
+          subtitulo={generated?.subtitulo ?? ""}
+          nicho={nicho}
+          conteudo={generated?.conteudo ?? ""}
+        />
+      </div>
     </div>
   );
 }
