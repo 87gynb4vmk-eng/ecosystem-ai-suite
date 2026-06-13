@@ -415,7 +415,8 @@ function EbookFlow() {
         `Ocorreu um erro ao gerar o PDF: ${(e as Error).message || "Falha ao baixar PDF."}`,
       );
     } finally {
-      if (blobUrl) window.setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+      const urlToRevoke = blobUrl;
+      if (urlToRevoke) window.setTimeout(() => URL.revokeObjectURL(urlToRevoke), 1000);
       setIsPdfCaptureActive(false);
       setIsDownloading(false);
     }
@@ -583,8 +584,19 @@ function EbookFlow() {
 
       {/* Printable document rendered off-screen for PDF capture */}
       <div
-        className="absolute -left-[9999px] top-0 opacity-0 pointer-events-none"
-        style={{ width: "794px", minWidth: "794px", maxWidth: "794px" }}
+        className="pointer-events-none"
+        style={{
+          position: isPdfCaptureActive ? "fixed" : "absolute",
+          left: isPdfCaptureActive ? "0" : "-9999px",
+          top: "0",
+          width: "794px",
+          minWidth: "794px",
+          maxWidth: "794px",
+          opacity: isPdfCaptureActive ? 1 : 0,
+          zIndex: -1,
+          overflow: "visible",
+          background: "#ffffff",
+        }}
         aria-hidden="true"
       >
         <EbookDocument
