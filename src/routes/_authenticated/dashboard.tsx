@@ -271,6 +271,7 @@ function EbookFlow() {
     setIsGenerating(true);
     try {
       const res = await gerar({ data: { nicho, subnicho } });
+      if (!res.ok) throw new Error(res.error);
       const bin = atob(res.pdfBase64);
       const arr = new Uint8Array(bin.length);
       for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
