@@ -364,16 +364,21 @@ function EbookFlow() {
   };
 
   const handleDownload = async () => {
-    if (!generated || !docRef.current) return;
+    if (!generated || !docRef.current || isDownloading) return;
+    setIsDownloading(true);
+    let pdfElement: HTMLElement | null = null;
     try {
       const html2pdf = ((await import("html2pdf.js")) as { default: unknown }).default as (
         ...args: unknown[]
       ) => {
         set: (opts: Record<string, unknown>) => {
-          from: (el: HTMLElement) => { save: () => Promise<void> };
+          from: (el: HTMLElement) => {
+            output: (type: "blob") => Promise<Blob>;
+            outputPdf: (type: "blob") => Promise<Blob>;
+          };
         };
       };
-      const pdfElement = createPdfSafeClone(docRef.current);
+      pdfElement = createPdfSafeClone(docRef.current);
       pdfElement.style.position = "fixed";
       pdfElement.style.left = "0";
       pdfElement.style.top = "0";
@@ -383,37 +388,46 @@ function EbookFlow() {
       pdfElement.style.background = "#ffffff";
       document.body.appendChild(pdfElement);
 
-      try {
-        await html2pdf()
-          .set({
-            margin: 0,
-            filename: generated.filename,
-            image: { type: "jpeg", quality: 0.98 },
-            html2canvas: {
-              scale: 2,
-              useCORS: true,
-              backgroundColor: "#ffffff",
-              onclone: (doc: Document) => {
-                doc
-                  .querySelectorAll("style, link[rel='stylesheet']")
-                  .forEach((node) => node.remove());
-                doc.documentElement.style.background = "#ffffff";
-                doc.body.style.background = "#ffffff";
-                doc.body.style.color = "#111827";
-              },
+      const worker = html2pdf()
+        .set({
+          margin: 0,
+          filename: generated.filename,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: "#ffffff",
+            onclone: (doc: Document) => {
+              doc
+                .querySelectorAll("style, link[rel='stylesheet']")
+                .forEach((node) => node.remove());
+              doc.documentElement.style.background = "#ffffff";
+              doc.body.style.background = "#ffffff";
+              doc.body.style.color = "#111827";
             },
-            jsPDF: { unit: "px", format: [794, 1123], orientation: "portrait" },
-            pagebreak: { mode: ["css", "legacy"] },
-          })
-          .from(pdfElement)
-          .save();
-      } finally {
-        pdfElement.remove();
-      }
+          },
+          jsPDF: { unit: "px", format: [794, 1123], orientation: "portrait" },
+          pagebreak: { mode: ["css", "legacy"] },
+        })
+        .from(pdfElement);
+
+      const blob: Blob = await worker.output("blob");
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = generated.filename || "ebook.pdf";
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     } catch (e) {
       toast.error(
         `Ocorreu um erro ao gerar o PDF: ${(e as Error).message || "Falha ao baixar PDF."}`,
       );
+    } finally {
+      if (pdfElement) pdfElement.remove();
+      setIsDownloading(false);
     }
   };
 
