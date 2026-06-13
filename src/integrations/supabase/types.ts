@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      ebooks: {
+        Row: {
+          affiliate_link: string | null
+          conteudo: string
+          created_at: string
+          id: string
+          nicho: string
+          subnicho: string
+          subtitulo: string
+          titulo: string
+          updated_at: string
+          usuario_id: string
+        }
+        Insert: {
+          affiliate_link?: string | null
+          conteudo: string
+          created_at?: string
+          id?: string
+          nicho: string
+          subnicho: string
+          subtitulo: string
+          titulo: string
+          updated_at?: string
+          usuario_id: string
+        }
+        Update: {
+          affiliate_link?: string | null
+          conteudo?: string
+          created_at?: string
+          id?: string
+          nicho?: string
+          subnicho?: string
+          subtitulo?: string
+          titulo?: string
+          updated_at?: string
+          usuario_id?: string
+        }
+        Relationships: []
+      }
       projetos: {
         Row: {
           created_at: string

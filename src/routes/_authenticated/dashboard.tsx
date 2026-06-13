@@ -2,9 +2,13 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import type { ComponentType } from "react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { gerarEbook } from "@/lib/ebooks.functions";
+import {
+  gerarEbook,
+  obterUltimoEbook,
+  atualizarAffiliateLink,
+} from "@/lib/ebooks.functions";
 import { EbookDocument } from "@/components/EbookDocument";
 import { LandingPageTemplate } from "@/components/LandingPageTemplate";
 import { toast } from "sonner";
@@ -26,6 +30,9 @@ import {
   Menu,
   FileText as FileIcon,
   Gift,
+  Link as LinkIcon,
+  Copy,
+  ExternalLink,
 } from "lucide-react";
 
 const NICHOS: Record<string, string[]> = {
@@ -315,6 +322,7 @@ function EbookFlow() {
   const [isPdfCaptureActive, setIsPdfCaptureActive] = useState(false);
   const [pdfRenderKey, setPdfRenderKey] = useState(0);
   const [generated, setGenerated] = useState<{
+    id: string | null;
     titulo: string;
     subtitulo: string;
     conteudo: string;
@@ -324,11 +332,85 @@ function EbookFlow() {
   const [nicho, setNicho] = useState("");
   const [subnicho, setSubnicho] = useState("");
   const [affiliateLink, setAffiliateLink] = useState("");
+  const [publishedUrl, setPublishedUrl] = useState<string | null>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [isLoadingLast, setIsLoadingLast] = useState(false);
   const gerar = useServerFn(gerarEbook);
+  const obterUltimo = useServerFn(obterUltimoEbook);
+  const salvarLink = useServerFn(atualizarAffiliateLink);
   const docRef = useRef<HTMLDivElement>(null);
 
   const subnichos = useMemo(() => (nicho ? (NICHOS[nicho] ?? []) : []), [nicho]);
   const canGenerate = !!nicho && !!subnicho && !isGenerating;
+
+  // Carrega automaticamente o último e-book gerado pelo usuário
+  useEffect(() => {
+    let cancelled = false;
+    if (generated) return;
+    setIsLoadingLast(true);
+    obterUltimo()
+      .then((res) => {
+        if (cancelled) return;
+        if (res.ok && res.ebook) {
+          setGenerated({
+            id: res.ebook.id,
+            titulo: res.ebook.titulo,
+            subtitulo: res.ebook.subtitulo,
+            conteudo: res.ebook.conteudo,
+            filename: `${res.ebook.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`,
+          });
+          setNicho(res.ebook.nicho);
+          setSubnicho(res.ebook.subnicho);
+          setAffiliateLink(res.ebook.affiliate_link ?? "");
+          if (res.ebook.affiliate_link || res.ebook.id) {
+            setPublishedUrl(
+              typeof window !== "undefined"
+                ? `${window.location.origin}/view-page/${res.ebook.id}`
+                : null,
+            );
+          }
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingLast(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handlePublish = async () => {
+    if (!generated?.id) {
+      toast.error("Gere um e-book antes de criar a página.");
+      return;
+    }
+    setIsPublishing(true);
+    try {
+      const res = await salvarLink({
+        data: { id: generated.id, affiliate_link: affiliateLink.trim() },
+      });
+      if (!res.ok) throw new Error(res.error);
+      const url = `${window.location.origin}/view-page/${generated.id}`;
+      setPublishedUrl(url);
+      toast.success("Página gerada! Copie e divulgue.");
+    } catch (e) {
+      toast.error((e as Error).message || "Falha ao gerar página.");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!publishedUrl) return;
+    try {
+      await navigator.clipboard.writeText(publishedUrl);
+      toast.success("Link copiado!");
+    } catch {
+      toast.error("Não foi possível copiar.");
+    }
+  };
+
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -337,11 +419,14 @@ function EbookFlow() {
       if (!res.ok) throw new Error(res.error);
       const filename = `${res.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`;
       setGenerated({
+        id: res.id,
         titulo: res.titulo,
         subtitulo: res.subtitulo,
         conteudo: res.conteudo,
         filename,
       });
+      setPublishedUrl(null);
+      setAffiliateLink("");
     } catch (e) {
       toast.error((e as Error).message || "Falha ao gerar e-book.");
     } finally {
@@ -609,35 +694,120 @@ function EbookFlow() {
 
         {currentStep === 3 && (
           <div className="space-y-6">
-            <div className="bg-[#111] p-6 rounded-3xl border border-zinc-800">
-              <h2 className="text-xl font-bold mb-2">Página de Vendas</h2>
-              <p className="text-sm text-zinc-400 mb-5">
-                Cole o link de afiliado gerado na Kiwify ou Cakto. Ele será vinculado automaticamente
-                a todos os botões de compra da landing page.
-              </p>
-              <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">
-                Link de afiliado
-              </label>
-              <input
-                value={affiliateLink}
-                onChange={(e) => setAffiliateLink(e.target.value)}
-                placeholder="https://pay.kiwify.com.br/seu-link"
-                className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-4 text-sm"
-              />
-              {!affiliateLink && (
-                <p className="text-xs text-amber-400/80">
-                  Sem link, os botões ficarão desativados na pré-visualização.
+            {isLoadingLast && !generated ? (
+              <div className="bg-[#111] p-8 rounded-3xl border border-zinc-800 text-center text-sm text-zinc-500">
+                <Loader2 className="animate-spin mx-auto mb-2" /> Carregando seu último e-book...
+              </div>
+            ) : !generated ? (
+              <div className="bg-[#111] p-8 rounded-3xl border border-zinc-800 text-center">
+                <p className="text-sm text-zinc-400 mb-4">
+                  Você ainda não gerou um e-book. Volte para a Etapa 1 para começar.
                 </p>
-              )}
-            </div>
+                <button
+                  onClick={() => setCurrentStep(1)}
+                  className="text-black font-bold px-5 py-3 rounded-xl"
+                  style={{ background: AMBER }}
+                >
+                  Gerar e-book agora
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* Resumo do e-book carregado */}
+                <div className="bg-[#111] p-5 rounded-3xl border border-zinc-800">
+                  <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">
+                    E-book carregado
+                  </span>
+                  <h3 className="text-lg font-bold mt-1">{generated.titulo}</h3>
+                  <p className="text-sm text-zinc-400 mt-1">{generated.subtitulo}</p>
+                  <div className="flex items-center gap-2 mt-3">
+                    <span
+                      className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded"
+                      style={{ background: `${AMBER}1a`, color: AMBER }}
+                    >
+                      {subnicho || nicho}
+                    </span>
+                  </div>
+                </div>
 
-            <LandingPageTemplate
-              titulo={generated?.titulo ?? ""}
-              subtitulo={generated?.subtitulo ?? ""}
-              nicho={subnicho || nicho}
-              price={price}
-              affiliateLink={affiliateLink}
-            />
+                {/* Link de afiliado + publicação */}
+                <div className="bg-[#111] p-6 rounded-3xl border border-zinc-800">
+                  <h2 className="text-xl font-bold mb-2">Página de Vendas</h2>
+                  <p className="text-sm text-zinc-400 mb-5">
+                    Cole o link de pagamento (Kiwify ou Cakto). Ele será injetado automaticamente em
+                    todos os botões da página.
+                  </p>
+                  <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">
+                    Link de pagamento
+                  </label>
+                  <input
+                    value={affiliateLink}
+                    onChange={(e) => setAffiliateLink(e.target.value)}
+                    placeholder="https://pay.kiwify.com.br/seu-link"
+                    className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-4 text-sm"
+                  />
+
+                  <button
+                    onClick={handlePublish}
+                    disabled={isPublishing}
+                    className="w-full text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50"
+                    style={{ background: AMBER }}
+                  >
+                    {isPublishing ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin" /> Gerando...
+                      </>
+                    ) : (
+                      <>
+                        <LinkIcon size={18} /> Gerar Link da Página
+                      </>
+                    )}
+                  </button>
+
+                  {publishedUrl && (
+                    <div className="mt-5 p-4 rounded-2xl border border-emerald-600/30 bg-emerald-500/5">
+                      <p className="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-wider">
+                        Sua página está pronta
+                      </p>
+                      <div className="flex items-center gap-2 bg-black border border-zinc-800 rounded-xl p-3">
+                        <span className="text-xs text-zinc-300 truncate flex-1">{publishedUrl}</span>
+                        <button
+                          onClick={handleCopy}
+                          className="shrink-0 p-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white"
+                          aria-label="Copiar link"
+                        >
+                          <Copy size={14} />
+                        </button>
+                        <a
+                          href={publishedUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="shrink-0 p-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white"
+                          aria-label="Abrir"
+                        >
+                          <ExternalLink size={14} />
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Pré-visualização */}
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-zinc-500 font-bold mb-3 px-1">
+                    Pré-visualização
+                  </p>
+                  <LandingPageTemplate
+                    titulo={generated.titulo}
+                    subtitulo={generated.subtitulo}
+                    nicho={subnicho || nicho}
+                    price={price}
+                    affiliateLink={affiliateLink}
+                  />
+                </div>
+              </>
+            )}
+
 
             <div className="flex gap-4">
               <button
