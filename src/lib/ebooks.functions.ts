@@ -40,9 +40,10 @@ Tom profissional, prático e envolvente. Inclua título marcante, subtítulo, in
       ebook = (result as { experimental_output: z.infer<typeof EbookSchema> }).experimental_output;
     } catch (err) {
       const msg = (err as Error).message ?? "";
+      console.error("[gerarEbook] AI error:", err);
       if (msg.includes("429")) throw new Error("Limite de requisições. Tente novamente em instantes.");
       if (msg.includes("402")) throw new Error("Créditos de IA esgotados.");
-      throw new Error("Falha ao gerar e-book.");
+      throw new Error(`Falha ao gerar e-book: ${msg}`);
     }
 
     const { PDFDocument, StandardFonts, rgb } = await import("pdf-lib");
