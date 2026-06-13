@@ -258,7 +258,7 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
 function EbookFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generated, setGenerated] = useState<{ titulo: string; url: string; filename: string } | null>(null);
+  const [generated, setGenerated] = useState<{ titulo: string; subtitulo: string; conteudo: string; filename: string } | null>(null);
   const [price, setPrice] = useState("");
   const [nicho, setNicho] = useState("");
   const [subnicho, setSubnicho] = useState("");
@@ -272,17 +272,65 @@ function EbookFlow() {
     try {
       const res = await gerar({ data: { nicho, subnicho } });
       if (!res.ok) throw new Error(res.error);
-      const bin = atob(res.pdfBase64);
-      const arr = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-      const blob = new Blob([arr], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
       const filename = `${res.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`;
-      setGenerated({ titulo: res.titulo, url, filename });
+      setGenerated({ titulo: res.titulo, subtitulo: res.subtitulo, conteudo: res.conteudo, filename });
     } catch (e) {
       toast.error((e as Error).message || "Falha ao gerar e-book.");
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!generated) return;
+    try {
+      const { jsPDF } = await import("jspdf");
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const margin = 56;
+      const maxW = pageW - margin * 2;
+
+      // Cover
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(26);
+      const titleLines = doc.splitTextToSize(generated.titulo, maxW);
+      doc.text(titleLines, pageW / 2, pageH / 2 - 20, { align: "center" });
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(14);
+      const subLines = doc.splitTextToSize(generated.subtitulo, maxW);
+      doc.text(subLines, pageW / 2, pageH / 2 + 20, { align: "center" });
+
+      doc.addPage();
+      let y = margin;
+      const blocos = generated.conteudo
+        .split(/\n{2,}/)
+        .map((p) => p.trim())
+        .filter(Boolean);
+
+      for (const raw of blocos) {
+        const bloco = raw
+          .replace(/^T[IÍ]TULO\s*:.+$/im, "")
+          .replace(/^SUBT[IÍ]TULO\s*:.+$/im, "")
+          .trim();
+        if (!bloco) continue;
+        const isHeading = /^(INTRODUÇÃO|CONCLUSÃO|CAP[IÍ]TULO\s+\d+)/i.test(bloco);
+        const size = isHeading ? 16 : 11;
+        doc.setFont("helvetica", isHeading ? "bold" : "normal");
+        doc.setFontSize(size);
+        const lines = doc.splitTextToSize(bloco, maxW);
+        const lh = size * 1.4;
+        for (const ln of lines) {
+          if (y + lh > pageH - margin) { doc.addPage(); y = margin; }
+          doc.text(ln, margin, y);
+          y += lh;
+        }
+        y += isHeading ? 10 : 8;
+      }
+
+      doc.save(generated.filename);
+    } catch (e) {
+      toast.error((e as Error).message || "Falha ao baixar PDF.");
     }
   };
 
@@ -351,14 +399,14 @@ function EbookFlow() {
                     <FileText style={{ color: AMBER }} className="shrink-0" />
                     <span className="truncate text-sm">{generated.filename}</span>
                   </div>
-                  <a
-                    href={generated.url}
-                    download={generated.filename}
+                  <button
+                    onClick={handleDownload}
                     className="p-2 rounded-lg text-black shrink-0"
                     style={{ background: AMBER }}
+                    aria-label="Baixar PDF"
                   >
                     <Download size={18} />
-                  </a>
+                  </button>
                 </div>
                 <button
                   onClick={() => setCurrentStep(2)}
