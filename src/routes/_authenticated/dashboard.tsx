@@ -408,9 +408,7 @@ function EbookFlow() {
               key={step.id}
               onClick={() => setCurrentStep(step.id)}
               className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
-                currentStep === step.id
-                  ? "bg-zinc-900"
-                  : "text-zinc-600 hover:text-zinc-400"
+                currentStep === step.id ? "bg-zinc-900" : "text-zinc-600 hover:text-zinc-400"
               }`}
               style={{ color: currentStep === step.id ? AMBER : undefined }}
             >
@@ -426,17 +424,28 @@ function EbookFlow() {
           <div className="bg-[#111] p-8 rounded-3xl border border-zinc-800">
             <h2 className="text-2xl font-bold mb-6">Gerar E-book</h2>
 
-            <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">Nicho principal</label>
+            <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">
+              Nicho principal
+            </label>
             <select
               value={nicho}
-              onChange={(e) => { setNicho(e.target.value); setSubnicho(""); }}
+              onChange={(e) => {
+                setNicho(e.target.value);
+                setSubnicho("");
+              }}
               className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-5"
             >
               <option value="">Selecione um nicho...</option>
-              {Object.keys(NICHOS).map((n) => <option key={n} value={n}>{n}</option>)}
+              {Object.keys(NICHOS).map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
             </select>
 
-            <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">Sub-nicho</label>
+            <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">
+              Sub-nicho
+            </label>
             <select
               value={subnicho}
               onChange={(e) => setSubnicho(e.target.value)}
