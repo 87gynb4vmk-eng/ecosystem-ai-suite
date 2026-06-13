@@ -522,6 +522,29 @@ function EbookFlow() {
           </div>
         )}
       </div>
+
+      {/* Hidden printable document */}
+      {generated && (
+        <div
+          style={{
+            position: "fixed",
+            left: "-10000px",
+            top: 0,
+            zIndex: -1,
+            pointerEvents: "none",
+            opacity: 0,
+          }}
+          aria-hidden
+        >
+          <EbookDocument
+            ref={docRef}
+            titulo={generated.titulo}
+            subtitulo={generated.subtitulo}
+            nicho={nicho}
+            conteudo={generated.conteudo}
+          />
+        </div>
+      )}
     </div>
   );
 }
