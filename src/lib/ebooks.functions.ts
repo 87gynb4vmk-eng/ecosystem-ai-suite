@@ -21,33 +21,42 @@ export const gerarEbook = createServerFn({ method: "POST" })
     try {
       const result = await generateText({
         model: gateway("google/gemini-3-flash-preview"),
-        prompt: `Crie um e-book completo em português brasileiro sobre "${data.subnicho}" dentro do nicho "${data.nicho}".
-Use tom profissional, prático e envolvente.
+        prompt: `Crie um e-book COMPLETO, APROFUNDADO e PROFISSIONAL em português brasileiro sobre "${data.subnicho}" dentro do nicho "${data.nicho}".
+Use tom profissional, prático, envolvente e didático. Conteúdo extenso e de alto valor, como um produto comercial premium.
 
-Formato obrigatório em texto simples, sem JSON e sem markdown:
-TÍTULO: um título comercial curto
+REGRAS DE FORMATO (texto simples, SEM JSON, SEM markdown):
+TÍTULO: um título comercial curto e impactante
 SUBTÍTULO: uma promessa clara do conteúdo
 
 INTRODUÇÃO
-2 parágrafos curtos.
+4 a 5 parágrafos densos contextualizando tema, problema, oportunidade e o que o leitor vai aprender.
 
 CAPÍTULO 1 — título do capítulo
-3 parágrafos curtos.
+6 a 8 parágrafos longos com exemplos práticos, dados e dicas acionáveis. Inclua listas com "- " quando útil.
 
 CAPÍTULO 2 — título do capítulo
-3 parágrafos curtos.
+Mesmo padrão (6 a 8 parágrafos + bullets quando útil).
 
 CAPÍTULO 3 — título do capítulo
-3 parágrafos curtos.
+Mesmo padrão.
 
 CAPÍTULO 4 — título do capítulo
-3 parágrafos curtos.
+Mesmo padrão.
 
 CAPÍTULO 5 — título do capítulo
-3 parágrafos curtos.
+Mesmo padrão.
+
+CAPÍTULO 6 — título do capítulo
+Mesmo padrão.
+
+CAPÍTULO 7 — título do capítulo
+Mesmo padrão.
+
+CAPÍTULO 8 — título do capítulo
+Mesmo padrão.
 
 CONCLUSÃO
-2 parágrafos curtos.`,
+4 a 5 parágrafos com síntese, chamada para ação e próximos passos.`,
       });
       const conteudo = result.text.trim();
       if (!conteudo) return { ok: false as const, error: "A IA retornou uma resposta vazia." };
