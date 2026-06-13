@@ -570,8 +570,22 @@ function EbookFlow() {
               className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-6"
             />
             <div className="flex gap-4">
-              <button className="flex-1 bg-zinc-800 py-4 rounded-xl font-bold">Kiwify</button>
-              <button className="flex-1 bg-zinc-800 py-4 rounded-xl font-bold">Cakto</button>
+              <a
+                href="https://kiwify.com.br"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-zinc-800 py-4 rounded-xl font-bold text-center"
+              >
+                Kiwify
+              </a>
+              <a
+                href="https://cakto.com.br"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-zinc-800 py-4 rounded-xl font-bold text-center"
+              >
+                Cakto
+              </a>
             </div>
             <div className="flex gap-4 mt-8">
               <button
