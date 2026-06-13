@@ -607,7 +607,57 @@ function EbookFlow() {
           </div>
         )}
 
-        {currentStep > 2 && (
+        {currentStep === 3 && (
+          <div className="space-y-6">
+            <div className="bg-[#111] p-6 rounded-3xl border border-zinc-800">
+              <h2 className="text-xl font-bold mb-2">Página de Vendas</h2>
+              <p className="text-sm text-zinc-400 mb-5">
+                Cole o link de afiliado gerado na Kiwify ou Cakto. Ele será vinculado automaticamente
+                a todos os botões de compra da landing page.
+              </p>
+              <label className="text-zinc-400 text-xs uppercase tracking-wider mb-2 block">
+                Link de afiliado
+              </label>
+              <input
+                value={affiliateLink}
+                onChange={(e) => setAffiliateLink(e.target.value)}
+                placeholder="https://pay.kiwify.com.br/seu-link"
+                className="w-full bg-black border border-zinc-700 p-4 rounded-xl text-white mb-4 text-sm"
+              />
+              {!affiliateLink && (
+                <p className="text-xs text-amber-400/80">
+                  Sem link, os botões ficarão desativados na pré-visualização.
+                </p>
+              )}
+            </div>
+
+            <LandingPageTemplate
+              titulo={generated?.titulo ?? ""}
+              subtitulo={generated?.subtitulo ?? ""}
+              nicho={subnicho || nicho}
+              price={price}
+              affiliateLink={affiliateLink}
+            />
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => setCurrentStep(2)}
+                className="flex-1 border border-zinc-800 py-3 rounded-xl flex items-center justify-center gap-2"
+              >
+                <ArrowLeft size={16} /> Voltar
+              </button>
+              <button
+                onClick={() => setCurrentStep(4)}
+                className="flex-1 text-black py-3 rounded-xl font-bold"
+                style={{ background: AMBER }}
+              >
+                Próxima Etapa
+              </button>
+            </div>
+          </div>
+        )}
+
+        {currentStep > 3 && (
           <div className="text-center py-20 text-zinc-500 border border-dashed border-zinc-800 rounded-3xl">
             Etapa {currentStep} em desenvolvimento...
           </div>
