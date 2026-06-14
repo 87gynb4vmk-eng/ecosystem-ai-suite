@@ -14,7 +14,7 @@ import {
   listarMinhasPaginas,
   deletarEbook,
 } from "@/lib/ebooks.functions";
-import { listarMeusVideos, deletarVideo } from "@/lib/videos.functions";
+
 import { EbookDocument } from "@/components/EbookDocument";
 import { LandingPageTemplate } from "@/components/LandingPageTemplate";
 import { Etapa5Grupos } from "@/components/Etapa5Grupos";
