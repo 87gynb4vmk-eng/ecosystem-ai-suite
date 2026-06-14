@@ -1,10 +1,14 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, useNavigate, Link, redirect } from "@tanstack/react-router";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) throw redirect({ to: "/dashboard" });
+  },
   head: () => ({
     meta: [
       { title: "Entrar | Alevi.ai" },
@@ -25,16 +29,6 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard", replace: true });
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) navigate({ to: "/dashboard", replace: true });
-    });
-    return () => sub.subscription.unsubscribe();
-  }, [navigate]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -43,6 +37,9 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Bem-vindo!");
+        setLoading(false);
+        navigate({ to: "/dashboard", replace: true });
+        return;
       } else {
         const { error } = await supabase.auth.signUp({
           email,
@@ -54,7 +51,6 @@ function AuthPage() {
       }
     } catch (err) {
       toast.error((err as Error).message ?? "Falha na autenticação.");
-    } finally {
       setLoading(false);
     }
   };
