@@ -18,6 +18,7 @@ import {
 import { EbookDocument } from "@/components/EbookDocument";
 import { LandingPageTemplate } from "@/components/LandingPageTemplate";
 import { Etapa5Grupos } from "@/components/Etapa5Grupos";
+import { EbooksList, PaginasList, VideosList } from "@/components/ProjectLists";
 import { toast } from "sonner";
 import {
   BookOpen,
