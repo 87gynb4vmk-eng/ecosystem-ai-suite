@@ -32,23 +32,21 @@ function buildTimeline(args: {
     type: "text",
     text,
     style: "001",
-    position: "custom",
     x: opts.x ?? 70,
     y: opts.y,
     width: opts.width ?? 940,
-    settings: {
-      "font-family": "Roboto Condensed",
-      "font-size": `${opts.size}px`,
-      "font-weight": String(opts.weight ?? 800),
-      color: opts.color ?? fg,
-      "text-align": opts.align ?? "center",
-      "vertical-align": "middle",
-    },
+    "font-family": "Arial",
+    "font-size": opts.size,
+    "font-weight": opts.weight ?? 800,
+    color: opts.color ?? fg,
+    "text-align": opts.align ?? "center",
   });
 
   return {
-    resolution: "instagram-portrait",
+    resolution: "custom",
     quality: "high",
+    width: 1080,
+    height: 1920,
     variables: { titulo: args.titulo, nicho: args.nicho },
     scenes: [
       {
