@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ViewPageIdRouteImport } from './routes/view-page.$id'
 import { Route as CheckoutPlanoRouteImport } from './routes/checkout.$plano'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAdminGruposRouteImport } from './routes/_authenticated/admin.grupos'
 import { Route as ApiPublicWebhookJson2videoRouteImport } from './routes/api/public/webhook/json2video'
 import { Route as ApiPublicWebhookCaktoRouteImport } from './routes/api/public/webhook/cakto'
 
@@ -47,6 +48,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminGruposRoute =
+  AuthenticatedAdminGruposRouteImport.update({
+    id: '/admin/grupos',
+    path: '/admin/grupos',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicWebhookJson2videoRoute =
   ApiPublicWebhookJson2videoRouteImport.update({
     id: '/api/public/webhook/json2video',
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
+  '/admin/grupos': typeof AuthenticatedAdminGruposRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
   '/api/public/webhook/json2video': typeof ApiPublicWebhookJson2videoRoute
 }
@@ -74,6 +82,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
+  '/admin/grupos': typeof AuthenticatedAdminGruposRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
   '/api/public/webhook/json2video': typeof ApiPublicWebhookJson2videoRoute
 }
@@ -85,6 +94,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
+  '/_authenticated/admin/grupos': typeof AuthenticatedAdminGruposRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
   '/api/public/webhook/json2video': typeof ApiPublicWebhookJson2videoRoute
 }
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
+    | '/admin/grupos'
     | '/api/public/webhook/cakto'
     | '/api/public/webhook/json2video'
   fileRoutesByTo: FileRoutesByTo
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
+    | '/admin/grupos'
     | '/api/public/webhook/cakto'
     | '/api/public/webhook/json2video'
   id:
@@ -115,6 +127,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
+    | '/_authenticated/admin/grupos'
     | '/api/public/webhook/cakto'
     | '/api/public/webhook/json2video'
   fileRoutesById: FileRoutesById
@@ -173,6 +186,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/grupos': {
+      id: '/_authenticated/admin/grupos'
+      path: '/admin/grupos'
+      fullPath: '/admin/grupos'
+      preLoaderRoute: typeof AuthenticatedAdminGruposRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/webhook/json2video': {
       id: '/api/public/webhook/json2video'
       path: '/api/public/webhook/json2video'
@@ -192,10 +212,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedAdminGruposRoute: typeof AuthenticatedAdminGruposRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedAdminGruposRoute: AuthenticatedAdminGruposRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -213,13 +235,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
