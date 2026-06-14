@@ -19,6 +19,7 @@ export type Database = {
           created_at: string
           descricao: string
           id: string
+          is_active: boolean
           link: string
           nicho: string
           plataforma: string
@@ -27,6 +28,7 @@ export type Database = {
           created_at?: string
           descricao: string
           id?: string
+          is_active?: boolean
           link: string
           nicho: string
           plataforma: string
@@ -35,6 +37,7 @@ export type Database = {
           created_at?: string
           descricao?: string
           id?: string
+          is_active?: boolean
           link?: string
           nicho?: string
           plataforma?: string
