@@ -78,6 +78,8 @@ export function Pricing() {
             </ul>
             <a
               href="https://pay.cakto.com.br/fnw2s5q_922144"
+              target="_top"
+              rel="noopener noreferrer"
               className="block w-full text-center rounded-md bg-gradient-gold px-6 py-3.5 text-base font-bold text-gold-foreground shadow-gold-glow hover:opacity-95 transition"
             >
               Garantir Vitalício
