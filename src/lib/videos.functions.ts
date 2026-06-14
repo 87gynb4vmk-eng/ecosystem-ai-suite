@@ -285,6 +285,7 @@ export const obterUltimoVideoDoEbook = createServerFn({ method: "POST" })
       .from("videos")
       .select("id, status, video_url, erro")
       .eq("ebook_id", data.ebookId)
+      .neq("status", "erro")
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();

@@ -923,6 +923,7 @@ function Etapa4Video({
       toast.error("Volte para a Etapa 1 e gere um e-book primeiro.");
       return;
     }
+    setVideoId(null);
     setIsStarting(true);
     try {
       const r = await gerar({ data: { ebookId, videoLink: affiliateLink || undefined } });
@@ -1019,11 +1020,12 @@ function Etapa4Video({
               {data.erro ?? "Falha ao renderizar."}
             </div>
             <button
-              onClick={() => setVideoId(null)}
+              onClick={handleGerar}
+              disabled={isStarting}
               className="w-full text-black py-3 rounded-xl font-bold"
               style={{ background: AMBER }}
             >
-              Tentar de novo
+              {isStarting ? "Iniciando..." : "Tentar de novo"}
             </button>
           </div>
         )}
