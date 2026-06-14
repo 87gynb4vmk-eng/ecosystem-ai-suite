@@ -233,7 +233,7 @@ export const obterUltimoVideoDoEbook = createServerFn({ method: "POST" })
       .select("id, status, video_url, erro")
       .eq("ebook_id", data.ebookId)
       .neq("status", "erro")
-      .gt("created_at", "2026-06-14T01:00:00Z")
+      .gt("created_at", "2026-06-14T01:07:00Z")
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
