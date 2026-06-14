@@ -99,16 +99,38 @@ const AMBER = "#E0B43A";
 
 function DashboardRoot() {
   const [tab, setTab] = useState<Tab>("inicio");
+  const [editingEbookId, setEditingEbookId] = useState<string | "new" | null>(null);
+
+  const openNew = () => {
+    setEditingEbookId("new");
+    setTab("ebooks");
+  };
+  const openEbook = (id: string) => {
+    setEditingEbookId(id);
+    setTab("ebooks");
+  };
 
   return (
     <div className="min-h-screen bg-black text-white font-sans pb-28">
-      {tab === "inicio" && <Overview onNovo={() => setTab("ebooks")} />}
-      {tab === "ebooks" && <EbookFlow />}
-      {tab !== "inicio" && tab !== "ebooks" && <Placeholder tab={tab} />}
+      {tab === "inicio" && <Overview onNovo={openNew} />}
+      {tab === "ebooks" &&
+        (editingEbookId ? (
+          <EbookFlow
+            key={editingEbookId}
+            initialEbookId={editingEbookId === "new" ? null : editingEbookId}
+            onBack={() => setEditingEbookId(null)}
+          />
+        ) : (
+          <EbooksList onNovo={openNew} onOpen={openEbook} />
+        ))}
+      {tab === "paginas" && <PaginasList onNovo={openNew} onOpen={openEbook} />}
+      {tab === "videos" && <VideosList onNovo={openNew} onOpen={openEbook} />}
+      {tab === "perfil" && <Placeholder tab={tab} />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   );
 }
+
 
 /* -------------------- OVERVIEW -------------------- */
 function Overview({ onNovo }: { onNovo: () => void }) {
