@@ -41,6 +41,9 @@ import {
   Link as LinkIcon,
   Copy,
   ExternalLink,
+  LogOut,
+  Mail,
+  X,
 } from "lucide-react";
 
 const NICHOS: Record<string, string[]> = {
@@ -131,7 +134,7 @@ function DashboardRoot() {
         ))}
       {tab === "paginas" && <PaginasList onNovo={openNew} onOpen={openEbook} />}
       {tab === "videos" && <VideosList onNovo={openNew} onOpen={openEbook} />}
-      {tab === "perfil" && <Placeholder tab={tab} />}
+      {tab === "perfil" && <PerfilScreen />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   );
@@ -143,6 +146,7 @@ function Overview({ onNovo }: { onNovo: () => void }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [period, setPeriod] = useState<Period>("hoje");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     await qc.cancelQueries();
@@ -150,6 +154,7 @@ function Overview({ onNovo }: { onNovo: () => void }) {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   };
+
 
   const bars = [
     { label: "Pix", value: 0 },
@@ -166,7 +171,7 @@ function Overview({ onNovo }: { onNovo: () => void }) {
       <div className="pointer-events-none absolute -top-10 left-0 right-0 h-72 bg-[radial-gradient(ellipse_at_top_left,rgba(16,185,129,0.18),transparent_60%)]" />
 
       <div className="relative flex items-center justify-between mb-6">
-        <button onClick={handleSignOut} className={iconBtn} aria-label="Menu">
+        <button onClick={() => setMenuOpen(true)} className={iconBtn} aria-label="Menu">
           <Menu size={18} />
         </button>
         <button className={iconBtn} aria-label="Documentos">
@@ -282,9 +287,100 @@ function Overview({ onNovo }: { onNovo: () => void }) {
           ))}
         </div>
       </div>
+      <AccountSheet open={menuOpen} onClose={() => setMenuOpen(false)} onSignOut={handleSignOut} />
     </div>
   );
 }
+
+/* -------------------- ACCOUNT SHEET / PERFIL -------------------- */
+function useUserEmail() {
+  return useQuery({
+    queryKey: ["auth-user-email"],
+    queryFn: async () => {
+      const { data } = await supabase.auth.getUser();
+      return data.user?.email ?? "";
+    },
+    staleTime: 60_000,
+  });
+}
+
+function AccountSheet({
+  open,
+  onClose,
+  onSignOut,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSignOut: () => void;
+}) {
+  const { data: email } = useUserEmail();
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
+      <button
+        aria-label="Fechar"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+      />
+      <div className="relative w-full sm:max-w-sm bg-zinc-950 border border-zinc-800 rounded-t-3xl sm:rounded-3xl p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-lg font-semibold">Conta</h3>
+          <button onClick={onClose} className="text-zinc-400 hover:text-white" aria-label="Fechar">
+            <X size={20} />
+          </button>
+        </div>
+        <div className="flex items-start gap-3 p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 mb-4">
+          <Mail size={18} className="text-zinc-400 mt-0.5" />
+          <div className="min-w-0">
+            <div className="text-[11px] uppercase tracking-wider text-zinc-500 mb-1">E-mail</div>
+            <div className="text-sm text-white break-all">{email || "Carregando..."}</div>
+          </div>
+        </div>
+        <button
+          onClick={onSignOut}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition font-semibold"
+        >
+          <LogOut size={18} />
+          Sair da conta
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PerfilScreen() {
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+  const { data: email } = useUserEmail();
+
+  const handleSignOut = async () => {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
+
+  return (
+    <div className="max-w-xl mx-auto px-5 pt-10">
+      <h1 className="text-5xl font-bold tracking-tight mb-8">Perfil</h1>
+      <div className="flex items-start gap-3 p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800 mb-4">
+        <Mail size={20} className="text-zinc-400 mt-0.5" />
+        <div className="min-w-0">
+          <div className="text-[11px] uppercase tracking-wider text-zinc-500 mb-1">E-mail</div>
+          <div className="text-base text-white break-all">{email || "Carregando..."}</div>
+        </div>
+      </div>
+      <button
+        onClick={handleSignOut}
+        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition font-semibold"
+      >
+        <LogOut size={18} />
+        Sair da conta
+      </button>
+    </div>
+  );
+}
+
 
 /* -------------------- PLACEHOLDER -------------------- */
 function Placeholder({ tab }: { tab: Tab }) {
