@@ -1005,10 +1005,11 @@ function Etapa4Video({
                 <Download size={16} /> Baixar MP4
               </a>
               <button
-                onClick={() => setVideoId(null)}
-                className="flex-1 border border-zinc-800 py-3 rounded-xl font-bold"
+                onClick={handleGerar}
+                disabled={isStarting}
+                className="flex-1 border border-zinc-800 py-3 rounded-xl font-bold disabled:opacity-50"
               >
-                Gerar outro
+                {isStarting ? "Iniciando..." : "Gerar outro"}
               </button>
             </div>
           </div>

@@ -25,108 +25,57 @@ function buildTimeline(args: {
   const fg = "#ffffff";
 
   const beneficios = args.beneficios.slice(0, 4);
+  const text = (
+    text: string,
+    opts: { x?: number; y: number; width?: number; size: number; color?: string; weight?: string | number; align?: string },
+  ) => ({
+    type: "text",
+    text,
+    style: "001",
+    position: "custom",
+    x: opts.x ?? 70,
+    y: opts.y,
+    width: opts.width ?? 940,
+    settings: {
+      "font-family": "Roboto Condensed",
+      "font-size": `${opts.size}px`,
+      "font-weight": String(opts.weight ?? 800),
+      color: opts.color ?? fg,
+      "text-align": opts.align ?? "center",
+      "vertical-align": "middle",
+    },
+  });
 
   return {
-    resolution: "full-hd",
+    resolution: "instagram-portrait",
     quality: "high",
-    width: 1080,
-    height: 1920,
     variables: { titulo: args.titulo, nicho: args.nicho },
     scenes: [
       {
         duration: 3.5,
         "background-color": bg,
         elements: [
-          {
-            type: "text",
-            text: args.nicho.toUpperCase(),
-            "font-family": "Inter",
-            "font-size": 42,
-            color: accent,
-            "font-weight": 700,
-            y: 380,
-          },
-          {
-            type: "text",
-            text: args.titulo,
-            "font-family": "Inter",
-            "font-size": 84,
-            color: fg,
-            "font-weight": 800,
-            "text-align": "center",
-            y: 720,
-            width: 960,
-            x: 60,
-          },
-          {
-            type: "text",
-            text: args.subtitulo,
-            "font-family": "Inter",
-            "font-size": 44,
-            color: "#a3a3a3",
-            "text-align": "center",
-            y: 1180,
-            width: 960,
-            x: 60,
-          },
+          text(args.nicho.toUpperCase(), { y: 360, size: 48, color: accent, weight: 900 }),
+          text(args.titulo, { y: 650, size: 86, weight: 900 }),
+          text(args.subtitulo, { y: 1120, size: 46, color: "#d4d4d8", weight: 600 }),
         ],
       },
       ...beneficios.map((b, i) => ({
         duration: 2.8,
         "background-color": bg,
         elements: [
-          {
-            type: "text",
-            text: `0${i + 1}`,
-            "font-family": "Inter",
-            "font-size": 220,
-            color: accent,
-            "font-weight": 900,
-            y: 360,
-          },
-          {
-            type: "text",
-            text: b,
-            "font-family": "Inter",
-            "font-size": 64,
-            color: fg,
-            "font-weight": 700,
-            "text-align": "center",
-            y: 820,
-            width: 960,
-            x: 60,
-          },
+          text(`0${i + 1}`, { y: 260, size: 190, color: accent, weight: 900 }),
+          text(b, { y: 760, size: 66, weight: 900 }),
         ],
       })),
       {
         duration: 4,
         "background-color": accent,
         elements: [
-          {
-            type: "text",
-            text: args.ctaTexto,
-            "font-family": "Inter",
-            "font-size": 96,
-            color: "#0a0a0a",
-            "font-weight": 900,
-            "text-align": "center",
-            y: 760,
-            width: 960,
-            x: 60,
-          },
+          text(args.ctaTexto, { y: 690, size: 96, color: "#0a0a0a", weight: 900 }),
           ...(args.ctaLink
             ? [
-                {
-                  type: "text",
-                  text: args.ctaLink,
-                  "font-family": "Inter",
-                  "font-size": 36,
-                  color: "#0a0a0a",
-                  "text-align": "center",
-                  y: 1140,
-                  width: 960,
-                  x: 60,
-                },
+                text(args.ctaLink, { y: 1080, size: 38, color: "#0a0a0a", weight: 700 }),
               ]
             : []),
         ],
@@ -286,6 +235,7 @@ export const obterUltimoVideoDoEbook = createServerFn({ method: "POST" })
       .select("id, status, video_url, erro")
       .eq("ebook_id", data.ebookId)
       .neq("status", "erro")
+      .gt("created_at", "2026-06-14T01:00:00Z")
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
