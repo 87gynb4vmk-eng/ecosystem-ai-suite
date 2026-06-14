@@ -146,6 +146,7 @@ function Overview({ onNovo }: { onNovo: () => void }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [period, setPeriod] = useState<Period>("hoje");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     await qc.cancelQueries();
@@ -153,6 +154,7 @@ function Overview({ onNovo }: { onNovo: () => void }) {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   };
+
 
   const bars = [
     { label: "Pix", value: 0 },
