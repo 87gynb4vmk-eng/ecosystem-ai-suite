@@ -340,8 +340,14 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   );
 }
 
-/* -------------------- EBOOK 5-STEP FLOW (unchanged) -------------------- */
-function EbookFlow() {
+/* -------------------- EBOOK 5-STEP FLOW -------------------- */
+function EbookFlow({
+  initialEbookId = null,
+  onBack,
+}: {
+  initialEbookId?: string | null;
+  onBack?: () => void;
+}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -363,18 +369,23 @@ function EbookFlow() {
   const [isLoadingLast, setIsLoadingLast] = useState(false);
   const gerar = useServerFn(gerarEbook);
   const obterUltimo = useServerFn(obterUltimoEbook);
+  const obterPorId = useServerFn(obterEbookPorId);
   const salvarLink = useServerFn(atualizarAffiliateLink);
   const docRef = useRef<HTMLDivElement>(null);
 
   const subnichos = useMemo(() => (nicho ? (NICHOS[nicho] ?? []) : []), [nicho]);
   const canGenerate = !!nicho && !!subnicho && !isGenerating;
 
-  // Carrega automaticamente o último e-book gerado pelo usuário
+  // Carrega automaticamente o e-book selecionado (ou o último, quando "Novo")
   useEffect(() => {
     let cancelled = false;
     if (generated) return;
+    if (initialEbookId === null) return; // "Novo": começa em branco
     setIsLoadingLast(true);
-    obterUltimo()
+    const loader = initialEbookId
+      ? obterPorId({ data: { id: initialEbookId } })
+      : obterUltimo();
+    loader
       .then((res) => {
         if (cancelled) return;
         if (res.ok && res.ebook) {
@@ -405,6 +416,7 @@ function EbookFlow() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const handlePublish = async () => {
     if (!generated?.id) {
