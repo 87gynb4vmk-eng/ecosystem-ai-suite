@@ -31,7 +31,6 @@ function buildTimeline(args: {
     quality: "high",
     width: 1080,
     height: 1920,
-    webhook: args.webhookUrl,
     variables: { titulo: args.titulo, nicho: args.nicho },
     scenes: [
       {
@@ -200,7 +199,7 @@ export const gerarVideo = createServerFn({ method: "POST" })
     });
 
     try {
-      const res = await fetch(J2V_BASE, {
+      const res = await fetch(`${J2V_BASE}?webhook=${encodeURIComponent(webhookUrl)}`, {
         method: "POST",
         headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
         body: JSON.stringify(movie),
