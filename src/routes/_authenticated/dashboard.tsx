@@ -1,18 +1,24 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { gerarVideo, obterVideo, obterUltimoVideoDoEbook } from "@/lib/videos.functions";
+import { gerarVideo, obterVideo, obterUltimoVideoDoEbook, listarMeusVideos, deletarVideo } from "@/lib/videos.functions";
 import type { ComponentType } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   gerarEbook,
   obterUltimoEbook,
+  obterEbookPorId,
   atualizarAffiliateLink,
+  listarMeusEbooks,
+  listarMinhasPaginas,
+  deletarEbook,
 } from "@/lib/ebooks.functions";
+
 import { EbookDocument } from "@/components/EbookDocument";
 import { LandingPageTemplate } from "@/components/LandingPageTemplate";
 import { Etapa5Grupos } from "@/components/Etapa5Grupos";
+import { EbooksList, PaginasList, VideosList } from "@/components/ProjectLists";
 import { toast } from "sonner";
 import {
   BookOpen,
@@ -99,16 +105,38 @@ const AMBER = "#E0B43A";
 
 function DashboardRoot() {
   const [tab, setTab] = useState<Tab>("inicio");
+  const [editingEbookId, setEditingEbookId] = useState<string | "new" | null>(null);
+
+  const openNew = () => {
+    setEditingEbookId("new");
+    setTab("ebooks");
+  };
+  const openEbook = (id: string) => {
+    setEditingEbookId(id);
+    setTab("ebooks");
+  };
 
   return (
     <div className="min-h-screen bg-black text-white font-sans pb-28">
-      {tab === "inicio" && <Overview onNovo={() => setTab("ebooks")} />}
-      {tab === "ebooks" && <EbookFlow />}
-      {tab !== "inicio" && tab !== "ebooks" && <Placeholder tab={tab} />}
+      {tab === "inicio" && <Overview onNovo={openNew} />}
+      {tab === "ebooks" &&
+        (editingEbookId ? (
+          <EbookFlow
+            key={editingEbookId}
+            initialEbookId={editingEbookId === "new" ? null : editingEbookId}
+            onBack={() => setEditingEbookId(null)}
+          />
+        ) : (
+          <EbooksList onNovo={openNew} onOpen={openEbook} />
+        ))}
+      {tab === "paginas" && <PaginasList onNovo={openNew} onOpen={openEbook} />}
+      {tab === "videos" && <VideosList onNovo={openNew} onOpen={openEbook} />}
+      {tab === "perfil" && <Placeholder tab={tab} />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   );
 }
+
 
 /* -------------------- OVERVIEW -------------------- */
 function Overview({ onNovo }: { onNovo: () => void }) {
@@ -318,8 +346,14 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   );
 }
 
-/* -------------------- EBOOK 5-STEP FLOW (unchanged) -------------------- */
-function EbookFlow() {
+/* -------------------- EBOOK 5-STEP FLOW -------------------- */
+function EbookFlow({
+  initialEbookId = null,
+  onBack,
+}: {
+  initialEbookId?: string | null;
+  onBack?: () => void;
+}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -341,18 +375,23 @@ function EbookFlow() {
   const [isLoadingLast, setIsLoadingLast] = useState(false);
   const gerar = useServerFn(gerarEbook);
   const obterUltimo = useServerFn(obterUltimoEbook);
+  const obterPorId = useServerFn(obterEbookPorId);
   const salvarLink = useServerFn(atualizarAffiliateLink);
   const docRef = useRef<HTMLDivElement>(null);
 
   const subnichos = useMemo(() => (nicho ? (NICHOS[nicho] ?? []) : []), [nicho]);
   const canGenerate = !!nicho && !!subnicho && !isGenerating;
 
-  // Carrega automaticamente o último e-book gerado pelo usuário
+  // Carrega automaticamente o e-book selecionado (ou o último, quando "Novo")
   useEffect(() => {
     let cancelled = false;
     if (generated) return;
+    if (initialEbookId === null) return; // "Novo": começa em branco
     setIsLoadingLast(true);
-    obterUltimo()
+    const loader = initialEbookId
+      ? obterPorId({ data: { id: initialEbookId } })
+      : obterUltimo();
+    loader
       .then((res) => {
         if (cancelled) return;
         if (res.ok && res.ebook) {
@@ -383,6 +422,7 @@ function EbookFlow() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const handlePublish = async () => {
     if (!generated?.id) {

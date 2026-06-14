@@ -267,3 +267,32 @@ export const obterUltimoVideoDoEbook = createServerFn({ method: "POST" })
       },
     };
   });
+
+export const listarMeusVideos = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("videos")
+      .select("id, status, video_url, erro, created_at, ebook_id, ebooks!inner(titulo, nicho)")
+      .eq("usuario_id", context.userId)
+      .order("created_at", { ascending: false });
+    if (error) {
+      console.error("[listarMeusVideos]", error);
+      return { ok: false as const, error: "Falha ao carregar vídeos." };
+    }
+    return { ok: true as const, videos: data ?? [] };
+  });
+
+const DelVideoInput = z.object({ id: z.string().uuid() });
+export const deletarVideo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => DelVideoInput.parse(i))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("videos")
+      .delete()
+      .eq("id", data.id)
+      .eq("usuario_id", context.userId);
+    if (error) return { ok: false as const, error: "Falha ao excluir vídeo." };
+    return { ok: true as const };
+  });

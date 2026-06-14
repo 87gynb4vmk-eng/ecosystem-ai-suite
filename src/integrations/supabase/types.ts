@@ -50,6 +50,7 @@ export type Database = {
           conteudo: string
           created_at: string
           id: string
+          is_published: boolean
           nicho: string
           subnicho: string
           subtitulo: string
@@ -62,6 +63,7 @@ export type Database = {
           conteudo: string
           created_at?: string
           id?: string
+          is_published?: boolean
           nicho: string
           subnicho: string
           subtitulo: string
@@ -74,6 +76,7 @@ export type Database = {
           conteudo?: string
           created_at?: string
           id?: string
+          is_published?: boolean
           nicho?: string
           subnicho?: string
           subtitulo?: string
