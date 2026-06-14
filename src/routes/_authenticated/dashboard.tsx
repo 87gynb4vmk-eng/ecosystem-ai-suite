@@ -134,7 +134,7 @@ function DashboardRoot() {
         ))}
       {tab === "paginas" && <PaginasList onNovo={openNew} onOpen={openEbook} />}
       {tab === "videos" && <VideosList onNovo={openNew} onOpen={openEbook} />}
-      {tab === "perfil" && <Placeholder tab={tab} />}
+      {tab === "perfil" && <PerfilScreen />}
       <BottomNav tab={tab} setTab={setTab} />
     </div>
   );
