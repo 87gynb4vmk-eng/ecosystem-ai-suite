@@ -12,6 +12,7 @@ import {
 } from "@/lib/ebooks.functions";
 import { EbookDocument } from "@/components/EbookDocument";
 import { LandingPageTemplate } from "@/components/LandingPageTemplate";
+import { Etapa5Grupos } from "@/components/Etapa5Grupos";
 import { toast } from "sonner";
 import {
   BookOpen,
@@ -837,7 +838,9 @@ function EbookFlow() {
           />
         )}
 
-        {currentStep > 4 && (
+        {currentStep === 5 && <Etapa5Grupos onBack={() => setCurrentStep(4)} />}
+
+        {currentStep > 5 && (
           <div className="text-center py-20 text-zinc-500 border border-dashed border-zinc-800 rounded-3xl">
             Etapa {currentStep} em desenvolvimento...
           </div>

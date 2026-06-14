@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      community_groups: {
+        Row: {
+          created_at: string
+          descricao: string
+          id: string
+          link: string
+          nicho: string
+          plataforma: string
+        }
+        Insert: {
+          created_at?: string
+          descricao: string
+          id?: string
+          link: string
+          nicho: string
+          plataforma: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string
+          id?: string
+          link?: string
+          nicho?: string
+          plataforma?: string
+        }
+        Relationships: []
+      }
       ebooks: {
         Row: {
           affiliate_link: string | null
