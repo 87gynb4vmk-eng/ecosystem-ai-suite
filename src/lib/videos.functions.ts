@@ -21,26 +21,50 @@ function buildTimeline(args: {
   webhookUrl: string;
 }) {
   const accent = "#f59e0b";
-  const bg = "#0a0a0a";
-  const fg = "#ffffff";
-
   const beneficios = args.beneficios.slice(0, 4);
-  const text = (
-    text: string,
-    opts: { x?: number; y: number; width?: number; size: number; color?: string; weight?: string | number; align?: string },
-  ) => ({
-    type: "text",
-    text,
-    style: "001",
-    x: opts.x ?? 70,
-    y: opts.y,
-    width: opts.width ?? 940,
-    "font-family": "Arial",
-    "font-size": opts.size,
-    "font-weight": opts.weight ?? 800,
-    color: opts.color ?? fg,
-    "text-align": opts.align ?? "center",
+  const escapeHtml = (value: string) =>
+    value
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  const htmlScene = (opts: { kicker: string; headline: string; body: string; number?: string; cta?: boolean }) => ({
+    type: "html",
+    width: 1080,
+    height: 1920,
+    x: 0,
+    y: 0,
+    duration: -2,
+    html: `
+      <div class="scene ${opts.cta ? "cta" : ""}">
+        <div class="orb one"></div><div class="orb two"></div><div class="grid"></div>
+        <div class="panel">
+          <div class="kicker">${escapeHtml(opts.kicker)}</div>
+          ${opts.number ? `<div class="number">${escapeHtml(opts.number)}</div>` : ""}
+          <h1>${escapeHtml(opts.headline)}</h1>
+          <p>${escapeHtml(opts.body)}</p>
+        </div>
+      </div>
+      <style>
+        *{box-sizing:border-box} body{margin:0;background:#111827;overflow:hidden}
+        .scene{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;color:white;background:radial-gradient(circle at 25% 18%,#78350f 0,#1f2937 26%,#111827 58%,#020617 100%)}
+        .scene.cta{background:radial-gradient(circle at 75% 22%,#fde68a 0,#f59e0b 30%,#92400e 68%,#111827 100%);color:#09090b}
+        .grid{position:absolute;inset:-80px;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:74px 74px;transform:rotate(-8deg) scale(1.2);animation:drift 8s linear infinite;opacity:.55}
+        .orb{position:absolute;border-radius:999px;filter:blur(18px);opacity:.85;animation:float 5s ease-in-out infinite alternate}.one{width:520px;height:520px;background:#f59e0b;left:-120px;top:160px}.two{width:760px;height:760px;background:#2563eb;right:-260px;bottom:120px;animation-delay:-1.4s}.cta .two{background:#111827;opacity:.22}.cta .one{background:#ffffff;opacity:.28}
+        .panel{position:absolute;left:76px;right:76px;top:270px;min-height:1180px;padding:88px 72px;border:3px solid rgba(255,255,255,.2);border-radius:54px;background:rgba(2,6,23,.55);box-shadow:0 40px 120px rgba(0,0,0,.38);animation:rise .9s cubic-bezier(.18,.8,.22,1) both}.cta .panel{background:rgba(255,255,255,.72);border-color:rgba(17,24,39,.24)}
+        .kicker{font-size:42px;letter-spacing:4px;text-transform:uppercase;font-weight:900;color:${accent};margin-bottom:60px}.cta .kicker{color:#92400e}.number{font-size:210px;line-height:.8;font-weight:900;color:${accent};margin-bottom:70px;text-shadow:0 20px 60px rgba(0,0,0,.3)}
+        h1{font-size:94px;line-height:1.02;margin:0 0 56px;font-weight:900;letter-spacing:0}p{font-size:52px;line-height:1.22;margin:0;color:#e5e7eb;font-weight:700}.cta p{color:#111827}
+        @keyframes rise{from{opacity:0;transform:translateY(120px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes float{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(80px,-90px,0) scale(1.14)}}@keyframes drift{from{transform:rotate(-8deg) translateY(0) scale(1.2)}to{transform:rotate(-8deg) translateY(74px) scale(1.2)}}
+      </style>`,
   });
+
+  const roteiro = [
+    `${args.titulo}. ${args.subtitulo}.`,
+    ...beneficios.map((b, i) => `Benefício ${i + 1}: ${b}.`),
+    `${args.ctaTexto}.`,
+  ].join(" ");
 
   return {
     resolution: "custom",
@@ -48,35 +72,30 @@ function buildTimeline(args: {
     width: 1080,
     height: 1920,
     variables: { titulo: args.titulo, nicho: args.nicho },
+    elements: [
+      {
+        type: "voice",
+        model: "azure",
+        voice: "pt-BR-AntonioNeural",
+        text: roteiro,
+        start: 0.4,
+      },
+    ],
     scenes: [
       {
         duration: 3.5,
-        "background-color": bg,
-        elements: [
-          text(args.nicho.toUpperCase(), { y: 360, size: 48, color: accent, weight: 900 }),
-          text(args.titulo, { y: 650, size: 86, weight: 900 }),
-          text(args.subtitulo, { y: 1120, size: 46, color: "#d4d4d8", weight: 600 }),
-        ],
+        "background-color": "#111827",
+        elements: [htmlScene({ kicker: args.nicho, headline: args.titulo, body: args.subtitulo })],
       },
       ...beneficios.map((b, i) => ({
         duration: 2.8,
-        "background-color": bg,
-        elements: [
-          text(`0${i + 1}`, { y: 260, size: 190, color: accent, weight: 900 }),
-          text(b, { y: 760, size: 66, weight: 900 }),
-        ],
+        "background-color": "#111827",
+        elements: [htmlScene({ kicker: "benefício", number: `0${i + 1}`, headline: b, body: "Ideia pronta para transformar em oferta e conteúdo de venda." })],
       })),
       {
         duration: 4,
         "background-color": accent,
-        elements: [
-          text(args.ctaTexto, { y: 690, size: 96, color: "#0a0a0a", weight: 900 }),
-          ...(args.ctaLink
-            ? [
-                text(args.ctaLink, { y: 1080, size: 38, color: "#0a0a0a", weight: 700 }),
-              ]
-            : []),
-        ],
+        elements: [htmlScene({ kicker: "oferta", headline: args.ctaTexto, body: args.ctaLink ?? "Acesse agora e aproveite o material completo.", cta: true })],
       },
     ],
   };
