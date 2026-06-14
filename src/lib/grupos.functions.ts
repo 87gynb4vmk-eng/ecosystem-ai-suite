@@ -23,6 +23,7 @@ export const listarGruposDoMeuNicho = createServerFn({ method: "GET" })
       .from("community_groups")
       .select("id, plataforma, nicho, link, descricao")
       .ilike("nicho", ebook.nicho)
+      .eq("is_active", true)
       .order("plataforma", { ascending: true });
 
     if (error) throw new Error(error.message);
