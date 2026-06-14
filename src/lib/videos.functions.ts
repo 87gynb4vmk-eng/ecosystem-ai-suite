@@ -31,7 +31,6 @@ function buildTimeline(args: {
     quality: "high",
     width: 1080,
     height: 1920,
-    webhook: args.webhookUrl,
     variables: { titulo: args.titulo, nicho: args.nicho },
     scenes: [
       {
