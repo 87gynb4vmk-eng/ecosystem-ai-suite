@@ -117,10 +117,10 @@ function Overview() {
   const [period, setPeriod] = useState<Period>("hoje");
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    qc.cancelQueries();
+    await qc.cancelQueries();
     qc.clear();
-    navigate({ to: "/auth" });
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
   };
 
   const bars = [
