@@ -873,3 +873,177 @@ function EbookFlow() {
     </div>
   );
 }
+
+/* -------------------- ETAPA 4: VÍDEO (JSON2Video) -------------------- */
+function Etapa4Video({
+  ebookId,
+  affiliateLink,
+  onBack,
+  onNext,
+}: {
+  ebookId: string | null;
+  affiliateLink: string;
+  onBack: () => void;
+  onNext: () => void;
+}) {
+  const gerar = useServerFn(gerarVideo);
+  const obter = useServerFn(obterVideo);
+  const obterUltimo = useServerFn(obterUltimoVideoDoEbook);
+  const [videoId, setVideoId] = useState<string | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
+
+  // Recupera último vídeo do e-book ao montar
+  useEffect(() => {
+    let cancel = false;
+    if (!ebookId || videoId) return;
+    obterUltimo({ data: { ebookId } })
+      .then((r) => {
+        if (cancel) return;
+        if (r.ok && r.video) setVideoId(r.video.id);
+      })
+      .catch(() => {});
+    return () => {
+      cancel = true;
+    };
+  }, [ebookId, videoId, obterUltimo]);
+
+  const status = useQuery({
+    queryKey: ["video", videoId],
+    queryFn: () => obter({ data: { id: videoId! } }),
+    enabled: !!videoId,
+    refetchInterval: (q) => {
+      const d = q.state.data;
+      if (!d || !d.ok) return 5000;
+      return d.status === "processando" ? 5000 : false;
+    },
+  });
+
+  async function handleGerar() {
+    if (!ebookId) {
+      toast.error("Volte para a Etapa 1 e gere um e-book primeiro.");
+      return;
+    }
+    setIsStarting(true);
+    try {
+      const r = await gerar({ data: { ebookId, videoLink: affiliateLink || undefined } });
+      if (!r.ok) {
+        toast.error(r.error);
+        return;
+      }
+      setVideoId(r.id);
+      toast.success("Vídeo em processamento...");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha ao iniciar vídeo");
+    } finally {
+      setIsStarting(false);
+    }
+  }
+
+  const data = status.data;
+  const currentStatus = data?.ok ? data.status : null;
+
+  return (
+    <div className="space-y-6">
+      <div className="border border-zinc-800 rounded-3xl p-6 bg-zinc-950/50">
+        <div className="flex items-center gap-3 mb-2">
+          <Video size={20} style={{ color: AMBER }} />
+          <h2 className="text-xl font-bold">Vídeo de vendas</h2>
+        </div>
+        <p className="text-sm text-zinc-500 mb-6">
+          Geramos um vídeo curto (formato vertical 9:16) a partir do seu e-book usando JSON2Video.
+          A renderização leva ~1 a 3 minutos.
+        </p>
+
+        {!ebookId && (
+          <div className="text-center py-10 text-zinc-500">
+            Você ainda não gerou um e-book. Volte para a Etapa 1.
+          </div>
+        )}
+
+        {ebookId && !videoId && (
+          <button
+            onClick={handleGerar}
+            disabled={isStarting}
+            className="w-full text-black py-3 rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-50"
+            style={{ background: AMBER }}
+          >
+            {isStarting ? (
+              <>
+                <Loader2 size={16} className="animate-spin" /> Iniciando...
+              </>
+            ) : (
+              <>
+                <Video size={16} /> Gerar vídeo de vendas
+              </>
+            )}
+          </button>
+        )}
+
+        {videoId && currentStatus === "processando" && (
+          <div className="flex flex-col items-center py-10 gap-3">
+            <Loader2 size={32} className="animate-spin" style={{ color: AMBER }} />
+            <p className="text-zinc-400">Renderizando seu vídeo... isso leva alguns minutos.</p>
+            <p className="text-xs text-zinc-600">Pode deixar essa tela aberta — atualizamos sozinho.</p>
+          </div>
+        )}
+
+        {videoId && currentStatus === "concluido" && data?.ok && data.videoUrl && (
+          <div className="space-y-4">
+            <video
+              src={data.videoUrl}
+              controls
+              playsInline
+              className="w-full rounded-2xl bg-black aspect-[9/16] max-h-[70vh] mx-auto"
+            />
+            <div className="flex gap-3">
+              <a
+                href={data.videoUrl}
+                download
+                className="flex-1 border border-zinc-800 py-3 rounded-xl font-bold text-center flex items-center justify-center gap-2"
+              >
+                <Download size={16} /> Baixar MP4
+              </a>
+              <button
+                onClick={() => setVideoId(null)}
+                className="flex-1 border border-zinc-800 py-3 rounded-xl font-bold"
+              >
+                Gerar outro
+              </button>
+            </div>
+          </div>
+        )}
+
+        {videoId && currentStatus === "erro" && data?.ok && (
+          <div className="space-y-3">
+            <div className="text-red-400 text-sm border border-red-900/50 bg-red-950/30 rounded-xl p-3">
+              {data.erro ?? "Falha ao renderizar."}
+            </div>
+            <button
+              onClick={() => setVideoId(null)}
+              className="w-full text-black py-3 rounded-xl font-bold"
+              style={{ background: AMBER }}
+            >
+              Tentar de novo
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          onClick={onBack}
+          className="flex-1 border border-zinc-800 py-3 rounded-xl font-bold flex items-center justify-center gap-2"
+        >
+          <ArrowLeft size={16} /> Voltar
+        </button>
+        <button
+          onClick={onNext}
+          className="flex-1 text-black py-3 rounded-xl font-bold"
+          style={{ background: AMBER }}
+        >
+          Próxima Etapa
+        </button>
+      </div>
+    </div>
+  );
+}
