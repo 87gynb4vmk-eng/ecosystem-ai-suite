@@ -48,6 +48,8 @@ export function Pricing() {
             </ul>
             <a
               href="https://pay.cakto.com.br/n26znnn_922150"
+              target="_top"
+              rel="noopener noreferrer"
               className="block w-full text-center rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90 transition"
             >
               Assinar Mensal
