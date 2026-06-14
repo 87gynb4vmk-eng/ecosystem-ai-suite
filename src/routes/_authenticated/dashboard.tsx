@@ -171,7 +171,7 @@ function Overview({ onNovo }: { onNovo: () => void }) {
       <div className="pointer-events-none absolute -top-10 left-0 right-0 h-72 bg-[radial-gradient(ellipse_at_top_left,rgba(16,185,129,0.18),transparent_60%)]" />
 
       <div className="relative flex items-center justify-between mb-6">
-        <button onClick={handleSignOut} className={iconBtn} aria-label="Menu">
+        <button onClick={() => setMenuOpen(true)} className={iconBtn} aria-label="Menu">
           <Menu size={18} />
         </button>
         <button className={iconBtn} aria-label="Documentos">
