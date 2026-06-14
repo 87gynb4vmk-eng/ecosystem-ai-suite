@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { gerarVideo, obterVideo, obterUltimoVideoDoEbook } from "@/lib/videos.functions";
+import { gerarVideo, obterVideo, obterUltimoVideoDoEbook, listarMeusVideos, deletarVideo } from "@/lib/videos.functions";
 import type { ComponentType } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
