@@ -1,7 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listarGruposDoMeuNicho } from "@/lib/grupos.functions";
-import { Search, Loader2, ArrowLeft, Facebook, MessageCircle } from "lucide-react";
+import { Search, Loader2, ArrowLeft, Facebook, MessageCircle, Send } from "lucide-react";
+
+const PLATAFORMA_STYLE: Record<string, { color: string; bg: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
+  WhatsApp: { color: "#25D366", bg: "#25D36620", icon: MessageCircle },
+  Telegram: { color: "#229ED9", bg: "#229ED920", icon: Send },
+  Facebook: { color: "#1877F2", bg: "#1877F220", icon: Facebook },
+  Discord: { color: "#5865F2", bg: "#5865F220", icon: MessageCircle },
+};
 
 const AMBER = "#f59e0b";
 
@@ -102,26 +109,30 @@ export function Etapa5Grupos({ onBack }: { onBack: () => void }) {
         <div className="space-y-3">
           {whatsappGroups.length === 0 && (
             <div className="border border-zinc-800 bg-zinc-900/20 rounded-2xl p-4 text-sm text-zinc-400">
-              Ainda não temos grupos de WhatsApp para esse nicho. Tente o Facebook abaixo.
+              Ainda não temos grupos fixos para esse nicho. Use a busca do Facebook abaixo.
             </div>
           )}
 
-          {whatsappGroups.map((g) => (
-            <Card
-              key={g.id}
-              icon={<MessageCircle className="w-6 h-6" style={{ color: "#25D366" }} />}
-              iconBg="#25D36620"
-              title={g.descricao}
-              subtitle={`WhatsApp · ${g.nicho}`}
-              href={g.link}
-            />
-          ))}
+          {whatsappGroups.map((g) => {
+            const style = PLATAFORMA_STYLE[g.plataforma] ?? PLATAFORMA_STYLE.WhatsApp;
+            const Icon = style.icon;
+            return (
+              <Card
+                key={g.id}
+                icon={<Icon className="w-6 h-6" style={{ color: style.color }} />}
+                iconBg={style.bg}
+                title={g.descricao}
+                subtitle={`${g.plataforma} · ${g.nicho}`}
+                href={g.link}
+              />
+            );
+          })}
 
           {facebookSearchUrl && (
             <Card
               icon={<Facebook className="w-6 h-6" style={{ color: "#1877F2" }} />}
               iconBg="#1877F220"
-              title={`Buscar grupos de ${data.nicho} no Facebook`}
+              title={`Buscar mais grupos de ${data.nicho} no Facebook`}
               subtitle="Facebook · resultados ao vivo"
               href={facebookSearchUrl}
             />
