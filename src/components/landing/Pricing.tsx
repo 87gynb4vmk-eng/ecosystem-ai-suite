@@ -1,5 +1,4 @@
 import { Check, Crown } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 
 const beneficiosMensal = [
   "Geração ilimitada de ecossistemas",
