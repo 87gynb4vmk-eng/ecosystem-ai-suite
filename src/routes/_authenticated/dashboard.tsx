@@ -102,7 +102,7 @@ function DashboardRoot() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans pb-28">
-      {tab === "inicio" && <Overview />}
+      {tab === "inicio" && <Overview onNovo={() => setTab("ebooks")} />}
       {tab === "ebooks" && <EbookFlow />}
       {tab !== "inicio" && tab !== "ebooks" && <Placeholder tab={tab} />}
       <BottomNav tab={tab} setTab={setTab} />
@@ -111,7 +111,7 @@ function DashboardRoot() {
 }
 
 /* -------------------- OVERVIEW -------------------- */
-function Overview() {
+function Overview({ onNovo }: { onNovo: () => void }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [period, setPeriod] = useState<Period>("hoje");
@@ -145,6 +145,7 @@ function Overview() {
           <FileIcon size={18} />
         </button>
         <button
+          onClick={onNovo}
           className="w-11 h-11 rounded-full border flex items-center justify-center"
           style={{ borderColor: AMBER, color: AMBER, boxShadow: `0 0 0 4px ${AMBER}10` }}
           aria-label="Novo"
@@ -180,6 +181,7 @@ function Overview() {
           </button>
         ))}
         <button
+          onClick={onNovo}
           className="ml-auto text-sm font-bold px-5 py-2.5 rounded-full flex items-center gap-1.5 text-black"
           style={{ background: `linear-gradient(135deg, ${AMBER}, #c89725)` }}
         >
