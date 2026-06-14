@@ -105,10 +105,10 @@ function AdminDashboard({ senha }: { senha: string }) {
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     carregar();
-    return undefined;
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCriar = async (e: React.FormEvent) => {
     e.preventDefault();
