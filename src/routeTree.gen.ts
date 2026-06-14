@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ViewPageIdRouteImport } from './routes/view-page.$id'
 import { Route as CheckoutPlanoRouteImport } from './routes/checkout.$plano'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as ApiPublicWebhookJson2videoRouteImport } from './routes/api/public/webhook/json2video'
 import { Route as ApiPublicWebhookCaktoRouteImport } from './routes/api/public/webhook/cakto'
 
 const AuthRoute = AuthRouteImport.update({
@@ -46,6 +47,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicWebhookJson2videoRoute =
+  ApiPublicWebhookJson2videoRouteImport.update({
+    id: '/api/public/webhook/json2video',
+    path: '/api/public/webhook/json2video',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicWebhookCaktoRoute = ApiPublicWebhookCaktoRouteImport.update({
   id: '/api/public/webhook/cakto',
   path: '/api/public/webhook/cakto',
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
+  '/api/public/webhook/json2video': typeof ApiPublicWebhookJson2videoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesByTo {
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
+  '/api/public/webhook/json2video': typeof ApiPublicWebhookJson2videoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,6 +86,7 @@ export interface FileRoutesById {
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
+  '/api/public/webhook/json2video': typeof ApiPublicWebhookJson2videoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/checkout/$plano'
     | '/view-page/$id'
     | '/api/public/webhook/cakto'
+    | '/api/public/webhook/json2video'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/checkout/$plano'
     | '/view-page/$id'
     | '/api/public/webhook/cakto'
+    | '/api/public/webhook/json2video'
   id:
     | '__root__'
     | '/'
@@ -104,6 +116,7 @@ export interface FileRouteTypes {
     | '/checkout/$plano'
     | '/view-page/$id'
     | '/api/public/webhook/cakto'
+    | '/api/public/webhook/json2video'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -113,6 +126,7 @@ export interface RootRouteChildren {
   CheckoutPlanoRoute: typeof CheckoutPlanoRoute
   ViewPageIdRoute: typeof ViewPageIdRoute
   ApiPublicWebhookCaktoRoute: typeof ApiPublicWebhookCaktoRoute
+  ApiPublicWebhookJson2videoRoute: typeof ApiPublicWebhookJson2videoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -159,6 +173,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/webhook/json2video': {
+      id: '/api/public/webhook/json2video'
+      path: '/api/public/webhook/json2video'
+      fullPath: '/api/public/webhook/json2video'
+      preLoaderRoute: typeof ApiPublicWebhookJson2videoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/webhook/cakto': {
       id: '/api/public/webhook/cakto'
       path: '/api/public/webhook/cakto'
@@ -187,6 +208,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutPlanoRoute: CheckoutPlanoRoute,
   ViewPageIdRoute: ViewPageIdRoute,
   ApiPublicWebhookCaktoRoute: ApiPublicWebhookCaktoRoute,
+  ApiPublicWebhookJson2videoRoute: ApiPublicWebhookJson2videoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
