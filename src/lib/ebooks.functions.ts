@@ -132,7 +132,7 @@ export const atualizarAffiliateLink = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("ebooks")
-      .update({ affiliate_link: data.affiliate_link || null })
+      .update({ affiliate_link: data.affiliate_link || null, is_published: true })
       .eq("id", data.id)
       .eq("usuario_id", context.userId);
     if (error) {
@@ -140,6 +140,83 @@ export const atualizarAffiliateLink = createServerFn({ method: "POST" })
       return { ok: false as const, error: "Falha ao salvar link." };
     }
     return { ok: true as const };
+  });
+
+export const listarMeusEbooks = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("ebooks")
+      .select("id, titulo, subtitulo, nicho, subnicho, affiliate_link, is_published, created_at")
+      .eq("usuario_id", context.userId)
+      .order("created_at", { ascending: false });
+    if (error) {
+      console.error("[listarMeusEbooks]", error);
+      return { ok: false as const, error: "Falha ao carregar e-books." };
+    }
+    return { ok: true as const, ebooks: data ?? [] };
+  });
+
+export const listarMinhasPaginas = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("ebooks")
+      .select("id, titulo, subtitulo, nicho, subnicho, affiliate_link, created_at")
+      .eq("usuario_id", context.userId)
+      .eq("is_published", true)
+      .order("created_at", { ascending: false });
+    if (error) {
+      console.error("[listarMinhasPaginas]", error);
+      return { ok: false as const, error: "Falha ao carregar páginas." };
+    }
+    return { ok: true as const, paginas: data ?? [] };
+  });
+
+const IdInput = z.object({ id: z.string().uuid() });
+
+export const deletarEbook = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => IdInput.parse(i))
+  .handler(async ({ data, context }) => {
+    await context.supabase.from("videos").delete().eq("ebook_id", data.id).eq("usuario_id", context.userId);
+    const { error } = await context.supabase
+      .from("ebooks")
+      .delete()
+      .eq("id", data.id)
+      .eq("usuario_id", context.userId);
+    if (error) {
+      console.error("[deletarEbook]", error);
+      return { ok: false as const, error: "Falha ao excluir." };
+    }
+    return { ok: true as const };
+  });
+
+export const despublicarEbook = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => IdInput.parse(i))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("ebooks")
+      .update({ is_published: false })
+      .eq("id", data.id)
+      .eq("usuario_id", context.userId);
+    if (error) return { ok: false as const, error: "Falha ao despublicar." };
+    return { ok: true as const };
+  });
+
+export const obterEbookPorId = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => IdInput.parse(i))
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase
+      .from("ebooks")
+      .select("id, nicho, subnicho, titulo, subtitulo, conteudo, affiliate_link, is_published, created_at")
+      .eq("id", data.id)
+      .eq("usuario_id", context.userId)
+      .maybeSingle();
+    if (error || !row) return { ok: false as const, error: "E-book não encontrado." };
+    return { ok: true as const, ebook: row };
   });
 
 const PubInput = z.object({ id: z.string().uuid() });
