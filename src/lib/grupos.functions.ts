@@ -25,7 +25,7 @@ export const listarGruposDoMeuNicho = createServerFn({ method: "GET" })
       .select("id, plataforma, nicho, link, descricao")
       .ilike("nicho", ebook.nicho)
       .eq("is_active", true)
-      .ilike("plataforma", "WhatsApp")
+      .order("plataforma", { ascending: true })
       .order("created_at", { ascending: false });
 
     if (error) throw new Error(error.message);
