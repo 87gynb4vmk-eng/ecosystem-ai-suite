@@ -63,7 +63,7 @@ export function Pricing() {
             <h3 className="font-display text-2xl font-bold mb-2 text-gradient-gold">Vitalício</h3>
             <p className="text-sm text-muted-foreground mb-6">Pague uma vez, use para sempre.</p>
             <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-5xl font-bold">R$ 250,90</span>
+              <span className="text-5xl font-bold">R$ 250,00</span>
             </div>
             <p className="text-sm text-gold font-semibold mb-8">Pagamento único</p>
             <ul className="space-y-3 mb-8">
@@ -74,13 +74,12 @@ export function Pricing() {
                 </li>
               ))}
             </ul>
-            <Link
-              to="/checkout/$plano"
-              params={{ plano: "vitalicio" }}
+            <a
+              href="https://pay.cakto.com.br/fnw2s5q_922144"
               className="block w-full text-center rounded-md bg-gradient-gold px-6 py-3.5 text-base font-bold text-gold-foreground shadow-gold-glow hover:opacity-95 transition"
             >
               Garantir Vitalício
-            </Link>
+            </a>
           </div>
         </div>
 
