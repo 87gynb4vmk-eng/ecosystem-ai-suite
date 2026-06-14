@@ -35,7 +35,7 @@ function buildTimeline(args: {
     scenes: [
       {
         duration: 3.5,
-        background: bg,
+        "background-color": bg,
         elements: [
           {
             type: "text",
@@ -73,7 +73,7 @@ function buildTimeline(args: {
       },
       ...beneficios.map((b, i) => ({
         duration: 2.8,
-        background: bg,
+        "background-color": bg,
         elements: [
           {
             type: "text",
@@ -100,7 +100,7 @@ function buildTimeline(args: {
       })),
       {
         duration: 4,
-        background: accent,
+        "background-color": accent,
         elements: [
           {
             type: "text",
