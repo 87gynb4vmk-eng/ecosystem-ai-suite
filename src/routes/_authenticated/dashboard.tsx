@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { gerarVideo, obterVideo, obterUltimoVideoDoEbook } from "@/lib/videos.functions";
 import type { ComponentType } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -827,7 +828,16 @@ function EbookFlow() {
           </div>
         )}
 
-        {currentStep > 3 && (
+        {currentStep === 4 && (
+          <Etapa4Video
+            ebookId={generated?.id ?? null}
+            affiliateLink={affiliateLink}
+            onBack={() => setCurrentStep(3)}
+            onNext={() => setCurrentStep(5)}
+          />
+        )}
+
+        {currentStep > 4 && (
           <div className="text-center py-20 text-zinc-500 border border-dashed border-zinc-800 rounded-3xl">
             Etapa {currentStep} em desenvolvimento...
           </div>
