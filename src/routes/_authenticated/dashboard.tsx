@@ -603,7 +603,7 @@ function EbookFlow({
     loader
       .then((res) => {
         if (cancelled) return;
-        if (res.ok && res.ebook) {
+        if (res && res.ok && res.ebook) {
           setGenerated({
             id: res.ebook.id,
             titulo: res.ebook.titulo,
@@ -623,6 +623,9 @@ function EbookFlow({
           }
         }
       })
+      .catch((err) => {
+        console.error("[load ebook]", err);
+      })
       .finally(() => {
         if (!cancelled) setIsLoadingLast(false);
       });
@@ -631,6 +634,7 @@ function EbookFlow({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
 
   const handlePublish = async () => {
