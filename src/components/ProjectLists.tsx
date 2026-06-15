@@ -212,7 +212,7 @@ function useEbookActions(
       },
       {
         icon: Download,
-        label: "Baixar PDF (abre o editor)",
+        label: "Abrir / Baixar e-book (PDF)",
         onClick: () => onOpen(e.id),
       },
       {
@@ -430,6 +430,37 @@ export function VideosList({
                   onClick: () => {
                     if (selected.video_url && typeof window !== "undefined") {
                       window.open(selected.video_url, "_blank", "noopener,noreferrer");
+                    }
+                  },
+                  disabled: !selected.video_url,
+                },
+                {
+                  icon: Download,
+                  label: "Baixar vídeo (MP4)",
+                  onClick: async () => {
+                    if (!selected.video_url) return;
+                    const url = selected.video_url;
+                    const title = (ebookOf(selected)?.titulo ?? "video")
+                      .replace(/[^a-z0-9-_ ]/gi, "")
+                      .trim() || "video";
+                    try {
+                      toast.loading("Baixando vídeo...", { id: "dl-vid" });
+                      const res = await fetch(url);
+                      if (!res.ok) throw new Error("Falha no download");
+                      const blob = await res.blob();
+                      const obj = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = obj;
+                      a.download = `${title}.mp4`;
+                      document.body.appendChild(a);
+                      a.click();
+                      a.remove();
+                      URL.revokeObjectURL(obj);
+                      toast.success("Vídeo baixado!", { id: "dl-vid" });
+                    } catch {
+                      // Fallback: abre em nova aba
+                      window.open(url, "_blank", "noopener,noreferrer");
+                      toast.error("Não foi possível baixar — abrimos em nova aba.", { id: "dl-vid" });
                     }
                   },
                   disabled: !selected.video_url,
