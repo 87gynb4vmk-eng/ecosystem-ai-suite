@@ -136,6 +136,13 @@ export const gerarVideo = createServerFn({ method: "POST" })
             "Material exclusivo de alto valor",
           ];
 
+    // Random per-render token for webhook authentication
+    const tokenBytes = new Uint8Array(24);
+    crypto.getRandomValues(tokenBytes);
+    const webhookToken = Array.from(tokenBytes, (b) =>
+      b.toString(16).padStart(2, "0"),
+    ).join("");
+
     // Cria registro em "videos" como processando
     const { data: videoRow, error: insErr } = await context.supabase
       .from("videos")
@@ -143,15 +150,16 @@ export const gerarVideo = createServerFn({ method: "POST" })
         usuario_id: context.userId,
         ebook_id: ebook.id,
         status: "processando",
+        webhook_token: webhookToken,
       })
       .select("id")
       .single();
     if (insErr || !videoRow) return { ok: false as const, error: "Falha ao registrar vídeo." };
 
-    // Webhook URL pública e estável
+    // Webhook URL pública e estável (token aleatório por render)
     const { getRequestHost } = await import("@tanstack/react-start/server");
     const host = getRequestHost();
-    const webhookUrl = `https://${host}/api/public/webhook/json2video?video=${videoRow.id}`;
+    const webhookUrl = `https://${host}/api/public/webhook/json2video?video=${videoRow.id}&token=${webhookToken}`;
 
     const ctaLink = data.videoLink || ebook.affiliate_link || undefined;
     const movie = buildTimeline({
