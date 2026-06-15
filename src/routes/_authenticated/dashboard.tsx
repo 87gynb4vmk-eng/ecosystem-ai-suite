@@ -603,7 +603,7 @@ function EbookFlow({
     loader
       .then((res) => {
         if (cancelled) return;
-        if (res.ok && res.ebook) {
+        if (res && res.ok && res.ebook) {
           setGenerated({
             id: res.ebook.id,
             titulo: res.ebook.titulo,
@@ -623,6 +623,9 @@ function EbookFlow({
           }
         }
       })
+      .catch((err) => {
+        console.error("[load ebook]", err);
+      })
       .finally(() => {
         if (!cancelled) setIsLoadingLast(false);
       });
@@ -631,6 +634,7 @@ function EbookFlow({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
 
   const handlePublish = async () => {
@@ -668,8 +672,14 @@ function EbookFlow({
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
-      const res = await gerar({ data: { nicho, subnicho } });
-      if (!res.ok) throw new Error(res.error);
+      const res = await gerar({ data: { nicho, subnicho } }).catch((err: unknown) => {
+        console.error("[gerarEbook] call error:", err);
+        throw new Error(
+          (err as Error)?.message || "Falha de comunicação com o servidor.",
+        );
+      });
+      if (!res) throw new Error("Resposta vazia do servidor.");
+      if (!res.ok) throw new Error(res.error || "Falha ao gerar e-book.");
       const filename = `${res.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`;
       setGenerated({
         id: res.id,
@@ -681,11 +691,13 @@ function EbookFlow({
       setPublishedUrl(null);
       setAffiliateLink("");
     } catch (e) {
+      console.error("[handleGenerate]", e);
       toast.error((e as Error).message || "Falha ao gerar e-book.");
     } finally {
       setIsGenerating(false);
     }
   };
+
 
   const handleDownload = async () => {
     if (!generated || isDownloading) return;
