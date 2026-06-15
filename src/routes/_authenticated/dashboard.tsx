@@ -425,6 +425,7 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   }[] = [
     { id: "inicio", label: "Início", icon: Home },
     { id: "ebooks", label: "Ebooks", icon: BookOpen },
+    { id: "pdfs", label: "PDFs", icon: FileText },
     { id: "paginas", label: "Páginas", icon: Layout },
     { id: "videos", label: "Vídeos", icon: Video },
     { id: "perfil", label: "Perfil", icon: User },
