@@ -212,7 +212,7 @@ function useEbookActions(
       },
       {
         icon: Download,
-        label: "Baixar PDF (abre o editor)",
+        label: "Abrir / Baixar e-book (PDF)",
         onClick: () => onOpen(e.id),
       },
       {
