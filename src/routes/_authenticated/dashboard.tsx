@@ -93,7 +93,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardRoot,
 });
 
-type Tab = "inicio" | "ebooks" | "paginas" | "videos" | "perfil";
+type Tab = "inicio" | "ebooks" | "pdfs" | "paginas" | "videos" | "perfil";
 type Period = "hoje" | "7d" | "30d";
 
 const STEPS = [
@@ -109,12 +109,20 @@ const AMBER = "#E0B43A";
 function DashboardRoot() {
   const [tab, setTab] = useState<Tab>("inicio");
   const [editingEbookId, setEditingEbookId] = useState<string | "new" | null>(null);
+  const [autoDownloadId, setAutoDownloadId] = useState<string | null>(null);
 
   const openNew = () => {
+    setAutoDownloadId(null);
     setEditingEbookId("new");
     setTab("ebooks");
   };
   const openEbook = (id: string) => {
+    setAutoDownloadId(null);
+    setEditingEbookId(id);
+    setTab("ebooks");
+  };
+  const downloadEbook = (id: string) => {
+    setAutoDownloadId(id);
     setEditingEbookId(id);
     setTab("ebooks");
   };
@@ -125,13 +133,18 @@ function DashboardRoot() {
       {tab === "ebooks" &&
         (editingEbookId ? (
           <EbookFlow
-            key={editingEbookId}
+            key={`${editingEbookId}-${autoDownloadId ?? ""}`}
             initialEbookId={editingEbookId === "new" ? null : editingEbookId}
-            onBack={() => setEditingEbookId(null)}
+            autoDownload={!!autoDownloadId && autoDownloadId === editingEbookId}
+            onBack={() => {
+              setEditingEbookId(null);
+              setAutoDownloadId(null);
+            }}
           />
         ) : (
           <EbooksList onNovo={openNew} onOpen={openEbook} />
         ))}
+      {tab === "pdfs" && <PdfsList onNovo={openNew} onOpen={openEbook} onDownload={downloadEbook} />}
       {tab === "paginas" && <PaginasList onNovo={openNew} onOpen={openEbook} />}
       {tab === "videos" && <VideosList onNovo={openNew} onOpen={openEbook} />}
       {tab === "perfil" && <PerfilScreen />}
@@ -139,6 +152,7 @@ function DashboardRoot() {
     </div>
   );
 }
+
 
 
 /* -------------------- OVERVIEW -------------------- */
