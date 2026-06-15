@@ -1,17 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// JSON2Video webhook: enviado pela API quando o vídeo termina (success ou erro).
-// Não há header de assinatura no payload — protegemos com um token único na própria
-// URL (?video=<uuid>). O ID do vídeo já é um UUID aleatório, o que torna a URL
-// efetivamente um segredo por renderização.
+// JSON2Video webhook: enviado pela API quando o vídeo termina.
+// Autenticamos por (videoId, token) — token aleatório gerado por render e
+// armazenado em `videos.webhook_token`. Sem o token correto, a requisição é rejeitada.
 export const Route = createFileRoute("/api/public/webhook/json2video")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         const url = new URL(request.url);
         const videoId = url.searchParams.get("video");
+        const token = url.searchParams.get("token");
         if (!videoId || !/^[0-9a-f-]{36}$/i.test(videoId)) {
           return new Response("video param inválido", { status: 400 });
+        }
+        if (!token || !/^[0-9a-f]{32,128}$/i.test(token)) {
+          return new Response("token inválido", { status: 401 });
         }
 
         let payload: unknown;
@@ -34,10 +37,38 @@ export const Route = createFileRoute("/api/public/webhook/json2video")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-        if (status === "done" && videoUrl) {
+        // Confere token armazenado para esse vídeo
+        const { data: row } = await supabaseAdmin
+          .from("videos")
+          .select("webhook_token")
+          .eq("id", videoId)
+          .maybeSingle();
+        if (!row?.webhook_token || row.webhook_token !== token) {
+          return new Response("não autorizado", { status: 401 });
+        }
+
+        // Aceita apenas URLs do CDN do JSON2Video para impedir injeção de URL arbitrária
+        const isAllowedUrl = (u: string) => {
+          try {
+            const parsed = new URL(u);
+            return (
+              parsed.protocol === "https:" &&
+              /(^|\.)json2video\.com$/i.test(parsed.hostname)
+            );
+          } catch {
+            return false;
+          }
+        };
+
+        if (status === "done" && videoUrl && isAllowedUrl(videoUrl)) {
           await supabaseAdmin
             .from("videos")
             .update({ status: "concluido", video_url: videoUrl, erro: null })
+            .eq("id", videoId);
+        } else if (status === "done" && videoUrl) {
+          await supabaseAdmin
+            .from("videos")
+            .update({ status: "erro", erro: "URL de vídeo recusada (origem inválida)" })
             .eq("id", videoId);
         } else if (status === "error" || p.success === false) {
           await supabaseAdmin

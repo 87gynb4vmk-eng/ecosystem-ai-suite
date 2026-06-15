@@ -229,6 +229,7 @@ export const obterEbookPublico = createServerFn({ method: "GET" })
       .from("ebooks")
       .select("id, nicho, subnicho, titulo, subtitulo, affiliate_link")
       .eq("id", data.id)
+      .eq("is_published", true)
       .maybeSingle();
     if (error) {
       console.error("[obterEbookPublico]", error);

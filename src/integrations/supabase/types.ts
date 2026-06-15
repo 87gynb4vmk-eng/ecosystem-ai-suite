@@ -180,6 +180,7 @@ export type Database = {
           updated_at: string
           usuario_id: string
           video_url: string | null
+          webhook_token: string | null
         }
         Insert: {
           created_at?: string
@@ -191,6 +192,7 @@ export type Database = {
           updated_at?: string
           usuario_id: string
           video_url?: string | null
+          webhook_token?: string | null
         }
         Update: {
           created_at?: string
@@ -202,6 +204,7 @@ export type Database = {
           updated_at?: string
           usuario_id?: string
           video_url?: string | null
+          webhook_token?: string | null
         }
         Relationships: [
           {
