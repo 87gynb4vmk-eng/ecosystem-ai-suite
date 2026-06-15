@@ -24,7 +24,6 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,23 +32,11 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast.success("Bem-vindo!");
-        setLoading(false);
-        navigate({ to: "/dashboard", replace: true });
-        return;
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${window.location.origin}/dashboard` },
-        });
-        if (error) throw error;
-        toast.success("Conta criada! Verifique seu e-mail se necessário.");
-        setLoading(false);
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      toast.success("Bem-vindo!");
+      setLoading(false);
+      navigate({ to: "/dashboard", replace: true });
     } catch (err) {
       toast.error((err as Error).message ?? "Falha na autenticação.");
       setLoading(false);
@@ -64,13 +51,9 @@ function AuthPage() {
           <span className="font-display text-3xl font-bold text-gradient-gold">.ai</span>
         </Link>
 
-        <h1 className="text-2xl font-bold text-center mb-2">
-          {mode === "signin" ? "Entrar no painel" : "Criar conta"}
-        </h1>
+        <h1 className="text-2xl font-bold text-center mb-2">Entrar no painel</h1>
         <p className="text-center text-sm text-muted-foreground mb-8">
-          {mode === "signin"
-            ? "Use o e-mail e a senha temporária enviados após a compra."
-            : "Crie sua conta para acessar o painel Alevi.ai."}
+          Use o e-mail e a senha temporária enviados após a compra.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -91,7 +74,7 @@ function AuthPage() {
               type="password"
               required
               minLength={6}
-              autoComplete={mode === "signin" ? "current-password" : "new-password"}
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
@@ -102,16 +85,17 @@ function AuthPage() {
             disabled={loading}
             className="w-full rounded-md bg-gradient-gold px-4 py-3 text-sm font-semibold text-gold-foreground shadow-gold-glow hover:opacity-95 transition disabled:opacity-60"
           >
-            {loading ? "Aguarde..." : mode === "signin" ? "Entrar" : "Criar conta"}
+            {loading ? "Aguarde..." : "Entrar"}
           </button>
         </form>
 
-        <button
-          onClick={() => setMode((m) => (m === "signin" ? "signup" : "signin"))}
-          className="w-full mt-6 text-sm text-muted-foreground hover:text-foreground transition"
-        >
-          {mode === "signin" ? "Não tem conta? Criar agora" : "Já tem conta? Entrar"}
-        </button>
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          Ainda não tem acesso?{" "}
+          <Link to="/" className="text-gold hover:underline">
+            Veja os planos
+          </Link>
+          .
+        </p>
       </div>
     </main>
   );

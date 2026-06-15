@@ -37,21 +37,16 @@ const PaginasIaSchema = z.object({
 export const garantirPerfil = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabase, userId, claims } = context;
+    const { supabase, userId } = context;
     const { data: existing } = await supabase
       .from("usuarios")
       .select("id")
       .eq("id", userId)
       .maybeSingle();
     if (existing) return { ok: true };
-
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin.from("usuarios").insert({
-      id: userId,
-      email: (claims as { email?: string })?.email ?? "",
-      plano: "mensal",
-    });
-    return { ok: true };
+    // Do NOT auto-create a profile here — accounts must come from the paid
+    // checkout flow (Cakto webhook) or the admin panel.
+    return { ok: false as const, error: "Conta sem plano ativo." };
   });
 
 export const listarProjetos = createServerFn({ method: "GET" })
@@ -69,22 +64,19 @@ export const gerarEcossistema = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => CriarInput.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId, claims } = context;
+    const { supabase, userId } = context;
 
-    // Ensure usuarios row exists (first login flow)
+    // Require an existing paid profile — never auto-create a `mensal` account here.
     const { data: perfil } = await supabase
       .from("usuarios")
-      .select("id")
+      .select("id, plano")
       .eq("id", userId)
       .maybeSingle();
     if (!perfil) {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      await supabaseAdmin.from("usuarios").insert({
-        id: userId,
-        email: (claims as { email?: string })?.email ?? "",
-        plano: "mensal",
-      });
+      throw new Error("Conta sem plano ativo. Conclua a compra para liberar o acesso.");
     }
+
+
 
     const lovableKey = process.env.LOVABLE_API_KEY;
     if (!lovableKey) throw new Error("Configuração de IA indisponível.");
