@@ -93,7 +93,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardRoot,
 });
 
-type Tab = "inicio" | "ebooks" | "paginas" | "videos" | "perfil";
+type Tab = "inicio" | "ebooks" | "pdfs" | "paginas" | "videos" | "perfil";
 type Period = "hoje" | "7d" | "30d";
 
 const STEPS = [
@@ -109,12 +109,20 @@ const AMBER = "#E0B43A";
 function DashboardRoot() {
   const [tab, setTab] = useState<Tab>("inicio");
   const [editingEbookId, setEditingEbookId] = useState<string | "new" | null>(null);
+  const [autoDownloadId, setAutoDownloadId] = useState<string | null>(null);
 
   const openNew = () => {
+    setAutoDownloadId(null);
     setEditingEbookId("new");
     setTab("ebooks");
   };
   const openEbook = (id: string) => {
+    setAutoDownloadId(null);
+    setEditingEbookId(id);
+    setTab("ebooks");
+  };
+  const downloadEbook = (id: string) => {
+    setAutoDownloadId(id);
     setEditingEbookId(id);
     setTab("ebooks");
   };
@@ -125,13 +133,18 @@ function DashboardRoot() {
       {tab === "ebooks" &&
         (editingEbookId ? (
           <EbookFlow
-            key={editingEbookId}
+            key={`${editingEbookId}-${autoDownloadId ?? ""}`}
             initialEbookId={editingEbookId === "new" ? null : editingEbookId}
-            onBack={() => setEditingEbookId(null)}
+            autoDownload={!!autoDownloadId && autoDownloadId === editingEbookId}
+            onBack={() => {
+              setEditingEbookId(null);
+              setAutoDownloadId(null);
+            }}
           />
         ) : (
           <EbooksList onNovo={openNew} onOpen={openEbook} />
         ))}
+      {tab === "pdfs" && <PdfsList onNovo={openNew} onOpen={openEbook} onDownload={downloadEbook} />}
       {tab === "paginas" && <PaginasList onNovo={openNew} onOpen={openEbook} />}
       {tab === "videos" && <VideosList onNovo={openNew} onOpen={openEbook} />}
       {tab === "perfil" && <PerfilScreen />}
@@ -139,6 +152,7 @@ function DashboardRoot() {
     </div>
   );
 }
+
 
 
 /* -------------------- OVERVIEW -------------------- */
@@ -387,6 +401,7 @@ function Placeholder({ tab }: { tab: Tab }) {
   const labels: Record<Tab, string> = {
     inicio: "Início",
     ebooks: "Ebooks",
+    pdfs: "PDFs",
     paginas: "Páginas",
     videos: "Vídeos",
     perfil: "Perfil",
@@ -401,6 +416,101 @@ function Placeholder({ tab }: { tab: Tab }) {
   );
 }
 
+/* -------------------- PDFS LIST -------------------- */
+function PdfsList({
+  onNovo,
+  onOpen,
+  onDownload,
+}: {
+  onNovo: () => void;
+  onOpen: (id: string) => void;
+  onDownload: (id: string) => void;
+}) {
+  const listar = useServerFn(listarMeusEbooks);
+  const { data, isLoading } = useQuery({
+    queryKey: ["meus-ebooks"],
+    queryFn: () => listar(),
+  });
+  const ebooks = (data?.ok ? data.ebooks : []) as Array<{
+    id: string;
+    titulo: string;
+    subtitulo: string;
+    nicho: string;
+    subnicho: string;
+    created_at: string;
+  }>;
+
+  return (
+    <div className="max-w-xl mx-auto px-5 pt-8">
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight">PDFs</h1>
+          <p className="text-zinc-500 text-sm mt-1">E-books por projeto — abra ou baixe o PDF</p>
+        </div>
+        <button
+          onClick={onNovo}
+          className="text-sm font-bold px-4 py-2.5 rounded-full flex items-center gap-1.5 text-black shrink-0"
+          style={{ background: `linear-gradient(135deg, ${AMBER}, #c89725)` }}
+        >
+          <Plus size={16} strokeWidth={3} /> Novo
+        </button>
+      </div>
+
+      {isLoading ? (
+        <div className="flex justify-center py-16 text-zinc-500">
+          <Loader2 className="animate-spin" />
+        </div>
+      ) : ebooks.length === 0 ? (
+        <div className="text-center py-16 border border-dashed border-zinc-800 rounded-3xl">
+          <FileText size={28} className="mx-auto text-zinc-600 mb-3" />
+          <p className="text-zinc-500 text-sm">Nenhum e-book em PDF ainda.</p>
+          <p className="text-zinc-600 text-xs mt-1">Toque em + Novo para criar o primeiro</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {ebooks.map((e) => (
+            <div
+              key={e.id}
+              className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-4"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ background: `${AMBER}1A` }}
+                >
+                  <FileText size={22} style={{ color: AMBER }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold truncate">{e.titulo}</p>
+                  <p className="text-zinc-500 text-xs truncate mt-0.5">
+                    {e.nicho} • {e.subnicho}
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => onOpen(e.id)}
+                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-zinc-800 bg-zinc-900/60 hover:bg-zinc-900 text-sm font-medium text-white transition"
+                >
+                  <ExternalLink size={16} /> Abrir
+                </button>
+                <button
+                  onClick={() => onDownload(e.id)}
+                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold text-black transition"
+                  style={{ background: `linear-gradient(135deg, ${AMBER}, #c89725)` }}
+                >
+                  <Download size={16} /> Baixar PDF
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 /* -------------------- BOTTOM NAV -------------------- */
 function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   const items: {
@@ -410,6 +520,7 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   }[] = [
     { id: "inicio", label: "Início", icon: Home },
     { id: "ebooks", label: "Ebooks", icon: BookOpen },
+    { id: "pdfs", label: "PDFs", icon: FileText },
     { id: "paginas", label: "Páginas", icon: Layout },
     { id: "videos", label: "Vídeos", icon: Video },
     { id: "perfil", label: "Perfil", icon: User },
@@ -445,9 +556,11 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
 /* -------------------- EBOOK 5-STEP FLOW -------------------- */
 function EbookFlow({
   initialEbookId = null,
+  autoDownload = false,
   onBack,
 }: {
   initialEbookId?: string | null;
+  autoDownload?: boolean;
   onBack?: () => void;
 }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -664,6 +777,19 @@ function EbookFlow({
       setIsDownloading(false);
     }
   };
+
+  // Auto-download quando vier da lista de PDFs
+  const autoDownloadFiredRef = useRef(false);
+  useEffect(() => {
+    if (!autoDownload || autoDownloadFiredRef.current) return;
+    if (!generated || isLoadingLast) return;
+    autoDownloadFiredRef.current = true;
+    setCurrentStep(1);
+    void handleDownload();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoDownload, generated, isLoadingLast]);
+
+
 
   return (
     <div className="max-w-xl mx-auto px-4 pt-6">
