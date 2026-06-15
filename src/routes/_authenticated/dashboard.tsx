@@ -461,9 +461,11 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
 /* -------------------- EBOOK 5-STEP FLOW -------------------- */
 function EbookFlow({
   initialEbookId = null,
+  autoDownload = false,
   onBack,
 }: {
   initialEbookId?: string | null;
+  autoDownload?: boolean;
   onBack?: () => void;
 }) {
   const [currentStep, setCurrentStep] = useState(1);
