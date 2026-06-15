@@ -401,6 +401,7 @@ function Placeholder({ tab }: { tab: Tab }) {
   const labels: Record<Tab, string> = {
     inicio: "Início",
     ebooks: "Ebooks",
+    pdfs: "PDFs",
     paginas: "Páginas",
     videos: "Vídeos",
     perfil: "Perfil",
