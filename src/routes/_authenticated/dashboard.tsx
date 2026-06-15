@@ -683,6 +683,19 @@ function EbookFlow({
     }
   };
 
+  // Auto-download quando vier da lista de PDFs
+  const autoDownloadFiredRef = useRef(false);
+  useEffect(() => {
+    if (!autoDownload || autoDownloadFiredRef.current) return;
+    if (!generated || isLoadingLast) return;
+    autoDownloadFiredRef.current = true;
+    setCurrentStep(1);
+    void handleDownload();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoDownload, generated, isLoadingLast]);
+
+
+
   return (
     <div className="max-w-xl mx-auto px-4 pt-6">
       <div className="flex justify-between items-center mb-8 bg-[#111] p-3 rounded-2xl border border-zinc-800">
