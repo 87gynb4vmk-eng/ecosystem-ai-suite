@@ -702,90 +702,22 @@ function EbookFlow({
   const handleDownload = async () => {
     if (!generated || isDownloading) return;
     setIsDownloading(true);
-    setIsPdfCaptureActive(true);
-    let blobUrl: string | null = null;
     try {
-      setPdfRenderKey((key) => key + 1);
-      await new Promise((resolve) => window.setTimeout(resolve, 800));
-      // Wait for all images in the template to finish loading (cover + chapter banners)
-      if (docRef.current) {
-        const imgs = Array.from(docRef.current.querySelectorAll("img"));
-        await Promise.all(
-          imgs.map((img) =>
-            img.complete && img.naturalWidth > 0
-              ? Promise.resolve()
-              : new Promise<void>((resolve) => {
-                  const done = () => resolve();
-                  img.addEventListener("load", done, { once: true });
-                  img.addEventListener("error", done, { once: true });
-                  window.setTimeout(done, 6000);
-                }),
-          ),
-        );
-      }
-      if (!docRef.current) throw new Error("Template do e-book não foi renderizado.");
-
-      const html2pdf = ((await import("html2pdf.js")) as { default: unknown }).default as (
-        ...args: unknown[]
-      ) => {
-        set: (opts: Record<string, unknown>) => {
-          from: (el: HTMLElement) => {
-            output: (type: "blob") => Promise<Blob>;
-            outputPdf: (type: "blob") => Promise<Blob>;
-          };
-        };
-      };
-      const pdfElement = docRef.current;
-      const pdfHeight = Math.max(pdfElement.scrollHeight, 1123);
-      const canvasScale = window.innerWidth < 768 ? 1.35 : 2;
-
-      const worker = html2pdf()
-        .set({
-          margin: 0,
-          filename: generated.filename,
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: {
-            scale: canvasScale,
-            useCORS: true,
-            backgroundColor: "#ffffff",
-            width: 794,
-            height: pdfHeight,
-            windowWidth: 794,
-            windowHeight: pdfHeight,
-            scrollX: 0,
-            scrollY: 0,
-            onclone: (doc: Document) => {
-              doc
-                .querySelectorAll("style, link[rel='stylesheet']")
-                .forEach((node) => node.remove());
-              doc.documentElement.style.background = "#ffffff";
-              doc.body.style.background = "#ffffff";
-              doc.body.style.color = "#111827";
-            },
-          },
-          jsPDF: { unit: "px", format: [794, 1123], orientation: "portrait" },
-          pagebreak: { mode: ["css", "legacy"] },
-        })
-        .from(pdfElement);
-
-      const blob: Blob = await worker.output("blob");
-      if (!blob.size) throw new Error("O PDF foi gerado vazio.");
-      blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = generated.filename || "ebook.pdf";
-      a.style.display = "none";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      const { downloadEbookPdf } = await import("@/lib/ebook-pdf");
+      downloadEbookPdf({
+        titulo: generated.titulo,
+        subtitulo: generated.subtitulo,
+        nicho: nicho || "E-book",
+        conteudo: generated.conteudo,
+        filename: generated.filename,
+      });
+      toast.success("PDF gerado com sucesso!");
     } catch (e) {
+      console.error("[handleDownload]", e);
       toast.error(
         `Ocorreu um erro ao gerar o PDF: ${(e as Error).message || "Falha ao baixar PDF."}`,
       );
     } finally {
-      const urlToRevoke = blobUrl;
-      if (urlToRevoke) window.setTimeout(() => URL.revokeObjectURL(urlToRevoke), 1000);
-      setIsPdfCaptureActive(false);
       setIsDownloading(false);
     }
   };
