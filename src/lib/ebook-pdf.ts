@@ -227,5 +227,5 @@ export function downloadEbookPdf(input: EbookPdfInput) {
     `${(input.titulo || "ebook").replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "ebook"}.pdf`;
 
   // jsPDF.save() handles cross-browser (incl. iOS Safari) download/open correctly.
-  doc.save(filename, { returnPromise: false });
+  doc.save(filename);
 }
