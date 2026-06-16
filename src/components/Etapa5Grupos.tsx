@@ -20,12 +20,16 @@ function Card({
   title,
   subtitle,
   href,
+  cta = "Entrar",
+  ctaStyle,
 }: {
   icon: React.ReactNode;
   iconBg: string;
   title: string;
   subtitle: string;
   href: string;
+  cta?: string;
+  ctaStyle?: React.CSSProperties;
 }) {
   return (
     <div className="flex items-center gap-4 border border-zinc-800 bg-zinc-900/40 rounded-2xl p-4">
@@ -44,9 +48,9 @@ function Card({
         target="_blank"
         rel="noopener noreferrer"
         className="text-black font-bold py-2 px-4 rounded-lg text-xs shrink-0"
-        style={{ background: AMBER }}
+        style={ctaStyle ?? { background: AMBER }}
       >
-        Entrar
+        {cta}
       </a>
     </div>
   );
