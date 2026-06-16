@@ -270,7 +270,7 @@ export function EbooksList({
       ) : ebooks.length === 0 ? (
         <Empty icon={BookOpen} label="Você ainda não criou nenhum e-book." />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
           {ebooks.map((e) => (
             <ProjectCard
               key={e.id}
@@ -328,7 +328,7 @@ export function PaginasList({
       ) : paginas.length === 0 ? (
         <Empty icon={Layout} label="Você ainda não publicou nenhuma página." />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
           {paginas.map((e) => (
             <ProjectCard
               key={e.id}
@@ -390,7 +390,7 @@ export function VideosList({
       ) : videos.length === 0 ? (
         <Empty icon={VideoIcon} label="Você ainda não gerou nenhum vídeo." />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
           {videos.map((v) => {
             const eb = ebookOf(v);
             const statusColor =

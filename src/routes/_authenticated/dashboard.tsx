@@ -467,7 +467,7 @@ function PdfsList({
           <p className="text-zinc-600 text-xs mt-1">Toque em + Novo para criar o primeiro</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
           {ebooks.map((e) => (
             <div
               key={e.id}
