@@ -111,9 +111,43 @@ export function Etapa5Grupos({ onBack }: { onBack: () => void }) {
 
       {!isLoading && !isError && data?.nicho && (
         <div className="space-y-3">
+          {facebookSearchUrl && (
+            <a
+              href={facebookSearchUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 w-full rounded-2xl p-4 border transition"
+              style={{
+                background: "#1877F215",
+                borderColor: "#1877F240",
+              }}
+            >
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: "#1877F230" }}
+              >
+                <Search className="w-6 h-6" style={{ color: "#1877F2" }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-zinc-100 font-semibold text-sm truncate">
+                  Buscar Grupos no Facebook
+                </h3>
+                <p className="text-xs text-zinc-400 truncate">
+                  {data.nicho} · filtros de grupos já ativados
+                </p>
+              </div>
+              <span
+                className="text-white font-bold py-2 px-4 rounded-lg text-xs shrink-0 flex items-center gap-1.5"
+                style={{ background: "#1877F2" }}
+              >
+                <ExternalLink className="w-3.5 h-3.5" /> Abrir
+              </span>
+            </a>
+          )}
+
           {whatsappGroups.length === 0 && (
             <div className="border border-zinc-800 bg-zinc-900/20 rounded-2xl p-4 text-sm text-zinc-400">
-              Ainda não temos grupos fixos para esse nicho. Use a busca do Facebook abaixo.
+              Ainda não temos grupos fixos para esse nicho. Use a busca do Facebook acima.
             </div>
           )}
 
@@ -131,16 +165,6 @@ export function Etapa5Grupos({ onBack }: { onBack: () => void }) {
               />
             );
           })}
-
-          {facebookSearchUrl && (
-            <Card
-              icon={<Facebook className="w-6 h-6" style={{ color: "#1877F2" }} />}
-              iconBg="#1877F220"
-              title={`Buscar mais grupos de ${data.nicho} no Facebook`}
-              subtitle="Facebook · resultados ao vivo"
-              href={facebookSearchUrl}
-            />
-          )}
         </div>
       )}
 
