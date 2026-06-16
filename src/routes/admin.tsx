@@ -151,7 +151,7 @@ function AdminDashboard({ senha }: { senha: string }) {
 
   return (
     <main className="min-h-screen bg-background px-4 py-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl lg:max-w-6xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <div className="h-10 w-10 rounded-full bg-gold/15 flex items-center justify-center">
             <Users className="h-5 w-5 text-gold" />
