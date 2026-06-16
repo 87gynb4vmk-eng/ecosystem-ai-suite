@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listarGruposDoMeuNicho } from "@/lib/grupos.functions";
-import { Search, Loader2, ArrowLeft, Facebook, MessageCircle, Send } from "lucide-react";
+import { Search, Loader2, ArrowLeft, Facebook, MessageCircle, Send, ExternalLink } from "lucide-react";
 
 const PLATAFORMA_STYLE: Record<string, { color: string; bg: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
   WhatsApp: { color: "#25D366", bg: "#25D36620", icon: MessageCircle },
