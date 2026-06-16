@@ -222,11 +222,22 @@ function AdminDashboard({ senha }: { senha: string }) {
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm truncate">{u.email}</div>
                     <div className="text-xs text-muted-foreground mt-0.5">
-                      Plano: <span className="text-foreground">{u.plano}</span> ·{" "}
-                      {new Date(u.created_at).toLocaleDateString("pt-BR")}
+                      Criado em {new Date(u.created_at).toLocaleDateString("pt-BR")}
+                    </div>
+                    <div className="mt-1.5">
+                      {u.plano === "vitalicio" ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-gold/15 border border-gold/40 text-gold px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider">
+                          ⭐ Acesso Vitalício
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 border border-primary/40 text-primary-foreground px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider">
+                          📅 Acesso Mensal
+                        </span>
+                      )}
                     </div>
                     {u.senha_temporaria && (
-                      <div className="text-xs mt-1 flex items-center gap-2">
+                      <div className="text-xs mt-2 flex items-center gap-2">
+                        <span className="text-muted-foreground">Senha:</span>
                         <code className="bg-muted px-1.5 py-0.5 rounded font-mono">
                           {u.senha_temporaria}
                         </code>
@@ -243,6 +254,7 @@ function AdminDashboard({ senha }: { senha: string }) {
                       </div>
                     )}
                   </div>
+
                   <div className="flex gap-2 shrink-0">
                     <button
                       onClick={() => handleResetar(u)}
