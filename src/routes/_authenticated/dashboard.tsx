@@ -180,7 +180,7 @@ function Overview({ onNovo }: { onNovo: () => void }) {
     "w-11 h-11 rounded-full border border-zinc-800/80 bg-zinc-900/40 flex items-center justify-center text-zinc-400 hover:text-white transition";
 
   return (
-    <div className="relative max-w-xl mx-auto px-5 pt-6">
+    <div className="relative max-w-xl md:max-w-6xl mx-auto px-5 md:px-8 pt-6">
       {/* subtle green glow behind title */}
       <div className="pointer-events-none absolute -top-10 left-0 right-0 h-72 bg-[radial-gradient(ellipse_at_top_left,rgba(16,185,129,0.18),transparent_60%)]" />
 
@@ -375,7 +375,7 @@ function PerfilScreen() {
   };
 
   return (
-    <div className="max-w-xl mx-auto px-5 pt-10">
+    <div className="max-w-xl md:max-w-6xl mx-auto px-5 md:px-8 pt-10">
       <h1 className="text-5xl font-bold tracking-tight mb-8">Perfil</h1>
       <div className="flex items-start gap-3 p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800 mb-4">
         <Mail size={20} className="text-zinc-400 mt-0.5" />
@@ -407,7 +407,7 @@ function Placeholder({ tab }: { tab: Tab }) {
     perfil: "Perfil",
   };
   return (
-    <div className="max-w-xl mx-auto px-5 pt-10">
+    <div className="max-w-xl md:max-w-6xl mx-auto px-5 md:px-8 pt-10">
       <h1 className="text-5xl font-bold tracking-tight mb-6">{labels[tab]}</h1>
       <div className="text-center py-20 text-zinc-500 border border-dashed border-zinc-800 rounded-3xl">
         Em desenvolvimento...
@@ -441,7 +441,7 @@ function PdfsList({
   }>;
 
   return (
-    <div className="max-w-xl mx-auto px-5 pt-8">
+    <div className="max-w-xl md:max-w-6xl mx-auto px-5 md:px-8 pt-8">
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-4xl font-bold tracking-tight">PDFs</h1>
@@ -528,7 +528,7 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-t border-zinc-900">
-      <div className="max-w-xl mx-auto flex justify-around items-end px-2 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+      <div className="max-w-xl md:max-w-4xl mx-auto flex justify-around items-end px-2 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         {items.map((it) => {
           const Icon = it.icon;
           const active = tab === it.id;
@@ -736,7 +736,7 @@ function EbookFlow({
 
 
   return (
-    <div className="max-w-xl mx-auto px-4 pt-6">
+    <div className="max-w-xl md:max-w-6xl mx-auto px-4 md:px-8 pt-6">
       <div className="flex justify-between items-center mb-8 bg-[#111] p-3 rounded-2xl border border-zinc-800">
         {STEPS.map((step) => {
           const Icon = step.icon;

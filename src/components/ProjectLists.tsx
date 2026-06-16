@@ -261,7 +261,7 @@ export function EbooksList({
   const { buildActions } = useEbookActions(onOpen, ["meus-ebooks"]);
 
   return (
-    <div className="max-w-xl mx-auto px-5 pt-8">
+    <div className="max-w-xl md:max-w-6xl mx-auto px-5 md:px-8 pt-8">
       <Header title="Ebooks" subtitle="Todos os e-books que você criou" onNovo={onNovo} />
       {isLoading ? (
         <div className="flex justify-center py-16 text-zinc-500">
@@ -315,7 +315,7 @@ export function PaginasList({
   const { buildActions } = useEbookActions(onOpen, ["minhas-paginas"]);
 
   return (
-    <div className="max-w-xl mx-auto px-5 pt-8">
+    <div className="max-w-xl md:max-w-6xl mx-auto px-5 md:px-8 pt-8">
       <Header
         title="Páginas"
         subtitle="Páginas de vendas que você publicou"
@@ -381,7 +381,7 @@ export function VideosList({
   const ebookOf = (v: VideoRow) => (Array.isArray(v.ebooks) ? v.ebooks[0] : v.ebooks);
 
   return (
-    <div className="max-w-xl mx-auto px-5 pt-8">
+    <div className="max-w-xl md:max-w-6xl mx-auto px-5 md:px-8 pt-8">
       <Header title="Vídeos" subtitle="Vídeos gerados a partir dos seus e-books" onNovo={onNovo} />
       {isLoading ? (
         <div className="flex justify-center py-16 text-zinc-500">
