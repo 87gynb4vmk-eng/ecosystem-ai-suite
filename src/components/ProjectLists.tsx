@@ -261,7 +261,7 @@ export function EbooksList({
   const { buildActions } = useEbookActions(onOpen, ["meus-ebooks"]);
 
   return (
-    <div className="max-w-xl mx-auto px-5 pt-8">
+    <div className="max-w-xl md:max-w-6xl mx-auto px-5 md:px-8 pt-8">
       <Header title="Ebooks" subtitle="Todos os e-books que você criou" onNovo={onNovo} />
       {isLoading ? (
         <div className="flex justify-center py-16 text-zinc-500">
@@ -270,7 +270,7 @@ export function EbooksList({
       ) : ebooks.length === 0 ? (
         <Empty icon={BookOpen} label="Você ainda não criou nenhum e-book." />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
           {ebooks.map((e) => (
             <ProjectCard
               key={e.id}
@@ -315,7 +315,7 @@ export function PaginasList({
   const { buildActions } = useEbookActions(onOpen, ["minhas-paginas"]);
 
   return (
-    <div className="max-w-xl mx-auto px-5 pt-8">
+    <div className="max-w-xl md:max-w-6xl mx-auto px-5 md:px-8 pt-8">
       <Header
         title="Páginas"
         subtitle="Páginas de vendas que você publicou"
@@ -328,7 +328,7 @@ export function PaginasList({
       ) : paginas.length === 0 ? (
         <Empty icon={Layout} label="Você ainda não publicou nenhuma página." />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
           {paginas.map((e) => (
             <ProjectCard
               key={e.id}
@@ -381,7 +381,7 @@ export function VideosList({
   const ebookOf = (v: VideoRow) => (Array.isArray(v.ebooks) ? v.ebooks[0] : v.ebooks);
 
   return (
-    <div className="max-w-xl mx-auto px-5 pt-8">
+    <div className="max-w-xl md:max-w-6xl mx-auto px-5 md:px-8 pt-8">
       <Header title="Vídeos" subtitle="Vídeos gerados a partir dos seus e-books" onNovo={onNovo} />
       {isLoading ? (
         <div className="flex justify-center py-16 text-zinc-500">
@@ -390,7 +390,7 @@ export function VideosList({
       ) : videos.length === 0 ? (
         <Empty icon={VideoIcon} label="Você ainda não gerou nenhum vídeo." />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
           {videos.map((v) => {
             const eb = ebookOf(v);
             const statusColor =
