@@ -14,6 +14,7 @@ import {
   listarMinhasPaginas,
   deletarEbook,
 } from "@/lib/ebooks.functions";
+import { obterFaturamentoAdmin } from "@/lib/faturamento.functions";
 
 import { EbookDocument } from "@/components/EbookDocument";
 import { LandingPageTemplate } from "@/components/LandingPageTemplate";
