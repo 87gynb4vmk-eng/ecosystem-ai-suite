@@ -159,8 +159,10 @@ function DashboardRoot() {
 function Overview({ onNovo }: { onNovo: () => void }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const [period, setPeriod] = useState<Period>("hoje");
+  const [period, setPeriod] = useState<Period>("7d");
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: userEmail } = useUserEmail();
+  const isAdmin = (userEmail ?? "").toLowerCase() === "silvanascimentof14@gmail.com";
 
   const handleSignOut = async () => {
     await qc.cancelQueries();
@@ -169,11 +171,28 @@ function Overview({ onNovo }: { onNovo: () => void }) {
     navigate({ to: "/auth", replace: true });
   };
 
+  // Dados de demonstração visíveis apenas para a conta admin
+  const adminStats: Record<Period, { total: number; vendas: number; delta: number; pix: number; card: number; picpay: number }> = {
+    hoje: { total: 680, vendas: 5, delta: 12, pix: 64, card: 28, picpay: 8 },
+    "7d": { total: 4500, vendas: 31, delta: 38, pix: 58, card: 34, picpay: 8 },
+    "30d": { total: 18750, vendas: 142, delta: 64, pix: 61, card: 31, picpay: 8 },
+  };
+  const stats = isAdmin
+    ? adminStats[period]
+    : { total: 0, vendas: 0, delta: 0, pix: 0, card: 0, picpay: 0 };
+  const ticket = stats.vendas > 0 ? stats.total / stats.vendas : 0;
+  const fmtBRL = (n: number) =>
+    n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const periodLabel: Record<Period, string> = {
+    hoje: "VOCÊ FATUROU HOJE",
+    "7d": "VOCÊ FATUROU EM 7 DIAS",
+    "30d": "VOCÊ FATUROU EM 30 DIAS",
+  };
 
   const bars = [
-    { label: "Pix", value: 0 },
-    { label: "Cartão de Crédito", value: 0 },
-    { label: "PicPay", value: 0 },
+    { label: "Pix", value: stats.pix },
+    { label: "Cartão de Crédito", value: stats.card },
+    { label: "PicPay", value: stats.picpay },
   ];
 
   const iconBtn =
