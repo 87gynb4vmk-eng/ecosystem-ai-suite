@@ -285,14 +285,14 @@ function Overview({ onNovo }: { onNovo: () => void }) {
             {periodLabel[period]}
           </span>
           <span className="flex items-center gap-1 text-zinc-400 text-xs font-semibold border border-zinc-800 px-2.5 py-1 rounded-full">
-            <TrendingUp size={12} /> {stats.delta}%
+            <TrendingUp size={12} /> {safeStats.delta}%
           </span>
         </div>
 
-        <div className="relative text-5xl font-bold tracking-tight mb-5">{fmtBRL(stats.total)}</div>
+        <div className="relative text-5xl font-bold tracking-tight mb-5">{fmtBRL(safeStats.total)}</div>
 
         <div className="relative flex items-center justify-between text-xs text-zinc-500 mb-5">
-          <span>{stats.vendas} vendas aprovadas</span>
+          <span>{safeStats.vendas} vendas aprovadas</span>
           <span className="text-zinc-700">•</span>
           <span>Ticket médio {fmtBRL(ticket)}</span>
         </div>
