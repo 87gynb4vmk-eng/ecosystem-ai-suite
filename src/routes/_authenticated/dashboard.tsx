@@ -283,19 +283,19 @@ function Overview({ onNovo }: { onNovo: () => void }) {
 
         <div className="relative flex items-center justify-between mb-3">
           <span className="text-[11px] tracking-[0.18em] text-zinc-500 font-semibold">
-            VOCÊ FATUROU HOJE
+            {periodLabel[period]}
           </span>
           <span className="flex items-center gap-1 text-zinc-400 text-xs font-semibold border border-zinc-800 px-2.5 py-1 rounded-full">
-            <TrendingUp size={12} /> 0%
+            <TrendingUp size={12} /> {stats.delta}%
           </span>
         </div>
 
-        <div className="relative text-5xl font-bold tracking-tight mb-5">R$ 0,00</div>
+        <div className="relative text-5xl font-bold tracking-tight mb-5">{fmtBRL(stats.total)}</div>
 
         <div className="relative flex items-center justify-between text-xs text-zinc-500 mb-5">
-          <span>0 vendas aprovadas</span>
+          <span>{stats.vendas} vendas aprovadas</span>
           <span className="text-zinc-700">•</span>
-          <span>Ticket médio R$ 0,00</span>
+          <span>Ticket médio {fmtBRL(ticket)}</span>
         </div>
 
         <div className="relative flex items-center justify-end gap-1.5 text-xs text-zinc-300 mb-6">
