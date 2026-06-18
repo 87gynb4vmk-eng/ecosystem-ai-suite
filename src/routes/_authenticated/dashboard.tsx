@@ -161,8 +161,7 @@ function Overview({ onNovo }: { onNovo: () => void }) {
   const qc = useQueryClient();
   const [period, setPeriod] = useState<Period>("7d");
   const [menuOpen, setMenuOpen] = useState(false);
-  const { data: userEmail } = useUserEmail();
-  const isAdmin = (userEmail ?? "").toLowerCase() === "silvanascimentof14@gmail.com";
+  const obterFaturamento = useServerFn(obterFaturamentoAdmin);
 
   const handleSignOut = async () => {
     await qc.cancelQueries();
@@ -171,16 +170,14 @@ function Overview({ onNovo }: { onNovo: () => void }) {
     navigate({ to: "/auth", replace: true });
   };
 
-  // Dados de demonstração visíveis apenas para a conta admin
-  const adminStats: Record<Period, { total: number; vendas: number; delta: number; pix: number; card: number; picpay: number }> = {
-    hoje: { total: 680, vendas: 5, delta: 12, pix: 64, card: 28, picpay: 8 },
-    "7d": { total: 4500, vendas: 31, delta: 38, pix: 58, card: 34, picpay: 8 },
-    "30d": { total: 18750, vendas: 142, delta: 64, pix: 61, card: 31, picpay: 8 },
-  };
-  const stats = isAdmin
-    ? adminStats[period]
-    : { total: 0, vendas: 0, delta: 0, pix: 0, card: 0, picpay: 0 };
-  const ticket = stats.vendas > 0 ? stats.total / stats.vendas : 0;
+  // Dados de faturamento — server fn protegida por has_role('admin')
+  const { data: stats } = useQuery({
+    queryKey: ["faturamento-admin", period],
+    queryFn: () => obterFaturamento({ data: { period } }),
+    staleTime: 60_000,
+  });
+  const safeStats = stats ?? { total: 0, vendas: 0, delta: 0, pix: 0, card: 0, picpay: 0 };
+  const ticket = safeStats.vendas > 0 ? safeStats.total / safeStats.vendas : 0;
   const fmtBRL = (n: number) =>
     n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const periodLabel: Record<Period, string> = {
@@ -190,10 +187,11 @@ function Overview({ onNovo }: { onNovo: () => void }) {
   };
 
   const bars = [
-    { label: "Pix", value: stats.pix },
-    { label: "Cartão de Crédito", value: stats.card },
-    { label: "PicPay", value: stats.picpay },
+    { label: "Pix", value: safeStats.pix },
+    { label: "Cartão de Crédito", value: safeStats.card },
+    { label: "PicPay", value: safeStats.picpay },
   ];
+
 
   const iconBtn =
     "w-11 h-11 rounded-full border border-zinc-800/80 bg-zinc-900/40 flex items-center justify-center text-zinc-400 hover:text-white transition";
