@@ -20,7 +20,6 @@ type Usuario = {
   id: string;
   email: string;
   plano: string;
-  senha_temporaria: string | null;
   created_at: string;
 };
 
@@ -235,24 +234,6 @@ function AdminDashboard({ senha }: { senha: string }) {
                         </span>
                       )}
                     </div>
-                    {u.senha_temporaria && (
-                      <div className="text-xs mt-2 flex items-center gap-2">
-                        <span className="text-muted-foreground">Senha:</span>
-                        <code className="bg-muted px-1.5 py-0.5 rounded font-mono">
-                          {u.senha_temporaria}
-                        </code>
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(u.senha_temporaria!);
-                            toast.success("Senha copiada");
-                          }}
-                          className="text-muted-foreground hover:text-foreground"
-                          aria-label="Copiar senha"
-                        >
-                          <Copy className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    )}
                   </div>
 
                   <div className="flex gap-2 shrink-0">
