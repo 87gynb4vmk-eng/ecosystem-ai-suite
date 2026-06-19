@@ -29,16 +29,16 @@ export function PrivacidadePage() {
           ← Voltar para a home
         </Link>
         <h1 className="font-display text-4xl font-bold mt-6 mb-2">
-          Privacidade e Segurança
+          Trust Center, Privacy Policy e Segurança
         </h1>
         <p className="text-sm text-muted-foreground mb-10">
-          Última atualização: junho de 2026
+          Esta página é mantida pela Alevi.ai para responder às principais dúvidas sobre privacidade, segurança, proteção de dados e controle de acesso. Última atualização: junho de 2026.
         </p>
 
         <section className="space-y-8 text-foreground/90 leading-relaxed">
           <div>
             <h2 className="font-display text-2xl font-semibold mb-2">
-              Quais dados coletamos
+              Privacy Policy: quais dados coletamos
             </h2>
             <p>
               Coletamos apenas o necessário para operar a plataforma: e-mail de
@@ -49,7 +49,7 @@ export function PrivacidadePage() {
 
           <div>
             <h2 className="font-display text-2xl font-semibold mb-2">
-              Como protegemos sua conta
+              Security: como protegemos sua conta
             </h2>
             <ul className="list-disc pl-5 space-y-1">
               <li>
@@ -70,7 +70,7 @@ export function PrivacidadePage() {
 
           <div>
             <h2 className="font-display text-2xl font-semibold mb-2">
-              Seus direitos
+              Retenção, exclusão e direitos do usuário
             </h2>
             <p>
               Você pode solicitar a exclusão completa da sua conta e dos dados
@@ -80,7 +80,7 @@ export function PrivacidadePage() {
 
           <div>
             <h2 className="font-display text-2xl font-semibold mb-2">
-              Contato
+              Contato de segurança e privacidade
             </h2>
             <p>
               Dúvidas sobre privacidade ou segurança? Fale com a gente pelo
