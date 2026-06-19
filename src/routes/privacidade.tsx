@@ -21,7 +21,7 @@ export const Route = createFileRoute("/privacidade")({
   component: PrivacidadePage,
 });
 
-function PrivacidadePage() {
+export function PrivacidadePage() {
   return (
     <main className="min-h-screen bg-background px-6 py-16">
       <div className="mx-auto max-w-3xl">
