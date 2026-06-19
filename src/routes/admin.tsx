@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Copy, Loader2, Lock, RotateCcw, Trash2, UserPlus, Users } from "lucide-react";
+import { Loader2, Lock, RotateCcw, Trash2, UserPlus, Users } from "lucide-react";
 import {
   adminCriarUsuario,
   adminExcluirUsuario,
