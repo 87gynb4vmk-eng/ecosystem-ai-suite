@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+
 export function Footer() {
   return (
     <footer className="bg-gradient-dark text-background/70 py-12">
@@ -9,6 +11,19 @@ export function Footer() {
         <p className="text-sm">
           Ecossistemas digitais premium gerados por inteligência artificial.
         </p>
+        <nav className="mt-6" aria-label="Links institucionais">
+          <div className="flex justify-center gap-4 text-xs">
+            <Link to="/privacidade" className="text-background/60 hover:text-background">
+              Privacidade e Segurança
+            </Link>
+            <Link to="/privacy" className="text-background/60 hover:text-background">
+              Privacy Policy
+            </Link>
+            <Link to="/security" className="text-background/60 hover:text-background">
+              Security
+            </Link>
+          </div>
+        </nav>
         <p className="text-xs mt-6 text-background/40">
           © {new Date().getFullYear()} Alevi.ai. Todos os direitos reservados.
         </p>

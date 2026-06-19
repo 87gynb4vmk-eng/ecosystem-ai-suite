@@ -32,7 +32,7 @@ export const adminListarUsuarios = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("usuarios")
-      .select("id, email, plano, senha_temporaria, created_at")
+      .select("id, email, plano, created_at")
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return { usuarios: rows ?? [] };
@@ -72,7 +72,7 @@ export const adminCriarUsuario = createServerFn({ method: "POST" })
     await supabaseAdmin
       .from("usuarios")
       .upsert(
-        { id: userId, email: data.email, senha_temporaria: senha, plano: data.plano },
+        { id: userId, email: data.email, plano: data.plano },
         { onConflict: "id" },
       );
 
@@ -91,10 +91,6 @@ export const adminResetarSenha = createServerFn({ method: "POST" })
       password: novaSenha,
     });
     if (error) throw new Error(error.message);
-    await supabaseAdmin
-      .from("usuarios")
-      .update({ senha_temporaria: novaSenha })
-      .eq("id", data.userId);
     return { ok: true, senha: novaSenha };
   });
 

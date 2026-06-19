@@ -39,11 +39,11 @@ export const Route = createFileRoute("/api/public/webhook/json2video")({
 
         // Confere token armazenado para esse vídeo
         const { data: row } = await supabaseAdmin
-          .from("videos")
-          .select("webhook_token")
-          .eq("id", videoId)
+          .from("video_webhook_tokens")
+          .select("token")
+          .eq("video_id", videoId)
           .maybeSingle();
-        if (!row?.webhook_token || row.webhook_token !== token) {
+        if (!row?.token || row.token !== token) {
           return new Response("não autorizado", { status: 401 });
         }
 

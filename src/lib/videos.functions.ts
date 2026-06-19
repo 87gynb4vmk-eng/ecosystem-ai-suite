@@ -150,11 +150,16 @@ export const gerarVideo = createServerFn({ method: "POST" })
         usuario_id: context.userId,
         ebook_id: ebook.id,
         status: "processando",
-        webhook_token: webhookToken,
       })
       .select("id")
       .single();
     if (insErr || !videoRow) return { ok: false as const, error: "Falha ao registrar vídeo." };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error: tokenErr } = await supabaseAdmin
+      .from("video_webhook_tokens")
+      .upsert({ video_id: videoRow.id, token: webhookToken }, { onConflict: "video_id" });
+    if (tokenErr) return { ok: false as const, error: "Falha ao proteger webhook do vídeo." };
 
     // Webhook URL pública e estável (token aleatório por render)
     const { getRequestHost } = await import("@tanstack/react-start/server");

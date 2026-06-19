@@ -95,7 +95,7 @@ export const Route = createFileRoute("/api/public/webhook/cakto")({
 
         await supabaseAdmin
           .from("usuarios")
-          .upsert({ id: userId, email, senha_temporaria: senha, plano }, { onConflict: "id" });
+          .upsert({ id: userId, email, plano }, { onConflict: "id" });
 
         console.log(`[Cakto webhook] usuário ${email} provisionado plano=${plano}`);
         return Response.json({ ok: true });
