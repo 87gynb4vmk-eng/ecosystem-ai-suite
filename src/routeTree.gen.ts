@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SecurityRouteImport } from './routes/security'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -22,6 +23,11 @@ import { Route as AuthenticatedAdminGruposRouteImport } from './routes/_authenti
 import { Route as ApiPublicWebhookJson2videoRouteImport } from './routes/api/public/webhook/json2video'
 import { Route as ApiPublicWebhookCaktoRouteImport } from './routes/api/public/webhook/cakto'
 
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/security': typeof SecurityRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/security': typeof SecurityRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/security': typeof SecurityRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacidade'
     | '/privacy'
+    | '/security'
     | '/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacidade'
     | '/privacy'
+    | '/security'
     | '/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacidade'
     | '/privacy'
+    | '/security'
     | '/_authenticated/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
@@ -175,6 +187,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   PrivacyRoute: typeof PrivacyRoute
+  SecurityRoute: typeof SecurityRoute
   CheckoutPlanoRoute: typeof CheckoutPlanoRoute
   ViewPageIdRoute: typeof ViewPageIdRoute
   ApiPublicWebhookCaktoRoute: typeof ApiPublicWebhookCaktoRoute
@@ -183,6 +196,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -290,6 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   PrivacyRoute: PrivacyRoute,
+  SecurityRoute: SecurityRoute,
   CheckoutPlanoRoute: CheckoutPlanoRoute,
   ViewPageIdRoute: ViewPageIdRoute,
   ApiPublicWebhookCaktoRoute: ApiPublicWebhookCaktoRoute,
