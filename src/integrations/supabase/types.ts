@@ -166,6 +166,32 @@ export type Database = {
         }
         Relationships: []
       }
+      video_webhook_tokens: {
+        Row: {
+          created_at: string
+          token: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          token: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          token?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_webhook_tokens_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: true
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       videos: {
         Row: {
           created_at: string
@@ -177,7 +203,6 @@ export type Database = {
           updated_at: string
           usuario_id: string
           video_url: string | null
-          webhook_token: string | null
         }
         Insert: {
           created_at?: string
@@ -189,7 +214,6 @@ export type Database = {
           updated_at?: string
           usuario_id: string
           video_url?: string | null
-          webhook_token?: string | null
         }
         Update: {
           created_at?: string
@@ -201,7 +225,6 @@ export type Database = {
           updated_at?: string
           usuario_id?: string
           video_url?: string | null
-          webhook_token?: string | null
         }
         Relationships: [
           {
