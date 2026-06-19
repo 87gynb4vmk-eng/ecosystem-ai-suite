@@ -151,21 +151,18 @@ export type Database = {
           email: string
           id: string
           plano: string
-          senha_temporaria: string | null
         }
         Insert: {
           created_at?: string
           email: string
           id: string
           plano?: string
-          senha_temporaria?: string | null
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
           plano?: string
-          senha_temporaria?: string | null
         }
         Relationships: []
       }
