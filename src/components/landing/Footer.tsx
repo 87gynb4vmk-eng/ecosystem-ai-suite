@@ -12,9 +12,14 @@ export function Footer() {
           Ecossistemas digitais premium gerados por inteligência artificial.
         </p>
         <nav className="mt-6" aria-label="Links institucionais">
-          <Link to="/privacidade" className="text-xs text-background/60 hover:text-background">
-            Privacidade e Segurança
-          </Link>
+          <div className="flex justify-center gap-4 text-xs">
+            <Link to="/privacidade" className="text-background/60 hover:text-background">
+              Privacidade e Segurança
+            </Link>
+            <Link to="/privacy" className="text-background/60 hover:text-background">
+              Privacy Policy
+            </Link>
+          </div>
         </nav>
         <p className="text-xs mt-6 text-background/40">
           © {new Date().getFullYear()} Alevi.ai. Todos os direitos reservados.
