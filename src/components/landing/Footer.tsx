@@ -19,6 +19,9 @@ export function Footer() {
             <Link to="/privacy" className="text-background/60 hover:text-background">
               Privacy Policy
             </Link>
+            <Link to="/security" className="text-background/60 hover:text-background">
+              Security
+            </Link>
           </div>
         </nav>
         <p className="text-xs mt-6 text-background/40">

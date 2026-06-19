@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrustRouteImport } from './routes/trust'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
@@ -23,6 +24,11 @@ import { Route as AuthenticatedAdminGruposRouteImport } from './routes/_authenti
 import { Route as ApiPublicWebhookJson2videoRouteImport } from './routes/api/public/webhook/json2video'
 import { Route as ApiPublicWebhookCaktoRouteImport } from './routes/api/public/webhook/cakto'
 
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SecurityRoute = SecurityRouteImport.update({
   id: '/security',
   path: '/security',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
   '/security': typeof SecurityRoute
+  '/trust': typeof TrustRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
   '/security': typeof SecurityRoute
+  '/trust': typeof TrustRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
   '/security': typeof SecurityRoute
+  '/trust': typeof TrustRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/privacy'
     | '/security'
+    | '/trust'
     | '/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/privacy'
     | '/security'
+    | '/trust'
     | '/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/privacy'
     | '/security'
+    | '/trust'
     | '/_authenticated/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   PrivacidadeRoute: typeof PrivacidadeRoute
   PrivacyRoute: typeof PrivacyRoute
   SecurityRoute: typeof SecurityRoute
+  TrustRoute: typeof TrustRoute
   CheckoutPlanoRoute: typeof CheckoutPlanoRoute
   ViewPageIdRoute: typeof ViewPageIdRoute
   ApiPublicWebhookCaktoRoute: typeof ApiPublicWebhookCaktoRoute
@@ -196,6 +209,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/security': {
       id: '/security'
       path: '/security'
@@ -311,6 +331,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadeRoute: PrivacidadeRoute,
   PrivacyRoute: PrivacyRoute,
   SecurityRoute: SecurityRoute,
+  TrustRoute: TrustRoute,
   CheckoutPlanoRoute: CheckoutPlanoRoute,
   ViewPageIdRoute: ViewPageIdRoute,
   ApiPublicWebhookCaktoRoute: ApiPublicWebhookCaktoRoute,
