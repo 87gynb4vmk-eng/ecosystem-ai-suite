@@ -88,7 +88,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "icon",
-        href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23000'/%3E%3Ctext x='32' y='42' font-family='Arial,sans-serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23E0B43A'%3EA%3C/text%3E%3C/svg%3E",
+        type: "image/svg+xml",
+        href: "/favicon.svg",
       },
       {
         rel: "stylesheet",
