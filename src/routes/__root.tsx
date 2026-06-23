@@ -82,6 +82,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Ecossistemas digitais premium gerados por IA." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Alevi.ai" },
+      { name: "twitter:title", content: "Alevi.ai" },
+      { property: "og:description", content: "Ecossistemas digitais premium gerados por IA." },
+      { name: "twitter:description", content: "Ecossistemas digitais premium gerados por IA." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/92b6ff1c-35b2-4482-b3ae-01525ac3b093/id-preview-1a91929f--9f20a4fd-8dbb-48f7-ad15-69fb3296a55b.lovable.app-1782227443161.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/92b6ff1c-35b2-4482-b3ae-01525ac3b093/id-preview-1a91929f--9f20a4fd-8dbb-48f7-ad15-69fb3296a55b.lovable.app-1782227443161.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
