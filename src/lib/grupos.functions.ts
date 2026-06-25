@@ -89,7 +89,7 @@ const grupoInput = z.object({
 
 export const adminCriarGrupo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => grupoInput.parse(data))
+  .validator((data: unknown) => grupoInput.parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -107,7 +107,7 @@ export const adminCriarGrupo = createServerFn({ method: "POST" })
 
 export const adminAtualizarGrupo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
+  .validator((data: unknown) =>
     z
       .object({
         id: z.string().uuid(),
@@ -138,7 +138,7 @@ export const adminAtualizarGrupo = createServerFn({ method: "POST" })
 
 export const adminDeletarGrupo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .validator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

@@ -19,14 +19,14 @@ function gerarSenha(len = 12): string {
 }
 
 export const adminVerificarSenha = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ senha: PasswordSchema }).parse(d))
+  .validator((d: unknown) => z.object({ senha: PasswordSchema }).parse(d))
   .handler(async ({ data }) => {
     checkPassword(data.senha);
     return { ok: true };
   });
 
 export const adminListarUsuarios = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ senha: PasswordSchema }).parse(d))
+  .validator((d: unknown) => z.object({ senha: PasswordSchema }).parse(d))
   .handler(async ({ data }) => {
     checkPassword(data.senha);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -39,7 +39,7 @@ export const adminListarUsuarios = createServerFn({ method: "POST" })
   });
 
 export const adminCriarUsuario = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         senha: PasswordSchema,
@@ -80,7 +80,7 @@ export const adminCriarUsuario = createServerFn({ method: "POST" })
   });
 
 export const adminResetarSenha = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z.object({ senha: PasswordSchema, userId: z.string().uuid() }).parse(d),
   )
   .handler(async ({ data }) => {
@@ -95,7 +95,7 @@ export const adminResetarSenha = createServerFn({ method: "POST" })
   });
 
 export const adminExcluirUsuario = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z.object({ senha: PasswordSchema, userId: z.string().uuid() }).parse(d),
   )
   .handler(async ({ data }) => {
