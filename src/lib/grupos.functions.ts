@@ -42,7 +42,10 @@ export const listarGruposDoMeuNicho = createServerFn({ method: "GET" })
 
 async function assertAdmin(supabase: any, userId: string) {
   const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("[assertAdmin] has_role rpc", error);
+    throw new Error("Não foi possível validar permissões. Tente novamente.");
+  }
   if (!data) throw new Error("Forbidden: admin only");
 }
 
