@@ -16,7 +16,10 @@ export const listarGruposDoMeuNicho = createServerFn({ method: "GET" })
       .limit(1)
       .maybeSingle();
 
-    if (ebookErr) throw new Error(ebookErr.message);
+    if (ebookErr) {
+      console.error("[listarGruposDoMeuNicho] ebook lookup", ebookErr);
+      throw new Error("Não foi possível carregar os grupos. Tente novamente.");
+    }
     if (!ebook?.nicho) return { nicho: null, grupos: [] as Array<{ id: string; plataforma: string; nicho: string; link: string; descricao: string }> };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
