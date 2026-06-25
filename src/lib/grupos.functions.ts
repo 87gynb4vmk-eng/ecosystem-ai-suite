@@ -72,7 +72,10 @@ export const adminListarGrupos = createServerFn({ method: "GET" })
       .from("community_groups")
       .select("id, plataforma, nicho, link, descricao, is_active, created_at")
       .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[adminListarGrupos]", error);
+      throw new Error("Não foi possível carregar os grupos. Tente novamente.");
+    }
     return data ?? [];
   });
 
