@@ -9,7 +9,7 @@ const Input = z.object({
 
 export const gerarEbook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => Input.parse(i))
+  .validator((i: unknown) => Input.parse(i))
   .handler(async ({ data, context }) => {
     const key = process.env.LOVABLE_API_KEY;
     if (!key) return { ok: false as const, error: "IA indisponível." };
@@ -128,7 +128,7 @@ const LinkInput = z.object({
 
 export const atualizarAffiliateLink = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => LinkInput.parse(i))
+  .validator((i: unknown) => LinkInput.parse(i))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("ebooks")
@@ -177,7 +177,7 @@ const IdInput = z.object({ id: z.string().uuid() });
 
 export const deletarEbook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => IdInput.parse(i))
+  .validator((i: unknown) => IdInput.parse(i))
   .handler(async ({ data, context }) => {
     await context.supabase.from("videos").delete().eq("ebook_id", data.id).eq("usuario_id", context.userId);
     const { error } = await context.supabase
@@ -194,7 +194,7 @@ export const deletarEbook = createServerFn({ method: "POST" })
 
 export const despublicarEbook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => IdInput.parse(i))
+  .validator((i: unknown) => IdInput.parse(i))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("ebooks")
@@ -207,7 +207,7 @@ export const despublicarEbook = createServerFn({ method: "POST" })
 
 export const obterEbookPorId = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => IdInput.parse(i))
+  .validator((i: unknown) => IdInput.parse(i))
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("ebooks")
@@ -222,7 +222,7 @@ export const obterEbookPorId = createServerFn({ method: "POST" })
 const PubInput = z.object({ id: z.string().uuid() });
 
 export const obterEbookPublico = createServerFn({ method: "GET" })
-  .inputValidator((i: unknown) => PubInput.parse(i))
+  .validator((i: unknown) => PubInput.parse(i))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabaseAdmin

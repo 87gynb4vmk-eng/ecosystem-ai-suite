@@ -20,7 +20,7 @@ const DEMO_MOCK = {
 
 export const obterFaturamentoAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ period: PeriodSchema }).parse(d))
+  .validator((d: unknown) => z.object({ period: PeriodSchema }).parse(d))
   .handler(async ({ data, context }) => {
     const email = (context.claims?.email as string | undefined)?.toLowerCase();
     if (email && DEMO_EMAILS.has(email)) {

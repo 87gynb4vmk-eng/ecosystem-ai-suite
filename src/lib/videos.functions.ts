@@ -103,7 +103,7 @@ function buildTimeline(args: {
 
 export const gerarVideo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => GerarInput.parse(i))
+  .validator((i: unknown) => GerarInput.parse(i))
   .handler(async ({ data, context }) => {
     const apiKey = process.env.JSON2VIDEO_API_KEY;
     if (!apiKey) return { ok: false as const, error: "JSON2VIDEO_API_KEY ausente." };
@@ -205,7 +205,7 @@ export const gerarVideo = createServerFn({ method: "POST" })
 
 export const obterVideo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => ObterInput.parse(i))
+  .validator((i: unknown) => ObterInput.parse(i))
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("videos")
@@ -258,7 +258,7 @@ export const obterVideo = createServerFn({ method: "POST" })
 const UltimoInput = z.object({ ebookId: z.string().uuid() });
 export const obterUltimoVideoDoEbook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => UltimoInput.parse(i))
+  .validator((i: unknown) => UltimoInput.parse(i))
   .handler(async ({ data, context }) => {
     const { data: row } = await context.supabase
       .from("videos")
@@ -299,7 +299,7 @@ export const listarMeusVideos = createServerFn({ method: "GET" })
 const DelVideoInput = z.object({ id: z.string().uuid() });
 export const deletarVideo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => DelVideoInput.parse(i))
+  .validator((i: unknown) => DelVideoInput.parse(i))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("videos")

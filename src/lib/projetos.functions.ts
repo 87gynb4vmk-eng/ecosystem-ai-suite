@@ -65,7 +65,7 @@ export const listarProjetos = createServerFn({ method: "GET" })
 
 export const gerarEcossistema = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => CriarInput.parse(input))
+  .validator((input: unknown) => CriarInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
