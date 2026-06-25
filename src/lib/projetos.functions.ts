@@ -56,7 +56,10 @@ export const listarProjetos = createServerFn({ method: "GET" })
       .from("projetos")
       .select("id, nome_negocio, nicho, descricao, paginas_ia, created_at")
       .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[listarProjetos]", error);
+      throw new Error("Não foi possível carregar os projetos. Tente novamente.");
+    }
     return { projetos: data ?? [] };
   });
 
@@ -123,7 +126,10 @@ Gere copy persuasivo, sofisticado e em português brasileiro. Headlines diretas,
       })
       .select("id, nome_negocio, nicho, descricao, paginas_ia, created_at")
       .single();
-    if (insertErr) throw new Error(insertErr.message);
+    if (insertErr) {
+      console.error("[gerarEcossistema] insert projeto", insertErr);
+      throw new Error("Não foi possível salvar o projeto. Tente novamente.");
+    }
 
     return { projeto: inserted };
   });

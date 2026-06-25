@@ -16,7 +16,10 @@ export const listarGruposDoMeuNicho = createServerFn({ method: "GET" })
       .limit(1)
       .maybeSingle();
 
-    if (ebookErr) throw new Error(ebookErr.message);
+    if (ebookErr) {
+      console.error("[listarGruposDoMeuNicho] ebook lookup", ebookErr);
+      throw new Error("Não foi possível carregar os grupos. Tente novamente.");
+    }
     if (!ebook?.nicho) return { nicho: null, grupos: [] as Array<{ id: string; plataforma: string; nicho: string; link: string; descricao: string }> };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -28,7 +31,10 @@ export const listarGruposDoMeuNicho = createServerFn({ method: "GET" })
       .order("plataforma", { ascending: true })
       .order("created_at", { ascending: false });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[listarGruposDoMeuNicho] grupos query", error);
+      throw new Error("Não foi possível carregar os grupos. Tente novamente.");
+    }
     return { nicho: ebook.nicho, grupos: grupos ?? [] };
   });
 
@@ -36,7 +42,10 @@ export const listarGruposDoMeuNicho = createServerFn({ method: "GET" })
 
 async function assertAdmin(supabase: any, userId: string) {
   const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("[assertAdmin] has_role rpc", error);
+    throw new Error("Não foi possível validar permissões. Tente novamente.");
+  }
   if (!data) throw new Error("Forbidden: admin only");
 }
 
@@ -47,7 +56,10 @@ export const verificarSouAdmin = createServerFn({ method: "GET" })
       _user_id: context.userId,
       _role: "admin",
     });
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[verificarSouAdmin]", error);
+      throw new Error("Não foi possível validar permissões. Tente novamente.");
+    }
     return { isAdmin: !!data };
   });
 
@@ -60,7 +72,10 @@ export const adminListarGrupos = createServerFn({ method: "GET" })
       .from("community_groups")
       .select("id, plataforma, nicho, link, descricao, is_active, created_at")
       .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[adminListarGrupos]", error);
+      throw new Error("Não foi possível carregar os grupos. Tente novamente.");
+    }
     return data ?? [];
   });
 
@@ -83,7 +98,10 @@ export const adminCriarGrupo = createServerFn({ method: "POST" })
       .insert(data)
       .select()
       .single();
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[adminCriarGrupo]", error);
+      throw new Error("Não foi possível criar o grupo. Tente novamente.");
+    }
     return row;
   });
 
@@ -111,7 +129,10 @@ export const adminAtualizarGrupo = createServerFn({ method: "POST" })
       .eq("id", id)
       .select()
       .single();
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[adminAtualizarGrupo]", error);
+      throw new Error("Não foi possível atualizar o grupo. Tente novamente.");
+    }
     return row;
   });
 
@@ -122,6 +143,9 @@ export const adminDeletarGrupo = createServerFn({ method: "POST" })
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("community_groups").delete().eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[adminDeletarGrupo]", error);
+      throw new Error("Não foi possível excluir o grupo. Tente novamente.");
+    }
     return { ok: true };
   });
