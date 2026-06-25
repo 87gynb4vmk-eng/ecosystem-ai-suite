@@ -98,7 +98,10 @@ export const adminCriarGrupo = createServerFn({ method: "POST" })
       .insert(data)
       .select()
       .single();
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[adminCriarGrupo]", error);
+      throw new Error("Não foi possível criar o grupo. Tente novamente.");
+    }
     return row;
   });
 
