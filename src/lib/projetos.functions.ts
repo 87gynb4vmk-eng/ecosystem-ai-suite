@@ -126,7 +126,10 @@ Gere copy persuasivo, sofisticado e em português brasileiro. Headlines diretas,
       })
       .select("id, nome_negocio, nicho, descricao, paginas_ia, created_at")
       .single();
-    if (insertErr) throw new Error(insertErr.message);
+    if (insertErr) {
+      console.error("[gerarEcossistema] insert projeto", insertErr);
+      throw new Error("Não foi possível salvar o projeto. Tente novamente.");
+    }
 
     return { projeto: inserted };
   });
