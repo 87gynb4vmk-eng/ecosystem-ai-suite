@@ -56,7 +56,10 @@ export const verificarSouAdmin = createServerFn({ method: "GET" })
       _user_id: context.userId,
       _role: "admin",
     });
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[verificarSouAdmin]", error);
+      throw new Error("Não foi possível validar permissões. Tente novamente.");
+    }
     return { isAdmin: !!data };
   });
 
