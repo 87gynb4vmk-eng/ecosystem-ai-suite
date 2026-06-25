@@ -31,7 +31,10 @@ export const listarGruposDoMeuNicho = createServerFn({ method: "GET" })
       .order("plataforma", { ascending: true })
       .order("created_at", { ascending: false });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[listarGruposDoMeuNicho] grupos query", error);
+      throw new Error("Não foi possível carregar os grupos. Tente novamente.");
+    }
     return { nicho: ebook.nicho, grupos: grupos ?? [] };
   });
 
