@@ -7,6 +7,30 @@ const Input = z.object({
   subnicho: z.string().min(2).max(80),
 });
 
+function getAiGenerationErrorMessage(error: unknown) {
+  const details = error as {
+    message?: string;
+    status?: number;
+    statusCode?: number;
+    responseBody?: string;
+  };
+  const status = details.status ?? details.statusCode;
+  const rawMessage = [details.message, details.responseBody]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  if (status === 402 || rawMessage.includes("payment required")) {
+    return "Créditos de IA insuficientes para gerar este e-book. Adicione créditos em Configurações → Planos e créditos e tente novamente.";
+  }
+
+  if (status === 429 || rawMessage.includes("rate limit")) {
+    return "Limite de requisições atingido. Tente novamente em instantes.";
+  }
+
+  return details.message ? `Falha ao gerar e-book: ${details.message}` : "Falha ao gerar e-book.";
+}
+
 export const gerarEbook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((i: unknown) => Input.parse(i))
@@ -89,18 +113,8 @@ CONCLUSÃO
 
       return { ok: true as const, id: row.id as string, titulo, subtitulo, conteudo };
     } catch (err) {
-      const msg = (err as Error).message ?? "";
       console.error("[gerarEbook] AI error:", err);
-      if (msg.includes("429"))
-        return {
-          ok: false as const,
-          error: "Limite de requisições. Tente novamente em instantes.",
-        };
-      if (msg.includes("402")) return { ok: false as const, error: "Créditos de IA esgotados." };
-      return {
-        ok: false as const,
-        error: msg ? `Falha ao gerar e-book: ${msg}` : "Falha ao gerar e-book.",
-      };
+      return { ok: false as const, error: getAiGenerationErrorMessage(err) };
     }
   });
 
