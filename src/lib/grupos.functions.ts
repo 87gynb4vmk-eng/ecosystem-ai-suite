@@ -143,6 +143,9 @@ export const adminDeletarGrupo = createServerFn({ method: "POST" })
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("community_groups").delete().eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[adminDeletarGrupo]", error);
+      throw new Error("Não foi possível excluir o grupo. Tente novamente.");
+    }
     return { ok: true };
   });
