@@ -129,7 +129,10 @@ export const adminAtualizarGrupo = createServerFn({ method: "POST" })
       .eq("id", id)
       .select()
       .single();
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[adminAtualizarGrupo]", error);
+      throw new Error("Não foi possível atualizar o grupo. Tente novamente.");
+    }
     return row;
   });
 
