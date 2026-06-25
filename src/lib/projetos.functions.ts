@@ -56,7 +56,10 @@ export const listarProjetos = createServerFn({ method: "GET" })
       .from("projetos")
       .select("id, nome_negocio, nicho, descricao, paginas_ia, created_at")
       .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[listarProjetos]", error);
+      throw new Error("Não foi possível carregar os projetos. Tente novamente.");
+    }
     return { projetos: data ?? [] };
   });
 
