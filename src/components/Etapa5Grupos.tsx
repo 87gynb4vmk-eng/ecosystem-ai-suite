@@ -66,6 +66,12 @@ export function Etapa5Grupos({ onBack }: { onBack: () => void }) {
   const facebookSearchUrl = data?.nicho
     ? `https://www.facebook.com/groups/search/?q=${encodeURIComponent(data.nicho)}`
     : null;
+  const telegramSearchUrl = data?.nicho
+    ? `https://www.google.com/search?q=${encodeURIComponent(`grupo telegram ${data.nicho} site:t.me`)}`
+    : null;
+  const whatsappSearchUrl = data?.nicho
+    ? `https://www.google.com/search?q=${encodeURIComponent(`grupo whatsapp ${data.nicho} site:chat.whatsapp.com`)}`
+    : null;
   const whatsappGroups: Grupo[] = (data?.grupos ?? []) as Grupo[];
 
   return (
