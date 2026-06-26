@@ -11,79 +11,107 @@ function getAiGenerationErrorMessage(error: unknown) {
   const details = error as {
     message?: string;
     status?: number;
-    statusCode?: number;
-    responseBody?: string;
   };
-  const status = details.status ?? details.statusCode;
-  const rawMessage = [details.message, details.responseBody]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
+  const status = details.status;
+  const rawMessage = (details.message ?? "").toLowerCase();
 
-  if (status === 402 || rawMessage.includes("payment required")) {
-    return "Créditos de IA insuficientes para gerar este e-book. Adicione créditos em Configurações → Planos e créditos e tente novamente.";
+  if (status === 401 || status === 403 || rawMessage.includes("api key")) {
+    return "Chave da API do Google Gemini inválida ou não configurada. Verifique a variável GEMINI_API_KEY.";
+  }
+  if (status === 429 || rawMessage.includes("quota") || rawMessage.includes("rate")) {
+    return "Limite de requisições da API Gemini atingido. Aguarde alguns instantes e tente novamente.";
+  }
+  if (status && status >= 500) {
+    return "A API do Google Gemini está temporariamente indisponível. Tente novamente em instantes.";
+  }
+  return details.message
+    ? `Falha ao gerar e-book: ${details.message}`
+    : "Falha ao gerar e-book. Tente novamente.";
+}
+
+const GEMINI_MODEL = "gemini-2.5-flash";
+
+async function callGemini(apiKey: string, prompt: string): Promise<string> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.8,
+        topP: 0.95,
+        maxOutputTokens: 8192,
+      },
+    }),
+  });
+
+  if (!res.ok) {
+    const bodyText = await res.text().catch(() => "");
+    let parsedMessage = bodyText;
+    try {
+      const parsed = JSON.parse(bodyText);
+      parsedMessage = parsed?.error?.message ?? bodyText;
+    } catch {
+      /* ignore */
+    }
+    const err = new Error(parsedMessage || `Gemini HTTP ${res.status}`) as Error & {
+      status?: number;
+    };
+    err.status = res.status;
+    throw err;
   }
 
-  if (status === 429 || rawMessage.includes("rate limit")) {
-    return "Limite de requisições atingido. Tente novamente em instantes.";
-  }
-
-  return details.message ? `Falha ao gerar e-book: ${details.message}` : "Falha ao gerar e-book.";
+  const json = (await res.json()) as {
+    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+  };
+  const text =
+    json.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+  return text.trim();
 }
 
 export const gerarEbook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((i: unknown) => Input.parse(i))
   .handler(async ({ data, context }) => {
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) return { ok: false as const, error: "IA indisponível." };
-
-    const { generateText } = await import("ai");
-    const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
-    const gateway = createLovableAiGatewayProvider(key);
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) {
+      return {
+        ok: false as const,
+        error: "GEMINI_API_KEY não configurada no servidor.",
+      };
+    }
 
     try {
-      const result = await generateText({
-        model: gateway("google/gemini-3-flash-preview"),
-        prompt: `Crie um e-book COMPLETO, APROFUNDADO e PROFISSIONAL em português brasileiro sobre "${data.subnicho}" dentro do nicho "${data.nicho}".
-Use tom profissional, prático, envolvente e didático. Conteúdo extenso e de alto valor, como um produto comercial premium.
+      const prompt = `Crie um e-book COMPLETO, APROFUNDADO e PROFISSIONAL em português brasileiro sobre "${data.subnicho}" dentro do nicho "${data.nicho}".
+Tom profissional, prático, envolvente e didático. Conteúdo extenso e de altíssimo valor, como um produto comercial premium.
 
-REGRAS DE FORMATO (texto simples, SEM JSON, SEM markdown):
-TÍTULO: um título comercial curto e impactante
+REGRAS DE FORMATO (texto simples, SEM JSON, SEM markdown, SEM asteriscos):
+TÍTULO: um título comercial curto, atrativo e impactante
 SUBTÍTULO: uma promessa clara do conteúdo
 
 INTRODUÇÃO
 4 a 5 parágrafos densos contextualizando tema, problema, oportunidade e o que o leitor vai aprender.
 
+Em seguida, escreva NO MÍNIMO 10 CAPÍTULOS detalhados, no formato exato:
 CAPÍTULO 1 — título do capítulo
 6 a 8 parágrafos longos com exemplos práticos, dados e dicas acionáveis. Inclua listas com "- " quando útil.
 
 CAPÍTULO 2 — título do capítulo
-Mesmo padrão (6 a 8 parágrafos + bullets quando útil).
+(mesmo padrão)
 
-CAPÍTULO 3 — título do capítulo
-Mesmo padrão.
-
-CAPÍTULO 4 — título do capítulo
-Mesmo padrão.
-
-CAPÍTULO 5 — título do capítulo
-Mesmo padrão.
-
-CAPÍTULO 6 — título do capítulo
-Mesmo padrão.
-
-CAPÍTULO 7 — título do capítulo
-Mesmo padrão.
-
-CAPÍTULO 8 — título do capítulo
-Mesmo padrão.
+... e assim por diante até pelo menos CAPÍTULO 10. Cada capítulo deve ter título único e ser profundo e prático.
 
 CONCLUSÃO
-4 a 5 parágrafos com síntese, chamada para ação e próximos passos.`,
-      });
-      const conteudo = result.text.trim();
-      if (!conteudo) return { ok: false as const, error: "A IA retornou uma resposta vazia." };
+4 a 5 parágrafos com síntese e fechamento inspirador.
+
+CHAMADA PARA AÇÃO
+2 a 3 parágrafos finais com uma chamada para ação clara, persuasiva e prática, convidando o leitor a aplicar o conteúdo e dar o próximo passo.`;
+
+      const conteudo = await callGemini(key, prompt);
+      if (!conteudo) {
+        return { ok: false as const, error: "A IA retornou uma resposta vazia." };
+      }
 
       let titulo = `E-book de ${data.subnicho}`;
       let subtitulo = `${data.nicho} • ${data.subnicho}`;
@@ -92,7 +120,6 @@ CONCLUSÃO
       if (tituloMatch?.[1]) titulo = tituloMatch[1].trim();
       if (subtituloMatch?.[1]) subtitulo = subtituloMatch[1].trim();
 
-      // Persistir o e-book no banco para a Etapa 3 conseguir carregar
       const { data: row, error } = await context.supabase
         .from("ebooks")
         .insert({
@@ -113,10 +140,11 @@ CONCLUSÃO
 
       return { ok: true as const, id: row.id as string, titulo, subtitulo, conteudo };
     } catch (err) {
-      console.error("[gerarEbook] AI error:", err);
+      console.error("[gerarEbook] Gemini error:", err);
       return { ok: false as const, error: getAiGenerationErrorMessage(err) };
     }
   });
+
 
 export const obterUltimoEbook = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
