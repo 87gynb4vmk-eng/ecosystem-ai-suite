@@ -66,6 +66,12 @@ export function Etapa5Grupos({ onBack }: { onBack: () => void }) {
   const facebookSearchUrl = data?.nicho
     ? `https://www.facebook.com/groups/search/?q=${encodeURIComponent(data.nicho)}`
     : null;
+  const telegramSearchUrl = data?.nicho
+    ? `https://www.google.com/search?q=${encodeURIComponent(`grupo telegram ${data.nicho} site:t.me`)}`
+    : null;
+  const whatsappSearchUrl = data?.nicho
+    ? `https://www.google.com/search?q=${encodeURIComponent(`grupo whatsapp ${data.nicho} site:chat.whatsapp.com`)}`
+    : null;
   const whatsappGroups: Grupo[] = (data?.grupos ?? []) as Grupo[];
 
   return (
@@ -145,9 +151,71 @@ export function Etapa5Grupos({ onBack }: { onBack: () => void }) {
             </a>
           )}
 
+          {telegramSearchUrl && (
+            <a
+              href={telegramSearchUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 w-full rounded-2xl p-4 border transition"
+              style={{ background: "#229ED915", borderColor: "#229ED940" }}
+            >
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: "#229ED930" }}
+              >
+                <Send className="w-6 h-6" style={{ color: "#229ED9" }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-zinc-100 font-semibold text-sm truncate">
+                  Buscar Grupos no Telegram
+                </h3>
+                <p className="text-xs text-zinc-400 truncate">
+                  {data.nicho} · resultados públicos do Telegram
+                </p>
+              </div>
+              <span
+                className="text-white font-bold py-2 px-4 rounded-lg text-xs shrink-0 flex items-center gap-1.5"
+                style={{ background: "#229ED9" }}
+              >
+                <ExternalLink className="w-3.5 h-3.5" /> Abrir
+              </span>
+            </a>
+          )}
+
+          {whatsappSearchUrl && (
+            <a
+              href={whatsappSearchUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 w-full rounded-2xl p-4 border transition"
+              style={{ background: "#25D36615", borderColor: "#25D36640" }}
+            >
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: "#25D36630" }}
+              >
+                <MessageCircle className="w-6 h-6" style={{ color: "#25D366" }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-zinc-100 font-semibold text-sm truncate">
+                  Buscar Grupos no WhatsApp
+                </h3>
+                <p className="text-xs text-zinc-400 truncate">
+                  {data.nicho} · links públicos de convite
+                </p>
+              </div>
+              <span
+                className="text-white font-bold py-2 px-4 rounded-lg text-xs shrink-0 flex items-center gap-1.5"
+                style={{ background: "#25D366" }}
+              >
+                <ExternalLink className="w-3.5 h-3.5" /> Abrir
+              </span>
+            </a>
+          )}
+
           {whatsappGroups.length === 0 && (
             <div className="border border-zinc-800 bg-zinc-900/20 rounded-2xl p-4 text-sm text-zinc-400">
-              Ainda não temos grupos fixos para esse nicho. Use a busca do Facebook acima.
+              Ainda não temos grupos fixos para esse nicho. Use as buscas acima para encontrar comunidades ativas.
             </div>
           )}
 
