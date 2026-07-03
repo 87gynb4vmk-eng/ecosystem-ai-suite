@@ -1071,11 +1071,27 @@ function EbookFlow({
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
+      // Garante sessão válida antes de chamar o serverFn protegido (evita "Unauthorized: No authorization header").
+      const { data: sessionData } = await supabase.auth.getSession();
+      let session = sessionData.session;
+      if (!session) {
+        const { data: refreshed } = await supabase.auth.refreshSession();
+        session = refreshed.session;
+      }
+      if (!session?.access_token) {
+        toast.error("Sua sessão expirou. Faça login novamente.");
+        setIsGenerating(false);
+        window.location.href = "/auth";
+        return;
+      }
+
       const res = await gerar({ data: { nicho, subnicho } }).catch((err: unknown) => {
         console.error("[gerarEbook] call error:", err);
-        throw new Error(
-          (err as Error)?.message || "Falha de comunicação com o servidor.",
-        );
+        const msg = (err as Error)?.message || "";
+        if (msg.toLowerCase().includes("unauthorized") || msg.toLowerCase().includes("no authorization")) {
+          throw new Error("Sessão expirada. Faça login novamente para gerar o e-book.");
+        }
+        throw new Error(msg || "Falha de comunicação com o servidor.");
       });
       if (!res) throw new Error("Resposta vazia do servidor.");
       if (!res.ok) throw new Error(res.error || "Falha ao gerar e-book.");
