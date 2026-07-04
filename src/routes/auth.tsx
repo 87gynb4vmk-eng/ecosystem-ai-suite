@@ -5,9 +5,15 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  beforeLoad: async () => {
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" && s.next.startsWith("/") && !s.next.startsWith("//") ? s.next : undefined,
+  }),
+  beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getSession();
-    if (data.session) throw redirect({ to: "/dashboard" });
+    if (data.session) {
+      if (search.next) throw redirect({ href: search.next });
+      throw redirect({ to: "/dashboard" });
+    }
   },
   head: () => ({
     meta: [
@@ -24,6 +30,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,6 +43,10 @@ function AuthPage() {
       if (error) throw error;
       toast.success("Bem-vindo!");
       setLoading(false);
+      if (next) {
+        window.location.href = next;
+        return;
+      }
       navigate({ to: "/dashboard", replace: true });
     } catch (err) {
       toast.error((err as Error).message ?? "Falha na autenticação.");
