@@ -1,17 +1,18 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Lock, RotateCcw, Trash2, UserPlus, Users } from "lucide-react";
+import { Loader2, RotateCcw, Shield, Trash2, UserPlus, Users } from "lucide-react";
 import {
   adminCriarUsuario,
   adminExcluirUsuario,
   adminListarUsuarios,
   adminResetarSenha,
-  adminVerificarSenha,
+  adminSouAdmin,
 } from "@/lib/admin.functions";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Gerenciador | Alevi.ai" }, { name: "robots", content: "noindex" }] }),
   component: AdminPage,
 });
@@ -24,63 +25,43 @@ type Usuario = {
 };
 
 function AdminPage() {
-  const verificar = useServerFn(adminVerificarSenha);
-  const [senha, setSenha] = useState("");
-  const [autorizado, setAutorizado] = useState(false);
-  const [verificando, setVerificando] = useState(false);
+  const checkAdmin = useServerFn(adminSouAdmin);
+  const adminQ = useQuery({ queryKey: ["sou-admin"], queryFn: () => checkAdmin() });
 
-  const handleEntrar = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setVerificando(true);
-    try {
-      await verificar({ data: { senha } });
-      setAutorizado(true);
-    } catch (err) {
-      toast.error((err as Error).message);
-    } finally {
-      setVerificando(false);
-    }
-  };
-
-  if (!autorizado) {
+  if (adminQ.isLoading) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center px-6">
-        <form
-          onSubmit={handleEntrar}
-          className="w-full max-w-sm bg-card border border-border rounded-2xl p-8 shadow-luxury"
-        >
-          <div className="mx-auto h-12 w-12 rounded-full bg-gold/15 flex items-center justify-center mb-5">
-            <Lock className="h-5 w-5 text-gold" />
-          </div>
-          <h1 className="font-display text-2xl font-bold text-center mb-1">Gerenciador</h1>
-          <p className="text-sm text-muted-foreground text-center mb-6">
-            Digite a senha mestra para entrar.
-          </p>
-          <input
-            type="password"
-            autoFocus
-            required
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            placeholder="Senha mestra"
-            className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-          <button
-            type="submit"
-            disabled={verificando}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-gradient-gold px-4 py-3 text-sm font-bold text-gold-foreground shadow-gold-glow disabled:opacity-60"
-          >
-            {verificando ? <Loader2 className="h-4 w-4 animate-spin" /> : "Entrar"}
-          </button>
-        </form>
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-gold" />
       </main>
     );
   }
 
-  return <AdminDashboard senha={senha} />;
+  if (!adminQ.data?.isAdmin) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center px-6">
+        <div className="max-w-sm text-center bg-card border border-border rounded-2xl p-8 shadow-luxury">
+          <div className="mx-auto h-12 w-12 rounded-full bg-destructive/15 flex items-center justify-center mb-5">
+            <Shield className="h-5 w-5 text-destructive" />
+          </div>
+          <h1 className="font-display text-2xl font-bold mb-2">Acesso negado</h1>
+          <p className="text-sm text-muted-foreground mb-6">
+            Somente administradores podem acessar esta página.
+          </p>
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center justify-center rounded-md border border-border px-4 py-2 text-sm hover:bg-muted"
+          >
+            Voltar ao painel
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  return <AdminDashboard />;
 }
 
-function AdminDashboard({ senha }: { senha: string }) {
+function AdminDashboard() {
   const listar = useServerFn(adminListarUsuarios);
   const criar = useServerFn(adminCriarUsuario);
   const resetar = useServerFn(adminResetarSenha);
@@ -95,7 +76,7 @@ function AdminDashboard({ senha }: { senha: string }) {
   const carregar = async () => {
     setCarregando(true);
     try {
-      const { usuarios } = await listar({ data: { senha } });
+      const { usuarios } = await listar();
       setUsuarios(usuarios as Usuario[]);
     } catch (err) {
       toast.error((err as Error).message);
@@ -113,7 +94,7 @@ function AdminDashboard({ senha }: { senha: string }) {
     e.preventDefault();
     setCriando(true);
     try {
-      const res = await criar({ data: { senha, email: novoEmail, plano: novoPlano } });
+      const res = await criar({ data: { email: novoEmail, plano: novoPlano } });
       toast.success(`Conta criada. Senha: ${res.senha}`);
       navigator.clipboard.writeText(res.senha).catch(() => {});
       setNovoEmail("");
@@ -128,7 +109,7 @@ function AdminDashboard({ senha }: { senha: string }) {
   const handleResetar = async (u: Usuario) => {
     if (!confirm(`Gerar nova senha para ${u.email}?`)) return;
     try {
-      const res = await resetar({ data: { senha, userId: u.id } });
+      const res = await resetar({ data: { userId: u.id } });
       navigator.clipboard.writeText(res.senha).catch(() => {});
       toast.success(`Nova senha: ${res.senha} (copiada)`);
       await carregar();
@@ -140,7 +121,7 @@ function AdminDashboard({ senha }: { senha: string }) {
   const handleExcluir = async (u: Usuario) => {
     if (!confirm(`Excluir ${u.email} permanentemente?`)) return;
     try {
-      await excluir({ data: { senha, userId: u.id } });
+      await excluir({ data: { userId: u.id } });
       toast.success("Usuário excluído.");
       await carregar();
     } catch (err) {
@@ -161,7 +142,6 @@ function AdminDashboard({ senha }: { senha: string }) {
           </div>
         </div>
 
-        {/* Criar usuário */}
         <section className="bg-card border border-border rounded-2xl p-5 mb-6 shadow-card">
           <div className="flex items-center gap-2 mb-4">
             <UserPlus className="h-4 w-4 text-gold" />
@@ -194,7 +174,6 @@ function AdminDashboard({ senha }: { senha: string }) {
           </form>
         </section>
 
-        {/* Lista */}
         <section className="bg-card border border-border rounded-2xl p-5 shadow-card">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold">Usuários ({usuarios.length})</h2>

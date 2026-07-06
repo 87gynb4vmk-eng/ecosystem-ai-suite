@@ -18,7 +18,11 @@ export default defineTool({
     affiliate_link: z
       .string()
       .max(500)
-      .describe("Full URL to the affiliate offer, or empty string to clear."),
+      .refine((u) => u === "" || /^https?:\/\/\S+$/i.test(u), {
+        message: "Apenas URLs http:// ou https:// são permitidas, ou string vazia para limpar.",
+      })
+      .describe("Full URL (http/https) to the affiliate offer, or empty string to clear."),
+
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
   handler: async ({ id, affiliate_link }, ctx) => {

@@ -87,7 +87,7 @@
             "affiliate_link": {
               "type": "string",
               "maxLength": 500,
-              "description": "Full URL to the affiliate offer, or empty string to clear."
+              "description": "Full URL (http/https) to the affiliate offer, or empty string to clear."
             }
           },
           "required": [
