@@ -163,10 +163,19 @@ export const obterUltimoEbook = createServerFn({ method: "GET" })
     return { ok: true as const, ebook: data };
   });
 
+const HttpUrl = z
+  .string()
+  .url()
+  .max(500)
+  .refine((u) => /^https?:\/\//i.test(u), {
+    message: "Apenas URLs http:// ou https:// são permitidas.",
+  });
+
 const LinkInput = z.object({
   id: z.string().uuid(),
-  affiliate_link: z.string().url().max(500).or(z.literal("")),
+  affiliate_link: HttpUrl.or(z.literal("")),
 });
+
 
 export const atualizarAffiliateLink = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
