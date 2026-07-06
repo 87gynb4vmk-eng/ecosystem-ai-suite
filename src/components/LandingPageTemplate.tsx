@@ -103,9 +103,11 @@ export function LandingPageTemplate(props: LandingPageTemplateProps) {
   } = props;
 
   const { reais, cents, original } = priceParts(price);
-  const cta = affiliateLink || "#";
-  const ctaTarget = affiliateLink ? "_blank" : undefined;
-  const ctaRel = affiliateLink ? "noopener noreferrer" : undefined;
+  const safeAffiliateLink = /^https?:\/\//i.test(affiliateLink) ? affiliateLink : "";
+  const cta = safeAffiliateLink || "#";
+  const ctaTarget = safeAffiliateLink ? "_blank" : undefined;
+  const ctaRel = safeAffiliateLink ? "noopener noreferrer" : undefined;
+
 
   const defaultCapitulos = [
     "Fundamentos essenciais",
