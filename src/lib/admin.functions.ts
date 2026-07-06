@@ -1,12 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const PasswordSchema = z.string().min(1).max(200);
-
-function checkPassword(provided: string) {
-  const expected = process.env.ADMIN_MASTER_PASSWORD;
-  if (!expected) throw new Error("Senha mestra não configurada no servidor.");
-  if (provided !== expected) throw new Error("Senha incorreta.");
+async function assertAdmin(context: { supabase: any; userId: string }) {
+  const { data: isAdmin, error } = await context.supabase.rpc("has_role", {
+    _user_id: context.userId,
+    _role: "admin",
+  });
+  if (error) throw new Error("Falha ao verificar permissão.");
+  if (!isAdmin) throw new Error("Acesso negado: apenas administradores.");
 }
 
 function gerarSenha(len = 12): string {
@@ -18,38 +20,55 @@ function gerarSenha(len = 12): string {
   return s;
 }
 
-export const adminVerificarSenha = createServerFn({ method: "POST" })
-  .validator((d: unknown) => z.object({ senha: PasswordSchema }).parse(d))
-  .handler(async ({ data }) => {
-    checkPassword(data.senha);
-    return { ok: true };
+async function auditLog(
+  actorId: string,
+  action: string,
+  target: Record<string, unknown>,
+) {
+  try {
+    console.info("[admin-audit]", JSON.stringify({ actorId, action, target, at: new Date().toISOString() }));
+  } catch {
+    /* noop */
+  }
+}
+
+export const adminSouAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (error) return { isAdmin: false };
+    return { isAdmin: Boolean(data) };
   });
 
-export const adminListarUsuarios = createServerFn({ method: "POST" })
-  .validator((d: unknown) => z.object({ senha: PasswordSchema }).parse(d))
-  .handler(async ({ data }) => {
-    checkPassword(data.senha);
+export const adminListarUsuarios = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("usuarios")
       .select("id, email, plano, created_at")
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
+    await auditLog(context.userId, "list_users", { count: rows?.length ?? 0 });
     return { usuarios: rows ?? [] };
   });
 
 export const adminCriarUsuario = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((d: unknown) =>
     z
       .object({
-        senha: PasswordSchema,
         email: z.string().trim().toLowerCase().email().max(255),
         plano: z.enum(["mensal", "vitalicio"]),
       })
       .parse(d),
   )
-  .handler(async ({ data }) => {
-    checkPassword(data.senha);
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const senha = gerarSenha(12);
 
@@ -76,32 +95,36 @@ export const adminCriarUsuario = createServerFn({ method: "POST" })
         { onConflict: "id" },
       );
 
+    await auditLog(context.userId, "create_user", { targetUserId: userId, email: data.email, plano: data.plano });
     return { ok: true, email: data.email, senha };
   });
 
 export const adminResetarSenha = createServerFn({ method: "POST" })
-  .validator((d: unknown) =>
-    z.object({ senha: PasswordSchema, userId: z.string().uuid() }).parse(d),
-  )
-  .handler(async ({ data }) => {
-    checkPassword(data.senha);
+  .middleware([requireSupabaseAuth])
+  .validator((d: unknown) => z.object({ userId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const novaSenha = gerarSenha(12);
     const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
       password: novaSenha,
     });
     if (error) throw new Error(error.message);
+    await auditLog(context.userId, "reset_password", { targetUserId: data.userId });
     return { ok: true, senha: novaSenha };
   });
 
 export const adminExcluirUsuario = createServerFn({ method: "POST" })
-  .validator((d: unknown) =>
-    z.object({ senha: PasswordSchema, userId: z.string().uuid() }).parse(d),
-  )
-  .handler(async ({ data }) => {
-    checkPassword(data.senha);
+  .middleware([requireSupabaseAuth])
+  .validator((d: unknown) => z.object({ userId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    if (data.userId === context.userId) {
+      throw new Error("Você não pode excluir a própria conta.");
+    }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
+    await auditLog(context.userId, "delete_user", { targetUserId: data.userId });
     return { ok: true };
   });
