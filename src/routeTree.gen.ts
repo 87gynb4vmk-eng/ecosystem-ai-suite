@@ -13,6 +13,7 @@ import { Route as TrustRouteImport } from './routes/trust'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as PrimeiroAcessoRouteImport } from './routes/primeiro-acesso'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -47,6 +48,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrimeiroAcessoRoute = PrimeiroAcessoRouteImport.update({
+  id: '/primeiro-acesso',
+  path: '/primeiro-acesso',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
   '/security': typeof SecurityRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
   '/security': typeof SecurityRoute
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
   '/security': typeof SecurityRoute
@@ -197,6 +206,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
     | '/security'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
     | '/security'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/mcp'
+    | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
     | '/security'
@@ -260,6 +272,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   McpRoute: typeof McpRoute
+  PrimeiroAcessoRoute: typeof PrimeiroAcessoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   PrivacyRoute: typeof PrivacyRoute
   SecurityRoute: typeof SecurityRoute
@@ -302,6 +315,13 @@ declare module '@tanstack/react-router' {
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/primeiro-acesso': {
+      id: '/primeiro-acesso'
+      path: '/primeiro-acesso'
+      fullPath: '/primeiro-acesso'
+      preLoaderRoute: typeof PrimeiroAcessoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -441,6 +461,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   McpRoute: McpRoute,
+  PrimeiroAcessoRoute: PrimeiroAcessoRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   PrivacyRoute: PrivacyRoute,
   SecurityRoute: SecurityRoute,
