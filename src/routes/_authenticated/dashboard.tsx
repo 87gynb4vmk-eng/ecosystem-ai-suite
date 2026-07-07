@@ -658,6 +658,8 @@ function Overview({ onNovo }: { onNovo: () => void }) {
         </p>
       </div>
 
+      <PlanoCard />
+
       {/* Faturamento card */}
       <div className="relative rounded-3xl p-6 bg-gradient-to-br from-[#0d1410] to-[#0a0a0a] border border-zinc-800/80 overflow-hidden">
         <div className="pointer-events-none absolute -top-20 -left-10 h-60 w-60 bg-[radial-gradient(circle,rgba(16,185,129,0.18),transparent_70%)]" />
