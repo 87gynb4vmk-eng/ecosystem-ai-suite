@@ -1056,7 +1056,6 @@ function EbookFlow({
       });
       if (!res.ok) throw new Error(res.error);
 
-      await incrementarUso({ data: { recurso: "pagina" } });
 
       const url = `${window.location.origin}/view-page/${generated.id}`;
       setPublishedUrl(url);
@@ -1114,7 +1113,6 @@ function EbookFlow({
       if (!res) throw new Error("Resposta vazia do servidor.");
       if (!res.ok) throw new Error(res.error || "Falha ao gerar e-book.");
 
-      await incrementarUso({ data: { recurso: "ebook" } });
 
       const filename = `${res.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`;
       setGenerated({
@@ -1586,7 +1584,6 @@ function Etapa4Video({
         return;
       }
 
-      await incrementarUso({ data: { recurso: "video" } });
 
       setVideoId(r.id);
       toast.success("Vídeo em processamento...");
