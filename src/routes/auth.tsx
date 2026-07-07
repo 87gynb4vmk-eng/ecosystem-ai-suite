@@ -11,6 +11,17 @@ export const Route = createFileRoute("/auth")({
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getSession();
     if (data.session) {
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData.user) {
+        const { data: usuario } = await supabase
+          .from("usuarios")
+          .select("trocar_senha_obrigatorio")
+          .eq("id", userData.user.id)
+          .single();
+        if (usuario?.trocar_senha_obrigatorio) {
+          throw redirect({ to: "/primeiro-acesso" });
+        }
+      }
       if (search.next) throw redirect({ href: search.next });
       throw redirect({ to: "/dashboard" });
     }
@@ -42,6 +53,38 @@ function AuthPage() {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       toast.success("Bem-vindo!");
+
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData.user) {
+        const { data: usuario } = await supabase
+          .from("usuarios")
+          .select("trocar_senha_obrigatorio, status, acesso_ate")
+          .eq("id", userData.user.id)
+          .single();
+
+        if (usuario?.trocar_senha_obrigatorio) {
+          setLoading(false);
+          navigate({ to: "/primeiro-acesso", replace: true });
+          return;
+        }
+
+        if (usuario?.status === "inativo" || usuario?.status === "cancelado") {
+          await supabase.auth.signOut();
+          setLoading(false);
+          toast.error("Sua assinatura está inativa. Renove para continuar.");
+          navigate({ to: "/renovar", replace: true });
+          return;
+        }
+
+        if (usuario?.acesso_ate && new Date(usuario.acesso_ate) < new Date()) {
+          await supabase.auth.signOut();
+          setLoading(false);
+          toast.error("Seu acesso expirou. Renove sua assinatura.");
+          navigate({ to: "/renovar", replace: true });
+          return;
+        }
+      }
+
       setLoading(false);
       if (next) {
         window.location.href = next;

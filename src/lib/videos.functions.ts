@@ -155,6 +155,11 @@ export const gerarVideo = createServerFn({ method: "POST" })
       .single();
     if (insErr || !videoRow) return { ok: false as const, error: "Falha ao registrar vídeo." };
 
+    await context.supabase.rpc("increment_counter", {
+      p_user_id: context.userId,
+      p_column: "videos_gerados_mes",
+    });
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error: tokenErr } = await supabaseAdmin
       .from("video_webhook_tokens")

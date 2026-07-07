@@ -15,6 +15,7 @@ import {
   deletarEbook,
 } from "@/lib/ebooks.functions";
 import { obterFaturamentoAdmin } from "@/lib/faturamento.functions";
+import { verificarLimite, obterMeuPlano } from "@/lib/planos.functions";
 
 import { EbookDocument } from "@/components/EbookDocument";
 import { LandingPageTemplate } from "@/components/LandingPageTemplate";
@@ -45,6 +46,7 @@ import {
   LogOut,
   Mail,
   X,
+  Crown,
 } from "lucide-react";
 
 const NICHOS: Record<string, string[]> = {
@@ -657,6 +659,8 @@ function Overview({ onNovo }: { onNovo: () => void }) {
         </p>
       </div>
 
+      <PlanoCard />
+
       {/* Faturamento card */}
       <div className="relative rounded-3xl p-6 bg-gradient-to-br from-[#0d1410] to-[#0a0a0a] border border-zinc-800/80 overflow-hidden">
         <div className="pointer-events-none absolute -top-20 -left-10 h-60 w-60 bg-[radial-gradient(circle,rgba(16,185,129,0.18),transparent_70%)]" />
@@ -701,6 +705,74 @@ function Overview({ onNovo }: { onNovo: () => void }) {
         </div>
       </div>
       <AccountSheet open={menuOpen} onClose={() => setMenuOpen(false)} onSignOut={handleSignOut} />
+    </div>
+  );
+}
+
+function PlanoCard() {
+  const obterPlano = useServerFn(obterMeuPlano);
+  const { data } = useQuery({
+    queryKey: ["meu-plano"],
+    queryFn: () => obterPlano(),
+    staleTime: 30_000,
+  });
+
+  const plano = data?.ok ? data.plano : "mensal";
+  const isVitalicio = plano === "vitalicio";
+  const usado = data?.ok ? data.usado : { ebooks: 0, videos: 0, paginas: 0 };
+  const limites = data?.ok ? data.limites : { ebooksPorMes: 5, paginasPublicadas: 3, videosPorMes: 5 };
+
+  const items = [
+    { label: "E-books", used: usado.ebooks, total: limites.ebooksPorMes },
+    { label: "Vídeos", used: usado.videos, total: limites.videosPorMes },
+    { label: "Páginas", used: usado.paginas, total: limites.paginasPublicadas },
+  ];
+
+  return (
+    <div className="relative rounded-3xl p-5 mb-6 border border-zinc-800/80 bg-zinc-900/40">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <div className="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold mb-1">Seu plano</div>
+          <div className="text-lg font-bold capitalize flex items-center gap-2">
+            {isVitalicio ? <Crown size={18} style={{ color: AMBER }} /> : null}
+            {isVitalicio ? "Vitalício" : "Mensal"}
+          </div>
+        </div>
+        {!isVitalicio && (
+          <a
+            href="https://pay.cakto.com.br/fnw2s5q_922144"
+            target="_top"
+            rel="noopener noreferrer"
+            className="text-xs font-bold px-3 py-2 rounded-full text-black"
+            style={{ background: `linear-gradient(135deg, ${AMBER}, #c89725)` }}
+          >
+            Fazer upgrade
+          </a>
+        )}
+      </div>
+
+      <div className="space-y-3">
+        {items.map((item) => {
+          const total = item.total === Infinity ? "∞" : item.total;
+          const pct = typeof item.total === "number" ? Math.min(100, (item.used / item.total) * 100) : 0;
+          return (
+            <div key={item.label}>
+              <div className="flex justify-between text-sm mb-1.5">
+                <span className="text-zinc-400">{item.label}</span>
+                <span className="text-zinc-300 tabular-nums">
+                  {item.used} / {total}
+                </span>
+              </div>
+              <div className="h-[3px] bg-zinc-800/80 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{ width: `${pct}%`, background: AMBER }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -1043,10 +1115,19 @@ function EbookFlow({
     }
     setIsPublishing(true);
     try {
+      const limite = await verificarLimite({ data: { recurso: "pagina" } });
+      if (!limite.ok) {
+        toast.error(limite.error);
+        setIsPublishing(false);
+        return;
+      }
+
       const res = await salvarLink({
         data: { id: generated.id, affiliate_link: affiliateLink.trim() },
       });
       if (!res.ok) throw new Error(res.error);
+
+
       const url = `${window.location.origin}/view-page/${generated.id}`;
       setPublishedUrl(url);
       toast.success("Página gerada! Copie e divulgue.");
@@ -1071,6 +1152,13 @@ function EbookFlow({
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
+      const limite = await verificarLimite({ data: { recurso: "ebook" } });
+      if (!limite.ok) {
+        toast.error(limite.error);
+        setIsGenerating(false);
+        return;
+      }
+
       // Garante sessão válida antes de chamar o serverFn protegido (evita "Unauthorized: No authorization header").
       const { data: sessionData } = await supabase.auth.getSession();
       let session = sessionData.session;
@@ -1095,6 +1183,8 @@ function EbookFlow({
       });
       if (!res) throw new Error("Resposta vazia do servidor.");
       if (!res.ok) throw new Error(res.error || "Falha ao gerar e-book.");
+
+
       const filename = `${res.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`;
       setGenerated({
         id: res.id,
@@ -1549,6 +1639,13 @@ function Etapa4Video({
       toast.error("Volte para a Etapa 1 e gere um e-book primeiro.");
       return;
     }
+
+    const limite = await verificarLimite({ data: { recurso: "video" } });
+    if (!limite.ok) {
+      toast.error(limite.error);
+      return;
+    }
+
     setVideoId(null);
     setIsStarting(true);
     try {
@@ -1557,6 +1654,8 @@ function Etapa4Video({
         toast.error(r.error);
         return;
       }
+
+
       setVideoId(r.id);
       toast.success("Vídeo em processamento...");
     } catch (e) {

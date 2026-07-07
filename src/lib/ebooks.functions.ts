@@ -138,6 +138,11 @@ CHAMADA PARA AÇÃO
         return { ok: true as const, id: null, titulo, subtitulo, conteudo };
       }
 
+      await context.supabase.rpc("increment_counter", {
+        p_user_id: context.userId,
+        p_column: "ebooks_gerados_mes",
+      });
+
       return { ok: true as const, id: row.id as string, titulo, subtitulo, conteudo };
     } catch (err) {
       console.error("[gerarEbook] Gemini error:", err);
@@ -181,6 +186,17 @@ export const atualizarAffiliateLink = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((i: unknown) => LinkInput.parse(i))
   .handler(async ({ data, context }) => {
+    const { data: ebook, error: findErr } = await context.supabase
+      .from("ebooks")
+      .select("id, is_published")
+      .eq("id", data.id)
+      .eq("usuario_id", context.userId)
+      .single();
+
+    if (findErr || !ebook) {
+      return { ok: false as const, error: "E-book não encontrado." };
+    }
+
     const { error } = await context.supabase
       .from("ebooks")
       .update({ affiliate_link: data.affiliate_link || null, is_published: true })
@@ -190,6 +206,14 @@ export const atualizarAffiliateLink = createServerFn({ method: "POST" })
       console.error("[atualizarAffiliateLink]", error);
       return { ok: false as const, error: "Falha ao salvar link." };
     }
+
+    if (!ebook.is_published) {
+      await context.supabase.rpc("increment_counter", {
+        p_user_id: context.userId,
+        p_column: "paginas_publicadas_total",
+      });
+    }
+
     return { ok: true as const };
   });
 
