@@ -46,6 +46,7 @@ import {
   LogOut,
   Mail,
   X,
+  Crown,
 } from "lucide-react";
 
 const NICHOS: Record<string, string[]> = {
