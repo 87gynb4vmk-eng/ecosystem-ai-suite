@@ -15,7 +15,7 @@ import {
   deletarEbook,
 } from "@/lib/ebooks.functions";
 import { obterFaturamentoAdmin } from "@/lib/faturamento.functions";
-import { verificarLimite, incrementarUso } from "@/lib/planos.functions";
+import { verificarLimite } from "@/lib/planos.functions";
 
 import { EbookDocument } from "@/components/EbookDocument";
 import { LandingPageTemplate } from "@/components/LandingPageTemplate";
