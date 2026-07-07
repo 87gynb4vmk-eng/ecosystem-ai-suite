@@ -28,6 +28,7 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as AuthenticatedAdminGruposRouteImport } from './routes/_authenticated/admin.grupos'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicWebhookJson2videoRouteImport } from './routes/api/public/webhook/json2video'
 import { Route as ApiPublicWebhookCaktoRouteImport } from './routes/api/public/webhook/cakto'
 
@@ -129,6 +130,12 @@ const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicWebhookJson2videoRoute =
   ApiPublicWebhookJson2videoRouteImport.update({
     id: '/api/public/webhook/json2video',
@@ -162,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/admin/grupos': typeof AuthenticatedAdminGruposRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
   '/api/public/webhook/json2video': typeof ApiPublicWebhookJson2videoRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -184,6 +192,7 @@ export interface FileRoutesByTo {
   '/admin/grupos': typeof AuthenticatedAdminGruposRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
   '/api/public/webhook/json2video': typeof ApiPublicWebhookJson2videoRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -208,6 +217,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/grupos': typeof AuthenticatedAdminGruposRoute
   '/api/public/webhook/cakto': typeof ApiPublicWebhookCaktoRoute
   '/api/public/webhook/json2video': typeof ApiPublicWebhookJson2videoRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/admin/grupos'
     | '/api/public/webhook/cakto'
     | '/api/public/webhook/json2video'
+    | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/admin/grupos'
     | '/api/public/webhook/cakto'
     | '/api/public/webhook/json2video'
+    | '/lovable/email/queue/process'
   id:
     | '__root__'
     | '/'
@@ -277,6 +289,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/grupos'
     | '/api/public/webhook/cakto'
     | '/api/public/webhook/json2video'
+    | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -298,6 +311,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicWebhookCaktoRoute: typeof ApiPublicWebhookCaktoRoute
   ApiPublicWebhookJson2videoRoute: typeof ApiPublicWebhookJson2videoRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -435,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/webhook/json2video': {
       id: '/api/public/webhook/json2video'
       path: '/api/public/webhook/json2video'
@@ -496,6 +517,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicWebhookCaktoRoute: ApiPublicWebhookCaktoRoute,
   ApiPublicWebhookJson2videoRoute: ApiPublicWebhookJson2videoRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
