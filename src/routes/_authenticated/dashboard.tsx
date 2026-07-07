@@ -708,6 +708,74 @@ function Overview({ onNovo }: { onNovo: () => void }) {
   );
 }
 
+function PlanoCard() {
+  const obterPlano = useServerFn(obterMeuPlano);
+  const { data } = useQuery({
+    queryKey: ["meu-plano"],
+    queryFn: () => obterPlano(),
+    staleTime: 30_000,
+  });
+
+  const plano = data?.ok ? data.plano : "mensal";
+  const isVitalicio = plano === "vitalicio";
+  const usado = data?.ok ? data.usado : { ebooks: 0, videos: 0, paginas: 0 };
+  const limites = data?.ok ? data.limites : { ebooksPorMes: 5, paginasPublicadas: 3, videosPorMes: 5 };
+
+  const items = [
+    { label: "E-books", used: usado.ebooks, total: limites.ebooksPorMes },
+    { label: "Vídeos", used: usado.videos, total: limites.videosPorMes },
+    { label: "Páginas", used: usado.paginas, total: limites.paginasPublicadas },
+  ];
+
+  return (
+    <div className="relative rounded-3xl p-5 mb-6 border border-zinc-800/80 bg-zinc-900/40">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <div className="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold mb-1">Seu plano</div>
+          <div className="text-lg font-bold capitalize flex items-center gap-2">
+            {isVitalicio ? <Crown size={18} style={{ color: AMBER }} /> : null}
+            {isVitalicio ? "Vitalício" : "Mensal"}
+          </div>
+        </div>
+        {!isVitalicio && (
+          <a
+            href="https://pay.cakto.com.br/fnw2s5q_922144"
+            target="_top"
+            rel="noopener noreferrer"
+            className="text-xs font-bold px-3 py-2 rounded-full text-black"
+            style={{ background: `linear-gradient(135deg, ${AMBER}, #c89725)` }}
+          >
+            Fazer upgrade
+          </a>
+        )}
+      </div>
+
+      <div className="space-y-3">
+        {items.map((item) => {
+          const total = item.total === Infinity ? "∞" : item.total;
+          const pct = typeof item.total === "number" ? Math.min(100, (item.used / item.total) * 100) : 0;
+          return (
+            <div key={item.label}>
+              <div className="flex justify-between text-sm mb-1.5">
+                <span className="text-zinc-400">{item.label}</span>
+                <span className="text-zinc-300 tabular-nums">
+                  {item.used} / {total}
+                </span>
+              </div>
+              <div className="h-[3px] bg-zinc-800/80 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{ width: `${pct}%`, background: AMBER }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* -------------------- ACCOUNT SHEET / PERFIL -------------------- */
 function useUserEmail() {
   return useQuery({
