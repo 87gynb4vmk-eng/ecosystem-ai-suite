@@ -6,6 +6,25 @@ export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });
+
+    const { data: usuario } = await supabase
+      .from("usuarios")
+      .select("trocar_senha_obrigatorio, status, acesso_ate")
+      .eq("id", data.user.id)
+      .single();
+
+    if (usuario?.trocar_senha_obrigatorio) {
+      throw redirect({ to: "/primeiro-acesso" });
+    }
+
+    if (usuario?.status === "inativo" || usuario?.status === "cancelado") {
+      throw redirect({ to: "/renovar" });
+    }
+
+    if (usuario?.acesso_ate && new Date(usuario.acesso_ate) < new Date()) {
+      throw redirect({ to: "/renovar" });
+    }
+
     return { user: data.user };
   },
   component: () => <Outlet />,
