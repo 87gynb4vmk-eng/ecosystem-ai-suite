@@ -1044,10 +1044,20 @@ function EbookFlow({
     }
     setIsPublishing(true);
     try {
+      const limite = await verificarLimite({ data: { recurso: "pagina" } });
+      if (!limite.ok) {
+        toast.error(limite.error);
+        setIsPublishing(false);
+        return;
+      }
+
       const res = await salvarLink({
         data: { id: generated.id, affiliate_link: affiliateLink.trim() },
       });
       if (!res.ok) throw new Error(res.error);
+
+      await incrementarUso({ data: { recurso: "pagina" } });
+
       const url = `${window.location.origin}/view-page/${generated.id}`;
       setPublishedUrl(url);
       toast.success("Página gerada! Copie e divulgue.");
