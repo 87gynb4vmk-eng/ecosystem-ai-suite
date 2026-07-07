@@ -1072,6 +1072,13 @@ function EbookFlow({
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
+      const limite = await verificarLimite({ data: { recurso: "ebook" } });
+      if (!limite.ok) {
+        toast.error(limite.error);
+        setIsGenerating(false);
+        return;
+      }
+
       // Garante sessão válida antes de chamar o serverFn protegido (evita "Unauthorized: No authorization header").
       const { data: sessionData } = await supabase.auth.getSession();
       let session = sessionData.session;
@@ -1096,6 +1103,9 @@ function EbookFlow({
       });
       if (!res) throw new Error("Resposta vazia do servidor.");
       if (!res.ok) throw new Error(res.error || "Falha ao gerar e-book.");
+
+      await incrementarUso({ data: { recurso: "ebook" } });
+
       const filename = `${res.titulo.replace(/[^a-zA-Z0-9-_ ]/g, "").slice(0, 60) || "Ebook"}.pdf`;
       setGenerated({
         id: res.id,
