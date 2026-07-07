@@ -1570,6 +1570,13 @@ function Etapa4Video({
       toast.error("Volte para a Etapa 1 e gere um e-book primeiro.");
       return;
     }
+
+    const limite = await verificarLimite({ data: { recurso: "video" } });
+    if (!limite.ok) {
+      toast.error(limite.error);
+      return;
+    }
+
     setVideoId(null);
     setIsStarting(true);
     try {
@@ -1578,6 +1585,9 @@ function Etapa4Video({
         toast.error(r.error);
         return;
       }
+
+      await incrementarUso({ data: { recurso: "video" } });
+
       setVideoId(r.id);
       toast.success("Vídeo em processamento...");
     } catch (e) {
