@@ -86,6 +86,51 @@ export type Database = {
         }
         Relationships: []
       }
+      pedidos: {
+        Row: {
+          created_at: string
+          email: string
+          email_enviado: boolean
+          gateway: string
+          gateway_event_id: string | null
+          id: string
+          plano: string
+          produto_nome: string | null
+          status: string
+          updated_at: string
+          usuario_id: string
+          valor: number | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          email_enviado?: boolean
+          gateway?: string
+          gateway_event_id?: string | null
+          id?: string
+          plano: string
+          produto_nome?: string | null
+          status?: string
+          updated_at?: string
+          usuario_id: string
+          valor?: number | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          email_enviado?: boolean
+          gateway?: string
+          gateway_event_id?: string | null
+          id?: string
+          plano?: string
+          produto_nome?: string | null
+          status?: string
+          updated_at?: string
+          usuario_id?: string
+          valor?: number | null
+        }
+        Relationships: []
+      }
       projetos: {
         Row: {
           created_at: string
@@ -147,22 +192,43 @@ export type Database = {
       }
       usuarios: {
         Row: {
+          acesso_ate: string | null
           created_at: string
+          ebooks_gerados_mes: number
           email: string
           id: string
+          paginas_publicadas_total: number
           plano: string
+          status: string
+          trocar_senha_obrigatorio: boolean
+          updated_at: string
+          videos_gerados_mes: number
         }
         Insert: {
+          acesso_ate?: string | null
           created_at?: string
+          ebooks_gerados_mes?: number
           email: string
           id: string
+          paginas_publicadas_total?: number
           plano?: string
+          status?: string
+          trocar_senha_obrigatorio?: boolean
+          updated_at?: string
+          videos_gerados_mes?: number
         }
         Update: {
+          acesso_ate?: string | null
           created_at?: string
+          ebooks_gerados_mes?: number
           email?: string
           id?: string
+          paginas_publicadas_total?: number
           plano?: string
+          status?: string
+          trocar_senha_obrigatorio?: boolean
+          updated_at?: string
+          videos_gerados_mes?: number
         }
         Relationships: []
       }
