@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as SecurityRouteImport } from './routes/security'
+import { Route as RenovarRouteImport } from './routes/renovar'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PrimeiroAcessoRouteImport } from './routes/primeiro-acesso'
@@ -38,6 +39,11 @@ const TrustRoute = TrustRouteImport.update({
 const SecurityRoute = SecurityRouteImport.update({
   id: '/security',
   path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RenovarRoute = RenovarRouteImport.update({
+  id: '/renovar',
+  path: '/renovar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/renovar': typeof RenovarRoute
   '/security': typeof SecurityRoute
   '/trust': typeof TrustRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/renovar': typeof RenovarRoute
   '/security': typeof SecurityRoute
   '/trust': typeof TrustRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/renovar': typeof RenovarRoute
   '/security': typeof SecurityRoute
   '/trust': typeof TrustRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
+    | '/renovar'
     | '/security'
     | '/trust'
     | '/.mcp/list-tools'
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
+    | '/renovar'
     | '/security'
     | '/trust'
     | '/.mcp/list-tools'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
+    | '/renovar'
     | '/security'
     | '/trust'
     | '/.mcp/list-tools'
@@ -275,6 +287,7 @@ export interface RootRouteChildren {
   PrimeiroAcessoRoute: typeof PrimeiroAcessoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   PrivacyRoute: typeof PrivacyRoute
+  RenovarRoute: typeof RenovarRoute
   SecurityRoute: typeof SecurityRoute
   TrustRoute: typeof TrustRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
@@ -301,6 +314,13 @@ declare module '@tanstack/react-router' {
       path: '/security'
       fullPath: '/security'
       preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/renovar': {
+      id: '/renovar'
+      path: '/renovar'
+      fullPath: '/renovar'
+      preLoaderRoute: typeof RenovarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -464,6 +484,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrimeiroAcessoRoute: PrimeiroAcessoRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   PrivacyRoute: PrivacyRoute,
+  RenovarRoute: RenovarRoute,
   SecurityRoute: SecurityRoute,
   TrustRoute: TrustRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
