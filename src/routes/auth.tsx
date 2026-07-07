@@ -11,6 +11,17 @@ export const Route = createFileRoute("/auth")({
   beforeLoad: async ({ search }) => {
     const { data } = await supabase.auth.getSession();
     if (data.session) {
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData.user) {
+        const { data: usuario } = await supabase
+          .from("usuarios")
+          .select("trocar_senha_obrigatorio")
+          .eq("id", userData.user.id)
+          .single();
+        if (usuario?.trocar_senha_obrigatorio) {
+          throw redirect({ to: "/primeiro-acesso" });
+        }
+      }
       if (search.next) throw redirect({ href: search.next });
       throw redirect({ to: "/dashboard" });
     }
