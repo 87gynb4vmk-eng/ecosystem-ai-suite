@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
-  ssr: false,
   validateSearch: (s: Record<string, unknown>) => ({
     next: typeof s.next === "string" && s.next.startsWith("/") && !s.next.startsWith("//") ? s.next : undefined,
   }),
@@ -86,11 +85,7 @@ function AuthPage() {
       }
 
       setLoading(false);
-      if (next) {
-        window.location.href = next;
-        return;
-      }
-      navigate({ to: "/dashboard", replace: true });
+      navigate({ href: next ?? "/dashboard", replace: true });
     } catch (err) {
       toast.error((err as Error).message ?? "Falha na autenticação.");
       setLoading(false);
