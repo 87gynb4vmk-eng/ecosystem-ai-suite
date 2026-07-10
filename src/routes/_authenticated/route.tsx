@@ -8,8 +8,7 @@ export const Route = createFileRoute("/_authenticated")({
     if (error || !data.user) {
       const next = `${location.pathname}${location.search}${location.hash}`;
       throw redirect({
-        to: "/auth",
-        search: { next },
+        href: `/auth?next=${encodeURIComponent(next)}`,
       });
     }
 
