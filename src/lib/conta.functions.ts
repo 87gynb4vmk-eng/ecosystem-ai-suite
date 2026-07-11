@@ -7,34 +7,28 @@ export const excluirMinhaConta = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const uid = context.userId;
 
-    // Apaga dados vinculados. Alguns já têm ON DELETE CASCADE via auth.users,
-    // mas apagamos explicitamente para garantir remoção mesmo com FKs sem cascade.
-    const tabelas = [
-      "videos",
-      "ebooks",
-      "projetos",
-      "pedidos",
-      "user_roles",
-      "usuarios",
-    ] as const;
+    // Apaga dados vinculados explicitamente (em vez de depender de cascade).
+    const ops: Array<Promise<{ error: unknown }>> = [
+      supabaseAdmin.from("videos").delete().eq("user_id", uid) as unknown as Promise<{ error: unknown }>,
+      supabaseAdmin.from("ebooks").delete().eq("user_id", uid) as unknown as Promise<{ error: unknown }>,
+      supabaseAdmin.from("projetos").delete().eq("user_id", uid) as unknown as Promise<{ error: unknown }>,
+      supabaseAdmin.from("pedidos").delete().eq("usuario_id", uid) as unknown as Promise<{ error: unknown }>,
+      supabaseAdmin.from("user_roles").delete().eq("user_id", uid) as unknown as Promise<{ error: unknown }>,
+    ];
 
-    for (const t of tabelas) {
-      const coluna = t === "user_roles" || t === "pedidos" ? "user_id" : t === "usuarios" ? "id" : "user_id";
-      // usuarios usa id; pedidos usa usuario_id; demais usam user_id — normaliza:
-      const col =
-        t === "usuarios" ? "id" : t === "pedidos" ? "usuario_id" : t === "user_roles" ? "user_id" : "user_id";
-      const { error } = await supabaseAdmin.from(t).delete().eq(col, uid);
-      if (error) {
-        console.warn(`[excluirMinhaConta] falha ao apagar ${t}:`, error.message);
-      }
-      void coluna;
+    const results = await Promise.all(ops);
+    for (const r of results) {
+      if (r?.error) console.warn("[excluirMinhaConta] falha parcial:", r.error);
     }
+
+    const { error: usuariosErr } = await supabaseAdmin.from("usuarios").delete().eq("id", uid);
+    if (usuariosErr) console.warn("[excluirMinhaConta] falha ao apagar usuarios:", usuariosErr.message);
 
     const { error: authErr } = await supabaseAdmin.auth.admin.deleteUser(uid);
     if (authErr) {
       throw new Error(`Não foi possível excluir a conta de autenticação: ${authErr.message}`);
     }
 
-    console.info(`[excluirMinhaConta] conta ${uid} excluída em ${new Date().toISOString()}`);
+    console.info(`[excluirMinhaConta] conta excluída em ${new Date().toISOString()}`);
     return { ok: true as const };
   });
