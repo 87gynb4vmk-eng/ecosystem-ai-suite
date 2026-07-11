@@ -138,6 +138,12 @@ function AuthPage() {
           </button>
         </form>
 
+        <div className="mt-4 text-center">
+          <Link to="/esqueci-senha" className="text-xs text-gold hover:underline">
+            Esqueci minha senha
+          </Link>
+        </div>
+
         <p className="text-center text-xs text-muted-foreground mt-6">
           Ainda não tem acesso?{" "}
           <Link to="/" className="text-gold hover:underline">
