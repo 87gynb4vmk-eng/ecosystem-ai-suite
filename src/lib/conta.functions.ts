@@ -9,9 +9,9 @@ export const excluirMinhaConta = createServerFn({ method: "POST" })
 
     // Apaga dados vinculados explicitamente (em vez de depender de cascade).
     const ops: Array<Promise<{ error: unknown }>> = [
-      supabaseAdmin.from("videos").delete().eq("user_id", uid) as unknown as Promise<{ error: unknown }>,
-      supabaseAdmin.from("ebooks").delete().eq("user_id", uid) as unknown as Promise<{ error: unknown }>,
-      supabaseAdmin.from("projetos").delete().eq("user_id", uid) as unknown as Promise<{ error: unknown }>,
+      supabaseAdmin.from("videos").delete().eq("usuario_id", uid) as unknown as Promise<{ error: unknown }>,
+      supabaseAdmin.from("ebooks").delete().eq("usuario_id", uid) as unknown as Promise<{ error: unknown }>,
+      supabaseAdmin.from("projetos").delete().eq("usuario_id", uid) as unknown as Promise<{ error: unknown }>,
       supabaseAdmin.from("pedidos").delete().eq("usuario_id", uid) as unknown as Promise<{ error: unknown }>,
       supabaseAdmin.from("user_roles").delete().eq("user_id", uid) as unknown as Promise<{ error: unknown }>,
     ];
