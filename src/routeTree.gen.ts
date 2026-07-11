@@ -10,18 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrustRouteImport } from './routes/trust'
+import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as RenovarRouteImport } from './routes/renovar'
+import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PrimeiroAcessoRouteImport } from './routes/primeiro-acesso'
+import { Route as PoliticaPrivacidadeRouteImport } from './routes/politica-privacidade'
+import { Route as PoliticaCookiesRouteImport } from './routes/politica-cookies'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as EsqueciSenhaRouteImport } from './routes/esqueci-senha'
+import { Route as ContatoPrivacidadeRouteImport } from './routes/contato-privacidade'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ViewPageIdRouteImport } from './routes/view-page.$id'
 import { Route as CheckoutPlanoRouteImport } from './routes/checkout.$plano'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedContaRouteImport } from './routes/_authenticated/conta'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
@@ -37,6 +44,11 @@ const TrustRoute = TrustRouteImport.update({
   path: '/trust',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
+  id: '/termos-de-uso',
+  path: '/termos-de-uso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SecurityRoute = SecurityRouteImport.update({
   id: '/security',
   path: '/security',
@@ -45,6 +57,11 @@ const SecurityRoute = SecurityRouteImport.update({
 const RenovarRoute = RenovarRouteImport.update({
   id: '/renovar',
   path: '/renovar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
+  id: '/redefinir-senha',
+  path: '/redefinir-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -62,9 +79,29 @@ const PrimeiroAcessoRoute = PrimeiroAcessoRouteImport.update({
   path: '/primeiro-acesso',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PoliticaPrivacidadeRoute = PoliticaPrivacidadeRouteImport.update({
+  id: '/politica-privacidade',
+  path: '/politica-privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaCookiesRoute = PoliticaCookiesRouteImport.update({
+  id: '/politica-cookies',
+  path: '/politica-cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EsqueciSenhaRoute = EsqueciSenhaRouteImport.update({
+  id: '/esqueci-senha',
+  path: '/esqueci-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatoPrivacidadeRoute = ContatoPrivacidadeRouteImport.update({
+  id: '/contato-privacidade',
+  path: '/contato-privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -94,6 +131,11 @@ const CheckoutPlanoRoute = CheckoutPlanoRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedContaRoute = AuthenticatedContaRouteImport.update({
+  id: '/conta',
+  path: '/conta',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -151,16 +193,23 @@ const ApiPublicWebhookCaktoRoute = ApiPublicWebhookCaktoRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/contato-privacidade': typeof ContatoPrivacidadeRoute
+  '/esqueci-senha': typeof EsqueciSenhaRoute
   '/mcp': typeof McpRoute
+  '/politica-cookies': typeof PoliticaCookiesRoute
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/renovar': typeof RenovarRoute
   '/security': typeof SecurityRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/trust': typeof TrustRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/conta': typeof AuthenticatedContaRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
@@ -174,16 +223,23 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/contato-privacidade': typeof ContatoPrivacidadeRoute
+  '/esqueci-senha': typeof EsqueciSenhaRoute
   '/mcp': typeof McpRoute
+  '/politica-cookies': typeof PoliticaCookiesRoute
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/renovar': typeof RenovarRoute
   '/security': typeof SecurityRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/trust': typeof TrustRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/conta': typeof AuthenticatedContaRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
@@ -199,16 +255,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/contato-privacidade': typeof ContatoPrivacidadeRoute
+  '/esqueci-senha': typeof EsqueciSenhaRoute
   '/mcp': typeof McpRoute
+  '/politica-cookies': typeof PoliticaCookiesRoute
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/renovar': typeof RenovarRoute
   '/security': typeof SecurityRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/trust': typeof TrustRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/conta': typeof AuthenticatedContaRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/checkout/$plano': typeof CheckoutPlanoRoute
   '/view-page/$id': typeof ViewPageIdRoute
@@ -224,16 +287,23 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/contato-privacidade'
+    | '/esqueci-senha'
     | '/mcp'
+    | '/politica-cookies'
+    | '/politica-privacidade'
     | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
+    | '/redefinir-senha'
     | '/renovar'
     | '/security'
+    | '/termos-de-uso'
     | '/trust'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
+    | '/conta'
     | '/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
@@ -247,16 +317,23 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/contato-privacidade'
+    | '/esqueci-senha'
     | '/mcp'
+    | '/politica-cookies'
+    | '/politica-privacidade'
     | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
+    | '/redefinir-senha'
     | '/renovar'
     | '/security'
+    | '/termos-de-uso'
     | '/trust'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
+    | '/conta'
     | '/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
@@ -271,16 +348,23 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/contato-privacidade'
+    | '/esqueci-senha'
     | '/mcp'
+    | '/politica-cookies'
+    | '/politica-privacidade'
     | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
+    | '/redefinir-senha'
     | '/renovar'
     | '/security'
+    | '/termos-de-uso'
     | '/trust'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
+    | '/_authenticated/conta'
     | '/_authenticated/dashboard'
     | '/checkout/$plano'
     | '/view-page/$id'
@@ -296,12 +380,18 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ContatoPrivacidadeRoute: typeof ContatoPrivacidadeRoute
+  EsqueciSenhaRoute: typeof EsqueciSenhaRoute
   McpRoute: typeof McpRoute
+  PoliticaCookiesRoute: typeof PoliticaCookiesRoute
+  PoliticaPrivacidadeRoute: typeof PoliticaPrivacidadeRoute
   PrimeiroAcessoRoute: typeof PrimeiroAcessoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   PrivacyRoute: typeof PrivacyRoute
+  RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   RenovarRoute: typeof RenovarRoute
   SecurityRoute: typeof SecurityRoute
+  TermosDeUsoRoute: typeof TermosDeUsoRoute
   TrustRoute: typeof TrustRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -323,6 +413,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrustRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/termos-de-uso': {
+      id: '/termos-de-uso'
+      path: '/termos-de-uso'
+      fullPath: '/termos-de-uso'
+      preLoaderRoute: typeof TermosDeUsoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/security': {
       id: '/security'
       path: '/security'
@@ -335,6 +432,13 @@ declare module '@tanstack/react-router' {
       path: '/renovar'
       fullPath: '/renovar'
       preLoaderRoute: typeof RenovarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redefinir-senha': {
+      id: '/redefinir-senha'
+      path: '/redefinir-senha'
+      fullPath: '/redefinir-senha'
+      preLoaderRoute: typeof RedefinirSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -358,11 +462,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrimeiroAcessoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/politica-privacidade': {
+      id: '/politica-privacidade'
+      path: '/politica-privacidade'
+      fullPath: '/politica-privacidade'
+      preLoaderRoute: typeof PoliticaPrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-cookies': {
+      id: '/politica-cookies'
+      path: '/politica-cookies'
+      fullPath: '/politica-cookies'
+      preLoaderRoute: typeof PoliticaCookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mcp': {
       id: '/mcp'
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/esqueci-senha': {
+      id: '/esqueci-senha'
+      path: '/esqueci-senha'
+      fullPath: '/esqueci-senha'
+      preLoaderRoute: typeof EsqueciSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contato-privacidade': {
+      id: '/contato-privacidade'
+      path: '/contato-privacidade'
+      fullPath: '/contato-privacidade'
+      preLoaderRoute: typeof ContatoPrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -405,6 +537,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/conta': {
+      id: '/_authenticated/conta'
+      path: '/conta'
+      fullPath: '/conta'
+      preLoaderRoute: typeof AuthenticatedContaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin': {
@@ -486,11 +625,13 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedContaRoute: typeof AuthenticatedContaRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedContaRoute: AuthenticatedContaRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
 }
 
@@ -501,12 +642,18 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ContatoPrivacidadeRoute: ContatoPrivacidadeRoute,
+  EsqueciSenhaRoute: EsqueciSenhaRoute,
   McpRoute: McpRoute,
+  PoliticaCookiesRoute: PoliticaCookiesRoute,
+  PoliticaPrivacidadeRoute: PoliticaPrivacidadeRoute,
   PrimeiroAcessoRoute: PrimeiroAcessoRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   PrivacyRoute: PrivacyRoute,
+  RedefinirSenhaRoute: RedefinirSenhaRoute,
   RenovarRoute: RenovarRoute,
   SecurityRoute: SecurityRoute,
+  TermosDeUsoRoute: TermosDeUsoRoute,
   TrustRoute: TrustRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:

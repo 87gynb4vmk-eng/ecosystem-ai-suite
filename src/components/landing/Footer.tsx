@@ -12,15 +12,21 @@ export function Footer() {
           Ecossistemas digitais premium gerados por inteligência artificial.
         </p>
         <nav className="mt-6" aria-label="Links institucionais">
-          <div className="flex justify-center gap-4 text-xs">
-            <Link to="/privacidade" className="text-background/60 hover:text-background">
-              Privacidade e Segurança
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs">
+            <Link to="/politica-privacidade" className="text-background/60 hover:text-background">
+              Política de Privacidade
             </Link>
-            <Link to="/privacy" className="text-background/60 hover:text-background">
-              Privacy Policy
+            <Link to="/termos-de-uso" className="text-background/60 hover:text-background">
+              Termos de Uso
             </Link>
-            <Link to="/security" className="text-background/60 hover:text-background">
-              Security
+            <Link to="/politica-cookies" className="text-background/60 hover:text-background">
+              Política de Cookies
+            </Link>
+            <Link to="/contato-privacidade" className="text-background/60 hover:text-background">
+              Contato de Privacidade
+            </Link>
+            <Link to="/conta" className="text-background/60 hover:text-background">
+              Excluir minha conta
             </Link>
           </div>
         </nav>
