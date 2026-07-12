@@ -34,7 +34,7 @@ function LandingPage() {
       <ComoFunciona />
       <TestimonialsResultado />
       <TestimonialsObjecao />
-      <Pricing />
+      <OfertaRelampago />
       <Footer />
     </main>
   );
