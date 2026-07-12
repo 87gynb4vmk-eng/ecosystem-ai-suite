@@ -160,7 +160,10 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
   }
@@ -195,4 +198,15 @@
 
 @utility shadow-card {
   box-shadow: var(--shadow-card);
+}
+/* Oculta o badge da Lovable */
+#lovable-badge,
+[class*="lovable"],
+[id*="lovable"],
+a[href*="lovable.dev"],
+iframe[src*="lovable"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
