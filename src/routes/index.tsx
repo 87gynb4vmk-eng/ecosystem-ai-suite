@@ -3,7 +3,7 @@ import { Header } from "@/components/landing/Header";
 import { Hero } from "@/components/landing/Hero";
 import { ComoFunciona } from "@/components/landing/ComoFunciona";
 import { TestimonialsResultado, TestimonialsObjecao } from "@/components/landing/Testimonials";
-import { Pricing } from "@/components/landing/Pricing";
+import { OfertaRelampago } from "@/components/landing/OfertaRelampago";
 import { Footer } from "@/components/landing/Footer";
 
 export const Route = createFileRoute("/")({
