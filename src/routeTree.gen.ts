@@ -9,20 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TudoRouteImport } from './routes/tudo'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as RenovarRouteImport } from './routes/renovar'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
+import { Route as QuizRouteImport } from './routes/quiz'
+import { Route as ProdutividadeRouteImport } from './routes/produtividade'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PrimeiroAcessoRouteImport } from './routes/primeiro-acesso'
 import { Route as PoliticaPrivacidadeRouteImport } from './routes/politica-privacidade'
 import { Route as PoliticaCookiesRouteImport } from './routes/politica-cookies'
+import { Route as OfertaRouteImport } from './routes/oferta'
+import { Route as ObrigadoRouteImport } from './routes/obrigado'
+import { Route as NegocioRouteImport } from './routes/negocio'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as InicianteRouteImport } from './routes/iniciante'
+import { Route as IaRouteImport } from './routes/ia'
 import { Route as EsqueciSenhaRouteImport } from './routes/esqueci-senha'
+import { Route as EbookRouteImport } from './routes/ebook'
+import { Route as DemoRouteImport } from './routes/demo'
 import { Route as ContatoPrivacidadeRouteImport } from './routes/contato-privacidade'
+import { Route as CheckoutInfoRouteImport } from './routes/checkout-info'
+import { Route as CelularRouteImport } from './routes/celular'
+import { Route as AutomatizacaoRouteImport } from './routes/automatizacao'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AfiliadosRouteImport } from './routes/afiliados'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ViewPageIdRouteImport } from './routes/view-page.$id'
@@ -39,6 +53,11 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as ApiPublicWebhookJson2videoRouteImport } from './routes/api/public/webhook/json2video'
 import { Route as ApiPublicWebhookCaktoRouteImport } from './routes/api/public/webhook/cakto'
 
+const TudoRoute = TudoRouteImport.update({
+  id: '/tudo',
+  path: '/tudo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
   path: '/trust',
@@ -62,6 +81,16 @@ const RenovarRoute = RenovarRouteImport.update({
 const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
   id: '/redefinir-senha',
   path: '/redefinir-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutividadeRoute = ProdutividadeRouteImport.update({
+  id: '/produtividade',
+  path: '/produtividade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -89,9 +118,34 @@ const PoliticaCookiesRoute = PoliticaCookiesRouteImport.update({
   path: '/politica-cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OfertaRoute = OfertaRouteImport.update({
+  id: '/oferta',
+  path: '/oferta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ObrigadoRoute = ObrigadoRouteImport.update({
+  id: '/obrigado',
+  path: '/obrigado',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NegocioRoute = NegocioRouteImport.update({
+  id: '/negocio',
+  path: '/negocio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InicianteRoute = InicianteRouteImport.update({
+  id: '/iniciante',
+  path: '/iniciante',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IaRoute = IaRouteImport.update({
+  id: '/ia',
+  path: '/ia',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EsqueciSenhaRoute = EsqueciSenhaRouteImport.update({
@@ -99,14 +153,44 @@ const EsqueciSenhaRoute = EsqueciSenhaRouteImport.update({
   path: '/esqueci-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EbookRoute = EbookRouteImport.update({
+  id: '/ebook',
+  path: '/ebook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContatoPrivacidadeRoute = ContatoPrivacidadeRouteImport.update({
   id: '/contato-privacidade',
   path: '/contato-privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutInfoRoute = CheckoutInfoRouteImport.update({
+  id: '/checkout-info',
+  path: '/checkout-info',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CelularRoute = CelularRouteImport.update({
+  id: '/celular',
+  path: '/celular',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AutomatizacaoRoute = AutomatizacaoRouteImport.update({
+  id: '/automatizacao',
+  path: '/automatizacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AfiliadosRoute = AfiliadosRouteImport.update({
+  id: '/afiliados',
+  path: '/afiliados',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -192,20 +276,34 @@ const ApiPublicWebhookCaktoRoute = ApiPublicWebhookCaktoRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/afiliados': typeof AfiliadosRoute
   '/auth': typeof AuthRoute
+  '/automatizacao': typeof AutomatizacaoRoute
+  '/celular': typeof CelularRoute
+  '/checkout-info': typeof CheckoutInfoRoute
   '/contato-privacidade': typeof ContatoPrivacidadeRoute
+  '/demo': typeof DemoRoute
+  '/ebook': typeof EbookRoute
   '/esqueci-senha': typeof EsqueciSenhaRoute
+  '/ia': typeof IaRoute
+  '/iniciante': typeof InicianteRoute
   '/mcp': typeof McpRoute
+  '/negocio': typeof NegocioRoute
+  '/obrigado': typeof ObrigadoRoute
+  '/oferta': typeof OfertaRoute
   '/politica-cookies': typeof PoliticaCookiesRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/produtividade': typeof ProdutividadeRoute
+  '/quiz': typeof QuizRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/renovar': typeof RenovarRoute
   '/security': typeof SecurityRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/trust': typeof TrustRoute
+  '/tudo': typeof TudoRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -222,20 +320,34 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/afiliados': typeof AfiliadosRoute
   '/auth': typeof AuthRoute
+  '/automatizacao': typeof AutomatizacaoRoute
+  '/celular': typeof CelularRoute
+  '/checkout-info': typeof CheckoutInfoRoute
   '/contato-privacidade': typeof ContatoPrivacidadeRoute
+  '/demo': typeof DemoRoute
+  '/ebook': typeof EbookRoute
   '/esqueci-senha': typeof EsqueciSenhaRoute
+  '/ia': typeof IaRoute
+  '/iniciante': typeof InicianteRoute
   '/mcp': typeof McpRoute
+  '/negocio': typeof NegocioRoute
+  '/obrigado': typeof ObrigadoRoute
+  '/oferta': typeof OfertaRoute
   '/politica-cookies': typeof PoliticaCookiesRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/produtividade': typeof ProdutividadeRoute
+  '/quiz': typeof QuizRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/renovar': typeof RenovarRoute
   '/security': typeof SecurityRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/trust': typeof TrustRoute
+  '/tudo': typeof TudoRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -254,20 +366,34 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/afiliados': typeof AfiliadosRoute
   '/auth': typeof AuthRoute
+  '/automatizacao': typeof AutomatizacaoRoute
+  '/celular': typeof CelularRoute
+  '/checkout-info': typeof CheckoutInfoRoute
   '/contato-privacidade': typeof ContatoPrivacidadeRoute
+  '/demo': typeof DemoRoute
+  '/ebook': typeof EbookRoute
   '/esqueci-senha': typeof EsqueciSenhaRoute
+  '/ia': typeof IaRoute
+  '/iniciante': typeof InicianteRoute
   '/mcp': typeof McpRoute
+  '/negocio': typeof NegocioRoute
+  '/obrigado': typeof ObrigadoRoute
+  '/oferta': typeof OfertaRoute
   '/politica-cookies': typeof PoliticaCookiesRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/primeiro-acesso': typeof PrimeiroAcessoRoute
   '/privacidade': typeof PrivacidadeRoute
   '/privacy': typeof PrivacyRoute
+  '/produtividade': typeof ProdutividadeRoute
+  '/quiz': typeof QuizRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/renovar': typeof RenovarRoute
   '/security': typeof SecurityRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/trust': typeof TrustRoute
+  '/tudo': typeof TudoRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -286,20 +412,34 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/afiliados'
     | '/auth'
+    | '/automatizacao'
+    | '/celular'
+    | '/checkout-info'
     | '/contato-privacidade'
+    | '/demo'
+    | '/ebook'
     | '/esqueci-senha'
+    | '/ia'
+    | '/iniciante'
     | '/mcp'
+    | '/negocio'
+    | '/obrigado'
+    | '/oferta'
     | '/politica-cookies'
     | '/politica-privacidade'
     | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
+    | '/produtividade'
+    | '/quiz'
     | '/redefinir-senha'
     | '/renovar'
     | '/security'
     | '/termos-de-uso'
     | '/trust'
+    | '/tudo'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
@@ -316,20 +456,34 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/afiliados'
     | '/auth'
+    | '/automatizacao'
+    | '/celular'
+    | '/checkout-info'
     | '/contato-privacidade'
+    | '/demo'
+    | '/ebook'
     | '/esqueci-senha'
+    | '/ia'
+    | '/iniciante'
     | '/mcp'
+    | '/negocio'
+    | '/obrigado'
+    | '/oferta'
     | '/politica-cookies'
     | '/politica-privacidade'
     | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
+    | '/produtividade'
+    | '/quiz'
     | '/redefinir-senha'
     | '/renovar'
     | '/security'
     | '/termos-de-uso'
     | '/trust'
+    | '/tudo'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
@@ -347,20 +501,34 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/afiliados'
     | '/auth'
+    | '/automatizacao'
+    | '/celular'
+    | '/checkout-info'
     | '/contato-privacidade'
+    | '/demo'
+    | '/ebook'
     | '/esqueci-senha'
+    | '/ia'
+    | '/iniciante'
     | '/mcp'
+    | '/negocio'
+    | '/obrigado'
+    | '/oferta'
     | '/politica-cookies'
     | '/politica-privacidade'
     | '/primeiro-acesso'
     | '/privacidade'
     | '/privacy'
+    | '/produtividade'
+    | '/quiz'
     | '/redefinir-senha'
     | '/renovar'
     | '/security'
     | '/termos-de-uso'
     | '/trust'
+    | '/tudo'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
@@ -379,20 +547,34 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AfiliadosRoute: typeof AfiliadosRoute
   AuthRoute: typeof AuthRoute
+  AutomatizacaoRoute: typeof AutomatizacaoRoute
+  CelularRoute: typeof CelularRoute
+  CheckoutInfoRoute: typeof CheckoutInfoRoute
   ContatoPrivacidadeRoute: typeof ContatoPrivacidadeRoute
+  DemoRoute: typeof DemoRoute
+  EbookRoute: typeof EbookRoute
   EsqueciSenhaRoute: typeof EsqueciSenhaRoute
+  IaRoute: typeof IaRoute
+  InicianteRoute: typeof InicianteRoute
   McpRoute: typeof McpRoute
+  NegocioRoute: typeof NegocioRoute
+  ObrigadoRoute: typeof ObrigadoRoute
+  OfertaRoute: typeof OfertaRoute
   PoliticaCookiesRoute: typeof PoliticaCookiesRoute
   PoliticaPrivacidadeRoute: typeof PoliticaPrivacidadeRoute
   PrimeiroAcessoRoute: typeof PrimeiroAcessoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   PrivacyRoute: typeof PrivacyRoute
+  ProdutividadeRoute: typeof ProdutividadeRoute
+  QuizRoute: typeof QuizRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   RenovarRoute: typeof RenovarRoute
   SecurityRoute: typeof SecurityRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   TrustRoute: typeof TrustRoute
+  TudoRoute: typeof TudoRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   CheckoutPlanoRoute: typeof CheckoutPlanoRoute
@@ -406,6 +588,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tudo': {
+      id: '/tudo'
+      path: '/tudo'
+      fullPath: '/tudo'
+      preLoaderRoute: typeof TudoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trust': {
       id: '/trust'
       path: '/trust'
@@ -439,6 +628,20 @@ declare module '@tanstack/react-router' {
       path: '/redefinir-senha'
       fullPath: '/redefinir-senha'
       preLoaderRoute: typeof RedefinirSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtividade': {
+      id: '/produtividade'
+      path: '/produtividade'
+      fullPath: '/produtividade'
+      preLoaderRoute: typeof ProdutividadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -476,11 +679,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoliticaCookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/oferta': {
+      id: '/oferta'
+      path: '/oferta'
+      fullPath: '/oferta'
+      preLoaderRoute: typeof OfertaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/obrigado': {
+      id: '/obrigado'
+      path: '/obrigado'
+      fullPath: '/obrigado'
+      preLoaderRoute: typeof ObrigadoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/negocio': {
+      id: '/negocio'
+      path: '/negocio'
+      fullPath: '/negocio'
+      preLoaderRoute: typeof NegocioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mcp': {
       id: '/mcp'
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/iniciante': {
+      id: '/iniciante'
+      path: '/iniciante'
+      fullPath: '/iniciante'
+      preLoaderRoute: typeof InicianteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ia': {
+      id: '/ia'
+      path: '/ia'
+      fullPath: '/ia'
+      preLoaderRoute: typeof IaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/esqueci-senha': {
@@ -490,6 +728,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EsqueciSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ebook': {
+      id: '/ebook'
+      path: '/ebook'
+      fullPath: '/ebook'
+      preLoaderRoute: typeof EbookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contato-privacidade': {
       id: '/contato-privacidade'
       path: '/contato-privacidade'
@@ -497,11 +749,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContatoPrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout-info': {
+      id: '/checkout-info'
+      path: '/checkout-info'
+      fullPath: '/checkout-info'
+      preLoaderRoute: typeof CheckoutInfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/celular': {
+      id: '/celular'
+      path: '/celular'
+      fullPath: '/celular'
+      preLoaderRoute: typeof CelularRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/automatizacao': {
+      id: '/automatizacao'
+      path: '/automatizacao'
+      fullPath: '/automatizacao'
+      preLoaderRoute: typeof AutomatizacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/afiliados': {
+      id: '/afiliados'
+      path: '/afiliados'
+      fullPath: '/afiliados'
+      preLoaderRoute: typeof AfiliadosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -641,20 +921,34 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AfiliadosRoute: AfiliadosRoute,
   AuthRoute: AuthRoute,
+  AutomatizacaoRoute: AutomatizacaoRoute,
+  CelularRoute: CelularRoute,
+  CheckoutInfoRoute: CheckoutInfoRoute,
   ContatoPrivacidadeRoute: ContatoPrivacidadeRoute,
+  DemoRoute: DemoRoute,
+  EbookRoute: EbookRoute,
   EsqueciSenhaRoute: EsqueciSenhaRoute,
+  IaRoute: IaRoute,
+  InicianteRoute: InicianteRoute,
   McpRoute: McpRoute,
+  NegocioRoute: NegocioRoute,
+  ObrigadoRoute: ObrigadoRoute,
+  OfertaRoute: OfertaRoute,
   PoliticaCookiesRoute: PoliticaCookiesRoute,
   PoliticaPrivacidadeRoute: PoliticaPrivacidadeRoute,
   PrimeiroAcessoRoute: PrimeiroAcessoRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   PrivacyRoute: PrivacyRoute,
+  ProdutividadeRoute: ProdutividadeRoute,
+  QuizRoute: QuizRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
   RenovarRoute: RenovarRoute,
   SecurityRoute: SecurityRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
   TrustRoute: TrustRoute,
+  TudoRoute: TudoRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
